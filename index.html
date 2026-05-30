@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Wealth Management | Professional Statement v6</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --accent: #c5a880;
+            --accent-hover: #d4bc9c;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(197, 168, 128, 0.2);
+            --input-bg: rgba(255, 255, 255, 0.03);
+            --danger: #ef4444;
+            --success: #10b981;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #fcfbf7;
+            --bg-secondary: #f3f1e9;
+            --bg-card: #ffffff;
+            --accent: #8e734b;
+            --accent-hover: #725a3a;
+            --text-primary: #1a1a1a;
+            --text-secondary: #64748b;
+            --border: rgba(142, 115, 75, 0.2);
+            --input-bg: rgba(0, 0, 0, 0.02);
+            --danger: #dc2626;
+            --success: #059669;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; transition: all 0.4s ease; padding-bottom: 80px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+
+        /* Navigation - Restore v4 Style & Size */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 50px; }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; }
+        .brand span { font-size: 11px; letter-spacing: 2px; color: var(--text-secondary); margin-top: 5px; }
+        
+        .nav-controls { display: flex; gap: 15px; align-items: center; }
+        .view-toggle { display: flex; background: var(--bg-secondary); padding: 4px; border-radius: 4px; border: 1px solid var(--border); }
+        .view-btn { padding: 8px 18px; border-radius: 2px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); transition: all 0.3s; }
+        .view-btn.active { background: var(--accent); color: var(--bg-primary); }
+
+        select, button { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 2px; font-size: 12px; cursor: pointer; }
+        .btn-export { background: var(--accent); color: var(--bg-primary); font-weight: 700; border: none; }
+        .icon-btn { background: transparent; border: none; font-size: 18px; padding: 5px; color: var(--accent); cursor: pointer; }
+
+        /* Summary Section */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 60px; }
+        .summary-item { background: var(--bg-card); padding: 40px 20px; text-align: center; }
+        .summary-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 12px; }
+        .summary-value { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+        .summary-value.highlight { color: var(--accent); }
+
+        /* Main Content Layout */
+        .view-content { display: none; }
+        .view-content.active { display: block; }
+
+        .statement-layout { display: grid; grid-template-columns: 1fr 1fr 350px; gap: 50px; }
+        @media (max-width: 1200px) { .statement-layout { grid-template-columns: 1fr 1fr; } .notes-column { grid-column: span 2; } }
+        @media (max-width: 900px) { .statement-layout { grid-template-columns: 1fr; } .notes-column { grid-column: span 1; } }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+        .section-header h2 { font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 2px; color: var(--accent); }
+        .table-wrapper { background: var(--bg-card); border-radius: 4px; margin-bottom: 40px; box-shadow: var(--shadow); }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 15px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); }
+        td { padding: 10px 15px; border-bottom: 1px solid var(--border); }
+
+        input, textarea { background: transparent; border: 1px solid transparent; color: var(--text-primary); width: 100%; padding: 6px; font-size: 14px; border-radius: 2px; font-family: 'Inter', sans-serif; }
+        input:focus, textarea:focus { background: var(--input-bg); border-color: var(--accent); outline: none; }
+        input.readonly { pointer-events: none; }
+        .num-input { text-align: right; font-weight: 600; font-size: 16px; }
+        .date-input { font-size: 12px; color: var(--text-secondary); width: 85px; }
+        .btn-action { font-size: 10px; padding: 6px 12px; text-transform: uppercase; letter-spacing: 1px; margin: 15px; border: 1px dashed var(--accent); color: var(--accent); background: transparent; cursor: pointer; }
+        .btn-delete { color: var(--text-secondary); background: transparent; border: none; cursor: pointer; font-size: 16px; opacity: 0.3; }
+        .btn-delete:hover { opacity: 1; color: var(--danger); }
+
+        /* Notes Column */
+        .notes-column { background: rgba(197, 168, 128, 0.03); padding: 25px; border-radius: 4px; border: 1px solid var(--border); }
+        .note-item { background: var(--bg-card); padding: 15px; border-radius: 4px; margin-bottom: 15px; border-left: 3px solid var(--accent); box-shadow: var(--shadow); }
+        .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .note-status { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 10px; background: var(--bg-secondary); color: var(--accent); cursor: pointer; }
+        .note-status.done { background: var(--success); color: white; }
+        textarea { resize: vertical; min-height: 60px; font-size: 12px; line-height: 1.5; }
+
+        /* Insights View */
+        .insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        @media (max-width: 900px) { .insights-grid { grid-template-columns: 1fr; } }
+        .chart-card { background: var(--bg-card); padding: 30px; border-radius: 4px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .chart-card h3 { font-family: 'Cinzel', serif; font-size: 15px; letter-spacing: 1px; color: var(--accent); margin-bottom: 25px; text-transform: uppercase; }
+        .chart-container { position: relative; height: 350px; width: 100%; }
+
+        footer { margin-top: 100px; text-align: center; padding: 40px; border-top: 1px solid var(--border); font-size: 10px; letter-spacing: 3px; color: var(--text-secondary); text-transform: uppercase; }
+        .lock-indicator { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body data-theme="dark">
+
+<div class="container">
+    <nav>
+        <div class="brand">
+            <h1 id="title-main">Private Wealth</h1>
+            <span id="title-sub">PREMIUM FINANCIAL STATEMENT</span>
+        </div>
+        <div class="nav-controls">
+            <div class="view-toggle">
+                <div class="view-btn active" onclick="switchView('statement')" id="btn-view-statement">STATEMENT</div>
+                <div class="view-btn" onclick="switchView('insights')" id="btn-view-insights">INSIGHTS</div>
+            </div>
+            <select id="year-select" onchange="changePeriod()"></select>
+            <select id="month-select" onchange="changePeriod()"></select>
+            <button onclick="toggleTheme()" id="theme-btn">LIGHT MODE</button>
+            <button onclick="toggleLanguage()" id="lang-btn">EN</button>
+            <button class="btn-export" onclick="exportToExcel()">EXPORT</button>
+            <button class="icon-btn" onclick="toggleLock()" id="master-lock">🔒</button>
+        </div>
+    </nav>
+
+    <div class="summary-grid">
+        <div class="summary-item">
+            <div class="summary-label" data-i18n="net-worth">Net Worth</div>
+            <div class="summary-value highlight" id="sum-net-worth">$ 0</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label" data-i18n="net-cashflow">Monthly Cash Flow</div>
+            <div class="summary-value" id="sum-cashflow">$ 0</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label" data-i18n="total-assets">Total Assets</div>
+            <div class="summary-value" id="sum-assets">$ 0</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label" data-i18n="total-liabilities">Total Liabilities</div>
+            <div class="summary-value" id="sum-liabilities">$ 0</div>
+        </div>
+    </div>
+
+    <!-- View 1: Statement -->
+    <div id="view-statement" class="view-content active">
+        <div class="statement-layout">
+            <div class="column">
+                <div class="section-header"><h2 data-i18n="balance-sheet">Balance Sheet</h2><span class="lock-indicator" id="lock-bs">Locked</span></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th data-i18n="liquid-assets">Liquid Assets</th><th style="text-align:right; width:130px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <tbody id="list-liquid"></tbody>
+                    </table>
+                    <button class="btn-action edit-only" onclick="addItem('liquid')">+ ADD ITEM</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th data-i18n="investment-assets">Investment Assets</th><th style="text-align:right; width:130px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <tbody id="list-investment"></tbody>
+                    </table>
+                    <button class="btn-action edit-only" onclick="addItem('investment')">+ ADD ITEM</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th data-i18n="liabilities">Liabilities</th><th style="width:90px;">Due</th><th style="text-align:right; width:110px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <tbody id="list-liabilities"></tbody>
+                    </table>
+                    <button class="btn-action edit-only" onclick="addItem('liabilities')">+ ADD ITEM</button>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="section-header"><h2 data-i18n="cash-flow">Cash Flow</h2><span class="lock-indicator" id="lock-cf">Locked</span></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th data-i18n="income">Income</th><th style="width:90px;">Date</th><th style="text-align:right; width:110px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <tbody id="list-income"></tbody>
+                    </table>
+                    <button class="btn-action edit-only" onclick="addItem('income')">+ ADD ITEM</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th data-i18n="fixed-expenses">Fixed Expenses</th><th style="width:90px;">Date</th><th style="text-align:right; width:110px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <tbody id="list-fixed"></tbody>
+                    </table>
+                    <button class="btn-action edit-only" onclick="addItem('fixed')">+ ADD ITEM</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th data-i18n="variable-expenses">Variable Expenses</th><th style="width:90px;">Date</th><th style="text-align:right; width:110px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <tbody id="list-variable"></tbody>
+                    </table>
+                    <button class="btn-action edit-only" onclick="addItem('variable')">+ ADD ITEM</button>
+                </div>
+            </div>
+
+            <div class="notes-column">
+                <div class="section-header"><h2 data-i18n="strategic-notes">Strategic Notes</h2></div>
+                <div id="notes-list"></div>
+                <button class="btn-action" onclick="addNote()" style="width:calc(100% - 30px);">+ ADD ACTION</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View 2: Insights -->
+    <div id="view-insights" class="view-content">
+        <div class="insights-grid">
+            <div class="chart-card"><h3>Wealth Growth</h3><div class="chart-container"><canvas id="chart-wealth"></canvas></div></div>
+            <div class="chart-card"><h3>Income vs. Expenses</h3><div class="chart-container"><canvas id="chart-cashflow"></canvas></div></div>
+            <div class="chart-card"><h3>Liability Trend</h3><div class="chart-container"><canvas id="chart-liabilities"></canvas></div></div>
+            <div class="chart-card"><h3>Savings Rate %</h3><div class="chart-container"><canvas id="chart-savings"></canvas></div></div>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 PRIVATE WEALTH MANAGEMENT | HIGHLY CONFIDENTIAL | SWISS STANDARD</footer>
+</div>
+
+<script>
+    let currentTheme = 'dark';
+    let currentLang = 'zh';
+    let currentYear = 2026;
+    let currentMonth = 5;
+    let isLocked = true;
+    let charts = {};
+    
+    let db = JSON.parse(localStorage.getItem('wealth_db_v6')) || {};
+
+    const i18n = {
+        zh: {
+            "net-worth": "資產淨值", "net-cashflow": "每月淨現金流", "total-assets": "總資產", "total-liabilities": "總負債",
+            "balance-sheet": "資產負債表", "cash-flow": "現金流量表", "strategic-notes": "Strategic Notes & Actions",
+            "liquid-assets": "流動資產", "investment-assets": "投資資產", "liabilities": "負債", "income": "收入",
+            "fixed-expenses": "固定支出", "variable-expenses": "彈性支出", "locked": "已鎖定", "unlocked": "已解鎖",
+            "month-names": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+        },
+        en: {
+            "net-worth": "Net Worth", "net-cashflow": "Net Cash Flow", "total-assets": "Total Assets", "total-liabilities": "Total Liabilities",
+            "balance-sheet": "Balance Sheet", "cash-flow": "Cash Flow", "strategic-notes": "Strategic Notes & Actions",
+            "liquid-assets": "Liquid Assets", "investment-assets": "Investment Assets", "liabilities": "Liabilities", "income": "Income",
+            "fixed-expenses": "Fixed Expenses", "variable-expenses": "Variable Expenses", "locked": "Locked", "unlocked": "Unlocked",
+            "month-names": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        }
+    };
+
+    const defaultStructure = {
+        "liquid": [{name: "主要戶口", value: 0}], "investment": [{name: "股票/ETF", value: 0}],
+        "liabilities": [{name: "信用卡", value: 0, date: ""}], "income": [{name: "薪金", value: 0, date: ""}],
+        "fixed": [{name: "家用", value: 0, date: ""}], "variable": [{name: "餐飲", value: 0, date: ""}],
+        "notes": []
+    };
+
+    function init() {
+        const yearSelect = document.getElementById('year-select');
+        for(let y = 2024; y <= 2030; y++) {
+            let opt = document.createElement('option');
+            opt.value = y; opt.innerText = y;
+            if(y === currentYear) opt.selected = true;
+            yearSelect.appendChild(opt);
+        }
+        updateMonthSelect(); applyI18n(); renderDashboard();
+    }
+
+    function updateMonthSelect() {
+        const monthSelect = document.getElementById('month-select');
+        monthSelect.innerHTML = '';
+        i18n[currentLang]["month-names"].forEach((m, i) => {
+            let opt = document.createElement('option');
+            opt.value = i + 1; opt.innerText = m;
+            if(i + 1 === currentMonth) opt.selected = true;
+            monthSelect.appendChild(opt);
+        });
+    }
+
+    function switchView(view) {
+        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`view-${view}`).classList.add('active');
+        document.getElementById(`btn-view-${view}`).classList.add('active');
+        if (view === 'insights') initCharts();
+    }
+
+    function toggleTheme() {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', currentTheme);
+        document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? 'LIGHT MODE' : 'DARK MODE';
+        if (document.getElementById('view-insights').classList.contains('active')) initCharts();
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        document.getElementById('lang-btn').innerText = currentLang === 'zh' ? 'EN' : '中文';
+        updateMonthSelect(); applyI18n(); renderDashboard();
+    }
+
+    function toggleLock() {
+        isLocked = !isLocked;
+        document.getElementById('master-lock').innerText = isLocked ? '🔒' : '🔓';
+        applyI18n(); renderDashboard();
+    }
+
+    function applyI18n() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            el.innerText = i18n[currentLang][el.getAttribute('data-i18n')];
+        });
+        document.getElementById('lock-bs').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
+        document.getElementById('lock-cf').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
+    }
+
+    function changePeriod() {
+        currentYear = parseInt(document.getElementById('year-select').value);
+        currentMonth = parseInt(document.getElementById('month-select').value);
+        renderDashboard();
+    }
+
+    function getPeriodKey() { return `${currentYear}-${currentMonth.toString().padStart(2, '0')}`; }
+    function getPrevKey() {
+        let m = currentMonth - 1, y = currentYear;
+        if (m === 0) { m = 12; y -= 1; }
+        return `${y}-${m.toString().padStart(2, '0')}`;
+    }
+
+    function renderDashboard() {
+        const key = getPeriodKey();
+        if (!db[key]) {
+            const prev = getPrevKey();
+            if (db[prev]) {
+                db[key] = JSON.parse(JSON.stringify(db[prev]));
+                // Carry-over logic:
+                // Assets: Keep value (Balance is continuous)
+                // Flow (Income, Expenses, Liabilities): Reset value & date to 0/empty
+                db[key].income.forEach(i => { i.value = 0; i.date = ""; });
+                db[key].fixed.forEach(i => { i.value = 0; i.date = ""; });
+                db[key].variable.forEach(i => { i.value = 0; i.date = ""; });
+                db[key].liabilities.forEach(i => { i.value = 0; i.date = ""; });
+                // Notes: Carry over pending notes, clear done ones if you wish, or keep all.
+            } else {
+                db[key] = JSON.parse(JSON.stringify(defaultStructure));
+            }
+        }
+        renderList('liquid', db[key].liquid, false);
+        renderList('investment', db[key].investment, false);
+        renderList('liabilities', db[key].liabilities, true);
+        renderList('income', db[key].income, true);
+        renderList('fixed', db[key].fixed, true);
+        renderList('variable', db[key].variable, true);
+        renderNotes(); calculate();
+    }
+
+    function renderList(cat, items, hasDate) {
+        const tbody = document.getElementById(`list-${cat}`);
+        tbody.innerHTML = '';
+        items.forEach((item, i) => {
+            const tr = document.createElement('tr');
+            let dateHtml = hasDate ? `<td><input type="text" class="date-input" value="${item.date || ''}" onchange="updateItem('${cat}', ${i}, 'date', this.value)" placeholder="DD/MM"></td>` : '';
+            let deleteHtml = !isLocked ? `<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}', ${i})">×</button></td>` : '<td></td>';
+            tr.innerHTML = `
+                <td><input type="text" class="${isLocked ? 'readonly' : ''}" value="${item.name}" onchange="updateItem('${cat}', ${i}, 'name', this.value)"></td>
+                ${dateHtml}
+                <td><input type="number" class="num-input" value="${item.value}" onchange="updateItem('${cat}', ${i}, 'value', this.value)" step="0.01"></td>
+                ${deleteHtml}
+            `;
+            tbody.appendChild(tr);
+        });
+        const addBtn = tbody.parentElement.nextElementSibling;
+        if(addBtn) addBtn.style.display = isLocked ? 'none' : 'inline-block';
+    }
+
+    function renderNotes() {
+        const list = document.getElementById('notes-list');
+        list.innerHTML = '';
+        const notes = db[getPeriodKey()].notes || [];
+        notes.forEach((note, i) => {
+            const div = document.createElement('div');
+            div.className = 'note-item';
+            div.innerHTML = `<div class="note-header"><span class="note-status ${note.status === 'done' ? 'done' : ''}" onclick="toggleNoteStatus(${i})">${note.status.toUpperCase()}</span><button class="btn-delete" onclick="deleteNote(${i})">×</button></div><textarea onchange="updateNote(${i}, this.value)">${note.text}</textarea>`;
+            list.appendChild(div);
+        });
+    }
+
+    function updateItem(cat, i, field, val) {
+        if (field === 'value') val = parseFloat(val) || 0;
+        db[getPeriodKey()][cat][i][field] = val;
+        calculate(); save();
+    }
+
+    function addItem(cat) {
+        const newItem = {name: "New Item", value: 0};
+        if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem.date = "";
+        db[getPeriodKey()][cat].push(newItem);
+        renderDashboard();
+    }
+
+    function deleteItem(cat, i) { db[getPeriodKey()][cat].splice(i, 1); renderDashboard(); }
+    function addNote() { if (!db[getPeriodKey()].notes) db[getPeriodKey()].notes = []; db[getPeriodKey()].notes.push({text: "", status: "pending"}); renderNotes(); save(); }
+    function updateNote(i, val) { db[getPeriodKey()].notes[i].text = val; save(); }
+    function toggleNoteStatus(i) { db[getPeriodKey()].notes[i].status = db[getPeriodKey()].notes[i].status === 'done' ? 'pending' : 'done'; renderNotes(); save(); }
+    function deleteNote(i) { db[getPeriodKey()].notes.splice(i, 1); renderNotes(); save(); }
+
+    function calculate() {
+        const data = db[getPeriodKey()];
+        const sum = (arr) => arr.reduce((a, b) => a + (b.value || 0), 0);
+        const assets = sum(data.liquid) + sum(data.investment);
+        const liab = sum(data.liabilities);
+        const income = sum(data.income);
+        const expenses = sum(data.fixed) + sum(data.variable);
+        const netWorth = assets - liab;
+        const cashflow = income - expenses;
+        document.getElementById('sum-assets').innerText = format(assets);
+        document.getElementById('sum-liabilities').innerText = format(liab);
+        document.getElementById('sum-net-worth').innerText = format(netWorth);
+        const cfEl = document.getElementById('sum-cashflow');
+        cfEl.innerText = format(cashflow);
+        cfEl.style.color = cashflow >= 0 ? 'var(--success)' : 'var(--danger)';
+    }
+
+    function format(n) { return '$ ' + n.toLocaleString(undefined, {minimumFractionDigits: 0}); }
+    function save() { localStorage.setItem('wealth_db_v6', JSON.stringify(db)); }
+
+    function initCharts() {
+        const keys = Object.keys(db).sort();
+        const labels = keys.map(k => k.split('-')[1] + '月');
+        const sum = (arr) => arr.reduce((a, b) => a + (b.value || 0), 0);
+        const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim();
+        const textColor = getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
+        const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor, font: { size: 10 } } } }, scales: { x: { grid: { display: false }, ticks: { color: textColor } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: textColor } } } };
+
+        if (charts.wealth) charts.wealth.destroy();
+        charts.wealth = new Chart(document.getElementById('chart-wealth'), { type: 'line', data: { labels, datasets: [{ label: 'Net Worth', data: keys.map(k => sum(db[k].liquid) + sum(db[k].investment) - sum(db[k].liabilities)), borderColor: accentColor, tension: 0.3, fill: true, backgroundColor: 'rgba(197, 168, 128, 0.1)' }] }, options: commonOptions });
+        if (charts.cashflow) charts.cashflow.destroy();
+        charts.cashflow = new Chart(document.getElementById('chart-cashflow'), { type: 'bar', data: { labels, datasets: [{ label: 'Income', data: keys.map(k => sum(db[k].income)), backgroundColor: 'rgba(16, 185, 129, 0.6)' }, { label: 'Expenses', data: keys.map(k => sum(db[k].fixed) + sum(db[k].variable)), backgroundColor: 'rgba(239, 68, 68, 0.6)' }] }, options: commonOptions });
+        if (charts.liabilities) charts.liabilities.destroy();
+        charts.liabilities = new Chart(document.getElementById('chart-liabilities'), { type: 'line', data: { labels, datasets: [{ label: 'Liabilities', data: keys.map(k => sum(db[k].liabilities)), borderColor: '#ef4444', borderDash: [5, 5] }] }, options: commonOptions });
+        if (charts.savings) charts.savings.destroy();
+        charts.savings = new Chart(document.getElementById('chart-savings'), { type: 'bar', data: { labels, datasets: [{ label: 'Savings Rate %', data: keys.map(k => { const inc = sum(db[k].income); const exp = sum(db[k].fixed) + sum(db[k].variable); return inc > 0 ? ((inc - exp) / inc * 100).toFixed(1) : 0; }), backgroundColor: accentColor }] }, options: commonOptions });
+    }
+
+    function exportToExcel() {
+        const key = getPeriodKey();
+        const data = db[key];
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid, ...data.investment, ...data.liabilities]), "Balance Sheet");
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income, ...data.fixed, ...data.variable]), "Cash Flow");
+        XLSX.writeFile(wb, `Wealth_v6_${key}.xlsx`);
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
