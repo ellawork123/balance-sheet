@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Wealth Management | Professional Statement v6</title>
+    <title>Private Wealth Management | Professional Statement v6 (Cloud)</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-primary: #0f172a;
@@ -105,9 +106,12 @@
 
         footer { margin-top: 100px; text-align: center; padding: 40px; border-top: 1px solid var(--border); font-size: 10px; letter-spacing: 3px; color: var(--text-secondary); text-transform: uppercase; }
         .lock-indicator { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; color: var(--accent); font-family: 'Cinzel', serif; letter-spacing: 2px; }
     </style>
 </head>
 <body data-theme="dark">
+
+<div id="loading" class="loading-overlay">SYNCHRONIZING...</div>
 
 <div class="container">
     <nav>
@@ -223,6 +227,11 @@
 </div>
 
 <script>
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://vqqngcilyvfjlbeofryq.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxcW5nY2lseXZmamxiZW9mcnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY5MTYsImV4cCI6MjA5NTcxMjkxNn0.5F8XqInFhwjBd2-oHxBFZ2q4HhPiDUNOd18KCRiyUEo';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let currentTheme = 'dark';
     let currentLang = 'zh';
     let currentYear = 2026;
@@ -230,7 +239,9 @@
     let isLocked = true;
     let charts = {};
     
-    let db = JSON.parse(localStorage.getItem('wealth_db_v6')) || {};
+    // Cloud DB state
+    let db = {}; 
+    let currentPeriodId = null;
 
     const i18n = {
         zh: {
@@ -249,14 +260,17 @@
         }
     };
 
-    const defaultStructure = {
-        "liquid": [{name: "主要戶口", value: 0}], "investment": [{name: "股票/ETF", value: 0}],
-        "liabilities": [{name: "信用卡", value: 0, date: ""}], "income": [{name: "薪金", value: 0, date: ""}],
-        "fixed": [{name: "家用", value: 0, date: ""}], "variable": [{name: "餐飲", value: 0, date: ""}],
-        "notes": []
+    const tableMapping = {
+        'liquid': 'liquid_assets',
+        'investment': 'investment_assets',
+        'liabilities': 'liabilities',
+        'income': 'income',
+        'fixed': 'fixed_expenses',
+        'variable': 'variable_expenses',
+        'notes': 'notes'
     };
 
-    function init() {
+    async function init() {
         const yearSelect = document.getElementById('year-select');
         for(let y = 2024; y <= 2030; y++) {
             let opt = document.createElement('option');
@@ -264,7 +278,14 @@
             if(y === currentYear) opt.selected = true;
             yearSelect.appendChild(opt);
         }
-        updateMonthSelect(); applyI18n(); renderDashboard();
+        updateMonthSelect(); 
+        applyI18n(); 
+        await loadAllData();
+        await renderDashboard();
+    }
+
+    function showLoading(show) {
+        document.getElementById('loading').style.display = show ? 'flex' : 'none';
     }
 
     function updateMonthSelect() {
@@ -276,6 +297,48 @@
             if(i + 1 === currentMonth) opt.selected = true;
             monthSelect.appendChild(opt);
         });
+    }
+
+    async function loadAllData() {
+        showLoading(true);
+        try {
+            // Load all periods
+            const { data: periods, error: pError } = await _supabase.from('periods').select('*');
+            if (pError) throw pError;
+
+            const allData = {};
+            for (const p of periods) {
+                const pId = p.id;
+                const key = p.period_key;
+                
+                const results = await Promise.all([
+                    _supabase.from('liquid_assets').select('*').eq('period_id', pId),
+                    _supabase.from('investment_assets').select('*').eq('period_id', pId),
+                    _supabase.from('liabilities').select('*').eq('period_id', pId),
+                    _supabase.from('income').select('*').eq('period_id', pId),
+                    _supabase.from('fixed_expenses').select('*').eq('period_id', pId),
+                    _supabase.from('variable_expenses').select('*').eq('period_id', pId),
+                    _supabase.from('notes').select('*').eq('period_id', pId)
+                ]);
+
+                allData[key] = {
+                    id: pId,
+                    liquid: results[0].data || [],
+                    investment: results[1].data || [],
+                    liabilities: results[2].data || [],
+                    income: results[3].data || [],
+                    fixed: results[4].data || [],
+                    variable: results[5].data || [],
+                    notes: results[6].data || []
+                };
+            }
+            db = allData;
+        } catch (err) {
+            console.error("Error loading data:", err);
+            alert("Failed to sync with cloud. Check console.");
+        } finally {
+            showLoading(false);
+        }
     }
 
     function switchView(view) {
@@ -313,10 +376,10 @@
         document.getElementById('lock-cf').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
     }
 
-    function changePeriod() {
+    async function changePeriod() {
         currentYear = parseInt(document.getElementById('year-select').value);
         currentMonth = parseInt(document.getElementById('month-select').value);
-        renderDashboard();
+        await renderDashboard();
     }
 
     function getPeriodKey() { return `${currentYear}-${currentMonth.toString().padStart(2, '0')}`; }
@@ -326,31 +389,51 @@
         return `${y}-${m.toString().padStart(2, '0')}`;
     }
 
-    function renderDashboard() {
-        const key = getPeriodKey();
-        if (!db[key]) {
-            const prev = getPrevKey();
-            if (db[prev]) {
-                db[key] = JSON.parse(JSON.stringify(db[prev]));
-                // Carry-over logic:
-                // Assets: Keep value (Balance is continuous)
-                // Flow (Income, Expenses, Liabilities): Reset value & date to 0/empty
-                db[key].income.forEach(i => { i.value = 0; i.date = ""; });
-                db[key].fixed.forEach(i => { i.value = 0; i.date = ""; });
-                db[key].variable.forEach(i => { i.value = 0; i.date = ""; });
-                db[key].liabilities.forEach(i => { i.value = 0; i.date = ""; });
-                // Notes: Carry over pending notes, clear done ones if you wish, or keep all.
-            } else {
-                db[key] = JSON.parse(JSON.stringify(defaultStructure));
+    async function ensurePeriod(key) {
+        if (db[key]) return db[key].id;
+        
+        showLoading(true);
+        const { data, error } = await _supabase.from('periods').insert([{ period_key: key }]).select();
+        if (error) { console.error(error); showLoading(false); return null; }
+        
+        const newId = data[0].id;
+        db[key] = { id: newId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
+        
+        // Carry over logic
+        const prevKey = getPrevKey();
+        if (db[prevKey]) {
+            const categories = ['liquid', 'investment', 'liabilities', 'income', 'fixed', 'variable'];
+            for (const cat of categories) {
+                const items = db[prevKey][cat].map(item => {
+                    const newItem = { period_id: newId, name: item.name, value: item.value };
+                    if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) {
+                        newItem.value = 0; // Reset flow values
+                        newItem[cat === 'liabilities' ? 'due_date' : 'transaction_date'] = "";
+                    }
+                    return newItem;
+                });
+                if (items.length > 0) {
+                    const { data: insertedItems } = await _supabase.from(tableMapping[cat]).insert(items).select();
+                    db[key][cat] = insertedItems || [];
+                }
             }
         }
+        showLoading(false);
+        return newId;
+    }
+
+    async function renderDashboard() {
+        const key = getPeriodKey();
+        currentPeriodId = await ensurePeriod(key);
+        
         renderList('liquid', db[key].liquid, false);
         renderList('investment', db[key].investment, false);
         renderList('liabilities', db[key].liabilities, true);
         renderList('income', db[key].income, true);
         renderList('fixed', db[key].fixed, true);
         renderList('variable', db[key].variable, true);
-        renderNotes(); calculate();
+        renderNotes(); 
+        calculate();
     }
 
     function renderList(cat, items, hasDate) {
@@ -358,7 +441,8 @@
         tbody.innerHTML = '';
         items.forEach((item, i) => {
             const tr = document.createElement('tr');
-            let dateHtml = hasDate ? `<td><input type="text" class="date-input" value="${item.date || ''}" onchange="updateItem('${cat}', ${i}, 'date', this.value)" placeholder="DD/MM"></td>` : '';
+            const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
+            let dateHtml = hasDate ? `<td><input type="text" class="date-input" value="${item[dateField] || ''}" onchange="updateItem('${cat}', ${i}, '${dateField}', this.value)" placeholder="DD/MM"></td>` : '';
             let deleteHtml = !isLocked ? `<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}', ${i})">×</button></td>` : '<td></td>';
             tr.innerHTML = `
                 <td><input type="text" class="${isLocked ? 'readonly' : ''}" value="${item.name}" onchange="updateItem('${cat}', ${i}, 'name', this.value)"></td>
@@ -384,28 +468,92 @@
         });
     }
 
-    function updateItem(cat, i, field, val) {
+    async function updateItem(cat, i, field, val) {
+        const key = getPeriodKey();
+        const item = db[key][cat][i];
         if (field === 'value') val = parseFloat(val) || 0;
-        db[getPeriodKey()][cat][i][field] = val;
-        calculate(); save();
+        
+        item[field] = val;
+        calculate();
+        
+        const { error } = await _supabase.from(tableMapping[cat]).update({ [field]: val }).eq('id', item.id);
+        if (error) console.error("Update error:", error);
     }
 
-    function addItem(cat) {
-        const newItem = {name: "New Item", value: 0};
-        if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem.date = "";
-        db[getPeriodKey()][cat].push(newItem);
+    async function addItem(cat) {
+        const key = getPeriodKey();
+        const newItem = { period_id: currentPeriodId, name: "New Item", value: 0 };
+        const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
+        if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem[dateField] = "";
+        
+        showLoading(true);
+        const { data, error } = await _supabase.from(tableMapping[cat]).insert([newItem]).select();
+        showLoading(false);
+        
+        if (error) { console.error(error); return; }
+        db[key][cat].push(data[0]);
         renderDashboard();
     }
 
-    function deleteItem(cat, i) { db[getPeriodKey()][cat].splice(i, 1); renderDashboard(); }
-    function addNote() { if (!db[getPeriodKey()].notes) db[getPeriodKey()].notes = []; db[getPeriodKey()].notes.push({text: "", status: "pending"}); renderNotes(); save(); }
-    function updateNote(i, val) { db[getPeriodKey()].notes[i].text = val; save(); }
-    function toggleNoteStatus(i) { db[getPeriodKey()].notes[i].status = db[getPeriodKey()].notes[i].status === 'done' ? 'pending' : 'done'; renderNotes(); save(); }
-    function deleteNote(i) { db[getPeriodKey()].notes.splice(i, 1); renderNotes(); save(); }
+    async function deleteItem(cat, i) {
+        const key = getPeriodKey();
+        const item = db[key][cat][i];
+        
+        showLoading(true);
+        const { error } = await _supabase.from(tableMapping[cat]).delete().eq('id', item.id);
+        showLoading(false);
+        
+        if (error) { console.error(error); return; }
+        db[key][cat].splice(i, 1); 
+        renderDashboard(); 
+    }
+
+    async function addNote() {
+        const key = getPeriodKey();
+        const newNote = { period_id: currentPeriodId, text: "", status: "pending" };
+        
+        showLoading(true);
+        const { data, error } = await _supabase.from('notes').insert([newNote]).select();
+        showLoading(false);
+        
+        if (error) { console.error(error); return; }
+        db[key].notes.push(data[0]);
+        renderNotes();
+    }
+
+    async function updateNote(i, val) {
+        const key = getPeriodKey();
+        const note = db[key].notes[i];
+        note.text = val;
+        await _supabase.from('notes').update({ text: val }).eq('id', note.id);
+    }
+
+    async function toggleNoteStatus(i) {
+        const key = getPeriodKey();
+        const note = db[key].notes[i];
+        const newStatus = note.status === 'done' ? 'pending' : 'done';
+        note.status = newStatus;
+        renderNotes();
+        await _supabase.from('notes').update({ status: newStatus }).eq('id', note.id);
+    }
+
+    async function deleteNote(i) {
+        const key = getPeriodKey();
+        const note = db[key].notes[i];
+        
+        showLoading(true);
+        const { error } = await _supabase.from('notes').delete().eq('id', note.id);
+        showLoading(false);
+        
+        if (error) { console.error(error); return; }
+        db[key].notes.splice(i, 1); 
+        renderNotes();
+    }
 
     function calculate() {
         const data = db[getPeriodKey()];
-        const sum = (arr) => arr.reduce((a, b) => a + (b.value || 0), 0);
+        if (!data) return;
+        const sum = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0), 0);
         const assets = sum(data.liquid) + sum(data.investment);
         const liab = sum(data.liabilities);
         const income = sum(data.income);
@@ -421,12 +569,11 @@
     }
 
     function format(n) { return '$ ' + n.toLocaleString(undefined, {minimumFractionDigits: 0}); }
-    function save() { localStorage.setItem('wealth_db_v6', JSON.stringify(db)); }
 
     function initCharts() {
         const keys = Object.keys(db).sort();
         const labels = keys.map(k => k.split('-')[1] + '月');
-        const sum = (arr) => arr.reduce((a, b) => a + (b.value || 0), 0);
+        const sum = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0), 0);
         const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim();
         const textColor = getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
         const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor, font: { size: 10 } } } }, scales: { x: { grid: { display: false }, ticks: { color: textColor } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: textColor } } } };
