@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Private Wealth Management | Professional Statement v11 Secure</title>
+    <title>Private Wealth Management | Professional Statement v12</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -55,17 +55,16 @@
         .view-btn { padding: 6px 12px; border-radius: 2px; font-size: 10px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); transition: all 0.3s; }
         .view-btn.active { background: var(--accent); color: var(--bg-primary); }
 
-        select, button { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: 2px; font-size: 11px; cursor: pointer; flex: 1; min-width: 60px; }
+        select, button { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: 2px; font-size: 11px; cursor: pointer; flex: 1; min-width: 60px; font-family: 'Inter', sans-serif; }
         .btn-export { background: var(--accent); color: var(--bg-primary); font-weight: 700; border: none; }
         .btn-update-rates { background: var(--accent); color: var(--bg-primary); font-weight: 700; border: none; font-size: 10px; }
         .icon-btn { background: transparent; border: none; font-size: 16px; padding: 5px; color: var(--accent); cursor: pointer; flex: 0 0 auto; }
 
-        /* 12-Figure Ultra Display */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 40px; }
         .summary-item { background: var(--bg-card); padding: 20px 15px; text-align: center; }
         .summary-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 8px; }
         .summary-value { 
-            font-family: 'Inter', sans-serif; /* Reverted to Inter */
+            font-family: 'Inter', sans-serif;
             font-weight: 700; 
             color: var(--text-primary); 
             word-break: break-word;
@@ -73,7 +72,6 @@
             overflow-wrap: break-word;
         }
         .summary-value.highlight { color: var(--accent); }
-        /* 12-Figure Dynamic Scaling */
         .summary-value.size-lg { font-size: 18px; letter-spacing: -0.5px; }
         .summary-value.size-xl { font-size: 16px; letter-spacing: -0.8px; }
         .summary-value.size-xxl { font-size: 14px; letter-spacing: -1px; }
@@ -87,51 +85,51 @@
         .section-header h2 { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1px; color: var(--accent); }
         .table-wrapper { background: var(--bg-card); border-radius: 4px; margin-bottom: 25px; box-shadow: var(--shadow); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { padding: 12px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); }
-        td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+        th { padding: 12px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); font-family: 'Inter', sans-serif; }
+        td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; font-family: 'Inter', sans-serif; }
 
         input, textarea { background: transparent; border: 1px solid transparent; color: var(--text-primary); width: 100%; padding: 6px; font-size: 13px; border-radius: 2px; font-family: 'Inter', sans-serif; }
         input:focus, textarea:focus { background: var(--input-bg); border-color: var(--accent); outline: none; }
         input.readonly { pointer-events: none; }
-        .num-input { text-align: right; font-weight: 600; font-size: 14px; letter-spacing: -0.5px; }
-        .date-input { font-size: 11px; color: var(--text-secondary); text-align: center; }
+        .num-input { text-align: right; font-weight: 600; font-size: 14px; letter-spacing: -0.5px; font-family: 'Inter', sans-serif; }
+        .date-input { font-size: 11px; color: var(--text-secondary); text-align: center; font-family: 'Inter', sans-serif; }
         .currency-select { 
             font-size: 11px; padding: 4px; border: 1px solid var(--border); width: auto; min-width: 65px;
-            background-color: var(--bg-secondary); /* Fix for dark mode */
+            background-color: var(--bg-secondary);
             color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
         }
         
-        .btn-action { font-size: 10px; padding: 8px 12px; text-transform: uppercase; letter-spacing: 1px; margin: 12px; border: 1px dashed var(--accent); color: var(--accent); background: transparent; cursor: pointer; width: calc(100% - 24px); }
+        .btn-action { font-size: 10px; padding: 8px 12px; text-transform: uppercase; letter-spacing: 1px; margin: 12px; border: 1px dashed var(--accent); color: var(--accent); background: transparent; cursor: pointer; width: calc(100% - 24px); font-family: 'Inter', sans-serif; }
         .btn-delete { color: var(--text-secondary); background: transparent; border: none; cursor: pointer; font-size: 16px; opacity: 0.3; padding: 4px; }
         .btn-delete:hover { opacity: 1; color: var(--danger); }
 
-        /* Multi-Currency Display */
         .currency-display { font-size: 10px; color: var(--text-secondary); margin-top: 2px; font-family: 'Inter', sans-serif; }
 
         .notes-column { background: rgba(197, 168, 128, 0.03); padding: 15px; border-radius: 4px; border: 1px solid var(--border); }
         .note-item { background: var(--bg-card); padding: 12px; border-radius: 4px; margin-bottom: 12px; border-left: 3px solid var(--accent); box-shadow: var(--shadow); }
         .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .note-status { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 10px; background: var(--bg-secondary); color: var(--accent); cursor: pointer; }
+        .note-status { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 10px; background: var(--bg-secondary); color: var(--accent); cursor: pointer; font-family: 'Inter', sans-serif; }
         .note-status.done { background: var(--success); color: white; }
-        textarea { resize: vertical; min-height: 50px; font-size: 12px; line-height: 1.4; }
+        textarea { resize: vertical; min-height: 50px; font-size: 12px; line-height: 1.4; font-family: 'Inter', sans-serif; }
 
         .insights-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
         .chart-card { background: var(--bg-card); padding: 20px; border-radius: 4px; border: 1px solid var(--border); box-shadow: var(--shadow); }
         .chart-card h3 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; }
         .chart-container { position: relative; height: 250px; width: 100%; }
 
-        footer { margin-top: 60px; text-align: center; padding: 25px 15px; border-top: 1px solid var(--border); font-size: 9px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase; }
-        .lock-indicator { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        footer { margin-top: 60px; text-align: center; padding: 25px 15px; border-top: 1px solid var(--border); font-size: 9px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase; font-family: 'Inter', sans-serif; }
+        .lock-indicator { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; color: var(--accent); font-family: 'Cinzel', serif; letter-spacing: 2px; }
         
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-bg); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--bg-card); margin: auto; padding: 30px; border: 1px solid var(--border); width: 90%; max-width: 400px; border-radius: 8px; box-shadow: var(--shadow); text-align: center; }
-        .modal-content h2 { font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 20px; }
+        .modal-content h2 { font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 20px; font-size: 18px; letter-spacing: 1px; }
         .modal-content input[type="text"], .modal-content input[type="password"] {
-            width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 4px; background-color: var(--input-bg); color: var(--text-primary);
+            width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 4px; background-color: var(--input-bg); color: var(--text-primary); font-family: 'Inter', sans-serif;
         }
-        .modal-content button { width: 100%; padding: 10px; margin-top: 10px; }
-        .modal-content .error-message { color: var(--danger); font-size: 12px; margin-top: -10px; margin-bottom: 10px; }
+        .modal-content button { width: 100%; padding: 10px; margin-top: 10px; font-family: 'Inter', sans-serif; }
+        .modal-content .error-message { color: var(--danger); font-size: 12px; margin-top: -10px; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
         .modal-content .close-button { color: var(--text-secondary); float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-content .close-button:hover, .modal-content .close-button:focus { color: var(--accent); text-decoration: none; cursor: pointer; }
 
@@ -390,7 +388,7 @@
 
     async function loadAppContent() {
         const yearSelect = document.getElementById('year-select');
-        yearSelect.innerHTML = ''; // Clear existing options
+        yearSelect.innerHTML = '';
         for(let y = 2024; y <= 2030; y++) {
             let opt = document.createElement('option');
             opt.value = y; opt.innerText = y;
@@ -414,6 +412,7 @@
                 rates.JPY = 1 / data.rates.JPY;
                 rates.EUR = 1 / data.rates.EUR;
                 lastRateUpdate = new Date().toLocaleTimeString();
+                console.log("Exchange rates updated:", rates);
             }
         } catch (e) { console.log("Rate fetch failed, using defaults"); }
     }
@@ -459,7 +458,7 @@
     function toggleTheme() {
         currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.body.setAttribute('data-theme', currentTheme);
-        applyI18n(); // Update theme button text
+        applyI18n();
         if (document.getElementById('view-insights').classList.contains('active')) initCharts();
     }
 
@@ -494,8 +493,11 @@
         if (db[key]) return db[key].id;
         
         showLoading(true);
-        const { data, error } = await _supabase.from('periods').insert([{ period_key: key, user_id: (await _supabase.auth.getUser()).data.user.id }]).select();
-        if (error) { console.error(error); showLoading(false); return null; }
+        const user = (await _supabase.auth.getUser()).data.user;
+        if (!user) { console.error("No authenticated user"); showLoading(false); return null; }
+        
+        const { data, error } = await _supabase.from('periods').insert([{ period_key: key, user_id: user.id }]).select();
+        if (error) { console.error("Error creating period:", error); showLoading(false); return null; }
         
         const newId = data[0].id;
         db[key] = { id: newId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
@@ -513,8 +515,9 @@
                     return newItem;
                 });
                 if (items.length > 0) {
-                    const { data: insertedItems } = await _supabase.from(tableMapping[cat]).insert(items).select();
-                    db[key][cat] = insertedItems || [];
+                    const { data: insertedItems, error: insertError } = await _supabase.from(tableMapping[cat]).insert(items).select();
+                    if (insertError) console.error("Error copying items:", insertError);
+                    else db[key][cat] = insertedItems || [];
                 }
             }
         }
@@ -526,10 +529,10 @@
         showLoading(true);
         try {
             const user = (await _supabase.auth.getUser()).data.user;
-            if (!user) { showLoading(false); return; }
+            if (!user) { console.error("No authenticated user"); showLoading(false); return; }
 
             const { data: periods, error: periodsError } = await _supabase.from('periods').select('*').eq('user_id', user.id);
-            if (periodsError) throw periodsError;
+            if (periodsError) { console.error("Error loading periods:", periodsError); showLoading(false); return; }
 
             for (const p of periods || []) {
                 const results = await Promise.all([
@@ -543,6 +546,7 @@
                 ]);
                 db[p.period_key] = { id: p.id, liquid: results[0].data || [], investment: results[1].data || [], liabilities: results[2].data || [], income: results[3].data || [], fixed: results[4].data || [], variable: results[5].data || [], notes: results[6].data || [] };
             }
+            console.log("All data loaded:", db);
         } catch (err) { console.error("Error loading data:", err); }
         showLoading(false);
     }
@@ -632,24 +636,38 @@
         if (field === 'value') val = parseFloat(val) || 0;
         item[field] = val;
         calculate();
-        renderList(cat, db[key][cat]); // Re-render the specific list to update currency display
+        renderList(cat, db[key][cat]);
         const { error } = await _supabase.from(tableMapping[cat]).update({ [field]: val }).eq('id', item.id);
         if (error) console.error("Update error:", error);
     }
 
     async function addItem(cat) {
         const key = getPeriodKey();
+        if (!currentPeriodId) {
+            console.error("No period ID available");
+            alert("Error: Period not initialized. Please refresh the page.");
+            return;
+        }
+
         const newItem = { period_id: currentPeriodId, name: "New Item", value: 0, currency: 'HKD' };
         const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
         if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem[dateField] = "";
         
+        console.log(`Adding new item to ${cat}:`, newItem);
         showLoading(true);
+        
         const { data, error } = await _supabase.from(tableMapping[cat]).insert([newItem]).select();
         showLoading(false);
         
-        if (error) { console.error(error); return; }
+        if (error) { 
+            console.error(`Error adding item to ${cat}:`, error);
+            alert(`Failed to add item: ${error.message}`);
+            return; 
+        }
+        
+        console.log(`Item added successfully to ${cat}:`, data);
         db[key][cat].push(data[0]);
-        renderDashboard(); // Re-render entire dashboard to ensure all calculations and displays are updated
+        renderDashboard();
     }
 
     async function deleteItem(cat, i) {
@@ -715,8 +733,8 @@
         const str = value.toString().replace(/,/g, '');
         if (str.length > 12) return 'size-xxxl';
         if (str.length > 11) return 'size-xxl';
-        if (str.length > 9) return 'size-xl'; // Adjusted for 10-11 digits
-        return 'size-lg'; // Default for up to 9 digits
+        if (str.length > 9) return 'size-xl';
+        return 'size-lg';
     }
 
     function calculate() {
@@ -777,7 +795,7 @@
         let wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid, ...data.investment, ...data.liabilities]), "Balance Sheet");
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income, ...data.fixed, ...data.variable]), "Cash Flow");
-        XLSX.writeFile(wb, `Wealth_v11_${key}.xlsx`);
+        XLSX.writeFile(wb, `Wealth_v12_${key}.xlsx`);
     }
 
     // Authentication Functions
@@ -824,12 +842,11 @@
             document.getElementById('settingsModal').style.display = 'none';
             document.getElementById('main-app-content').style.display = 'none';
             document.getElementById('loginModal').style.display = 'flex';
-            db = {}; // Clear local data on logout
+            db = {};
         }
     }
 
     async function changePassword() {
-        const currentPassword = document.getElementById('current-password').value;
         const newPassword = document.getElementById('new-password').value;
         const confirmNewPassword = document.getElementById('confirm-new-password').value;
         const errorEl = document.getElementById('password-change-error');
@@ -845,10 +862,6 @@
         }
 
         showLoading(true);
-        // Supabase does not directly support changing password with current password for security reasons.
-        // It typically uses a password reset flow or relies on the user being authenticated.
-        // For simplicity, we'll assume the user is authenticated and just update the password.
-        // In a real app, you might want to re-authenticate or use a password reset email.
         const { data, error } = await _supabase.auth.updateUser({ password: newPassword });
         showLoading(false);
 
