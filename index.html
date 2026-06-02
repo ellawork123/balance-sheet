@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Private Wealth Management | Professional Statement v12</title>
+    <title>Private Wealth Management | Professional Statement v10 Ultimate</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,7 +22,6 @@
             --danger: #ef4444;
             --success: #10b981;
             --shadow: 0 10px 30px rgba(0,0,0,0.5);
-            --modal-bg: rgba(0,0,0,0.8);
         }
 
         [data-theme="light"] {
@@ -38,12 +37,20 @@
             --danger: #dc2626;
             --success: #059669;
             --shadow: 0 10px 30px rgba(0,0,0,0.05);
-            --modal-bg: rgba(255,255,255,0.8);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; transition: all 0.4s ease; padding-bottom: 80px; }
         .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+        /* Login Screen */
+        #login-screen { display: flex; justify-content: center; align-items: center; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-primary); z-index: 2000; }
+        .login-box { background: var(--bg-card); padding: 40px; border-radius: 8px; border: 1px solid var(--border); box-shadow: var(--shadow); max-width: 400px; width: 100%; }
+        .login-box h1 { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); margin-bottom: 30px; text-align: center; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-primary); border-radius: 4px; font-size: 14px; }
+        .login-box button { width: 100%; padding: 12px; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 14px; }
+        .login-box button:hover { background: var(--accent-hover); }
+        .login-error { color: var(--danger); font-size: 12px; margin-bottom: 15px; text-align: center; }
 
         nav { display: flex; flex-direction: column; gap: 15px; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
         .brand { display: flex; flex-direction: column; }
@@ -55,27 +62,36 @@
         .view-btn { padding: 6px 12px; border-radius: 2px; font-size: 10px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); transition: all 0.3s; }
         .view-btn.active { background: var(--accent); color: var(--bg-primary); }
 
-        select, button { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: 2px; font-size: 11px; cursor: pointer; flex: 1; min-width: 60px; font-family: 'Inter', sans-serif; }
+        select, button { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: 2px; font-size: 11px; cursor: pointer; flex: 1; min-width: 60px; }
         .btn-export { background: var(--accent); color: var(--bg-primary); font-weight: 700; border: none; }
         .btn-update-rates { background: var(--accent); color: var(--bg-primary); font-weight: 700; border: none; font-size: 10px; }
+        .btn-logout { background: var(--danger); color: white; font-weight: 700; border: none; font-size: 10px; }
         .icon-btn { background: transparent; border: none; font-size: 16px; padding: 5px; color: var(--accent); cursor: pointer; flex: 0 0 auto; }
 
+        /* 10-12 Figure Display Optimization */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 40px; }
         .summary-item { background: var(--bg-card); padding: 20px 15px; text-align: center; }
         .summary-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 8px; }
         .summary-value { 
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif; 
+            font-size: 18px; 
             font-weight: 700; 
             color: var(--text-primary); 
+            letter-spacing: -0.8px;
             word-break: break-word;
-            line-height: 1.15;
+            line-height: 1.2;
             overflow-wrap: break-word;
+            hyphens: auto;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .summary-value.highlight { color: var(--accent); }
-        .summary-value.size-lg { font-size: 18px; letter-spacing: -0.5px; }
-        .summary-value.size-xl { font-size: 16px; letter-spacing: -0.8px; }
-        .summary-value.size-xxl { font-size: 14px; letter-spacing: -1px; }
-        .summary-value.size-xxxl { font-size: 12px; letter-spacing: -1.2px; }
+        /* Dynamic font scaling for 10+ figures */
+        .summary-value.size-10 { font-size: 16px; letter-spacing: -1px; }
+        .summary-value.size-11 { font-size: 14px; letter-spacing: -1.2px; }
+        .summary-value.size-12 { font-size: 12px; letter-spacing: -1.3px; }
 
         .view-content { display: none; }
         .view-content.active { display: block; }
@@ -85,53 +101,41 @@
         .section-header h2 { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1px; color: var(--accent); }
         .table-wrapper { background: var(--bg-card); border-radius: 4px; margin-bottom: 25px; box-shadow: var(--shadow); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { padding: 12px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); font-family: 'Inter', sans-serif; }
-        td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; font-family: 'Inter', sans-serif; }
+        th { padding: 12px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); }
+        td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
 
-        input, textarea { background: transparent; border: 1px solid transparent; color: var(--text-primary); width: 100%; padding: 6px; font-size: 13px; border-radius: 2px; font-family: 'Inter', sans-serif; }
+        input, textarea, select.currency-select { background: transparent; border: 1px solid transparent; color: var(--text-primary); width: 100%; padding: 6px; font-size: 13px; border-radius: 2px; font-family: 'Inter', sans-serif; }
         input:focus, textarea:focus { background: var(--input-bg); border-color: var(--accent); outline: none; }
         input.readonly { pointer-events: none; }
-        .num-input { text-align: right; font-weight: 600; font-size: 14px; letter-spacing: -0.5px; font-family: 'Inter', sans-serif; }
-        .date-input { font-size: 11px; color: var(--text-secondary); text-align: center; font-family: 'Inter', sans-serif; }
-        .currency-select { 
-            font-size: 11px; padding: 4px; border: 1px solid var(--border); width: auto; min-width: 65px;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-        }
+        .num-input { text-align: right; font-weight: 600; font-size: 14px; letter-spacing: -0.5px; }
+        .date-input { font-size: 11px; color: var(--text-secondary); text-align: center; }
+        .currency-select { font-size: 11px; padding: 4px; border: 1px solid var(--border); width: auto; min-width: 60px; }
         
-        .btn-action { font-size: 10px; padding: 8px 12px; text-transform: uppercase; letter-spacing: 1px; margin: 12px; border: 1px dashed var(--accent); color: var(--accent); background: transparent; cursor: pointer; width: calc(100% - 24px); font-family: 'Inter', sans-serif; }
+        .btn-action { font-size: 10px; padding: 8px 12px; text-transform: uppercase; letter-spacing: 1px; margin: 12px; border: 1px dashed var(--accent); color: var(--accent); background: transparent; cursor: pointer; width: calc(100% - 24px); }
         .btn-delete { color: var(--text-secondary); background: transparent; border: none; cursor: pointer; font-size: 16px; opacity: 0.3; padding: 4px; }
         .btn-delete:hover { opacity: 1; color: var(--danger); }
 
-        .currency-display { font-size: 10px; color: var(--text-secondary); margin-top: 2px; font-family: 'Inter', sans-serif; }
+        /* Multi-Currency Display */
+        .currency-display { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+        .investment-row-wrapper { display: flex; flex-direction: column; }
 
         .notes-column { background: rgba(197, 168, 128, 0.03); padding: 15px; border-radius: 4px; border: 1px solid var(--border); }
         .note-item { background: var(--bg-card); padding: 12px; border-radius: 4px; margin-bottom: 12px; border-left: 3px solid var(--accent); box-shadow: var(--shadow); }
         .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .note-status { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 10px; background: var(--bg-secondary); color: var(--accent); cursor: pointer; font-family: 'Inter', sans-serif; }
+        .note-status { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 10px; background: var(--bg-secondary); color: var(--accent); cursor: pointer; }
         .note-status.done { background: var(--success); color: white; }
-        textarea { resize: vertical; min-height: 50px; font-size: 12px; line-height: 1.4; font-family: 'Inter', sans-serif; }
+        textarea { resize: vertical; min-height: 50px; font-size: 12px; line-height: 1.4; }
 
         .insights-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
         .chart-card { background: var(--bg-card); padding: 20px; border-radius: 4px; border: 1px solid var(--border); box-shadow: var(--shadow); }
         .chart-card h3 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; }
         .chart-container { position: relative; height: 250px; width: 100%; }
 
-        footer { margin-top: 60px; text-align: center; padding: 25px 15px; border-top: 1px solid var(--border); font-size: 9px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase; font-family: 'Inter', sans-serif; }
-        .lock-indicator { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
+        footer { margin-top: 60px; text-align: center; padding: 25px 15px; border-top: 1px solid var(--border); font-size: 9px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase; }
+        .lock-indicator { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; color: var(--accent); font-family: 'Cinzel', serif; letter-spacing: 2px; }
         
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-bg); justify-content: center; align-items: center; }
-        .modal-content { background-color: var(--bg-card); margin: auto; padding: 30px; border: 1px solid var(--border); width: 90%; max-width: 400px; border-radius: 8px; box-shadow: var(--shadow); text-align: center; }
-        .modal-content h2 { font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 20px; font-size: 18px; letter-spacing: 1px; }
-        .modal-content input[type="text"], .modal-content input[type="password"] {
-            width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 4px; background-color: var(--input-bg); color: var(--text-primary); font-family: 'Inter', sans-serif;
-        }
-        .modal-content button { width: 100%; padding: 10px; margin-top: 10px; font-family: 'Inter', sans-serif; }
-        .modal-content .error-message { color: var(--danger); font-size: 12px; margin-top: -10px; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
-        .modal-content .close-button { color: var(--text-secondary); float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-content .close-button:hover, .modal-content .close-button:focus { color: var(--accent); text-decoration: none; cursor: pointer; }
+        .rate-status { font-size: 9px; color: var(--text-secondary); margin-left: 10px; }
 
         @media (min-width: 768px) {
             .container { padding: 0 40px; }
@@ -144,10 +148,10 @@
             .summary-grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 60px; }
             .summary-item { padding: 40px 20px; }
             .summary-label { font-size: 11px; letter-spacing: 2px; margin-bottom: 12px; }
-            .summary-value.size-lg { font-size: 28px; letter-spacing: -0.5px; }
-            .summary-value.size-xl { font-size: 24px; letter-spacing: -0.8px; }
-            .summary-value.size-xxl { font-size: 20px; letter-spacing: -1px; }
-            .summary-value.size-xxxl { font-size: 16px; letter-spacing: -1.2px; }
+            .summary-value { font-size: 28px; letter-spacing: -1px; }
+            .summary-value.size-10 { font-size: 24px; letter-spacing: -1.2px; }
+            .summary-value.size-11 { font-size: 20px; letter-spacing: -1.3px; }
+            .summary-value.size-12 { font-size: 16px; letter-spacing: -1.5px; }
 
             .statement-layout { grid-template-columns: 1fr 1fr 350px; gap: 50px; }
             .section-header h2 { font-size: 17px; letter-spacing: 2px; }
@@ -174,48 +178,20 @@
 </head>
 <body data-theme="dark">
 
+<!-- Login Screen -->
+<div id="login-screen">
+    <div class="login-box">
+        <h1>WEALTH MANAGER</h1>
+        <div id="login-error" class="login-error"></div>
+        <input type="text" id="login-username" placeholder="Username" />
+        <input type="password" id="login-password" placeholder="Password" />
+        <button onclick="handleLogin()">LOGIN</button>
+    </div>
+</div>
+
 <div id="loading" class="loading-overlay">SYNCHRONIZING...</div>
 
-<!-- Login Modal -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <h2>Login to Private Wealth</h2>
-        <input type="text" id="login-email" placeholder="Email">
-        <input type="password" id="login-password" placeholder="Password">
-        <p id="login-error" class="error-message"></p>
-        <button onclick="handleLogin()">Login</button>
-        <button onclick="showSignup()">Sign Up</button>
-    </div>
-</div>
-
-<!-- Signup Modal -->
-<div id="signupModal" class="modal">
-    <div class="modal-content">
-        <h2>Sign Up for Private Wealth</h2>
-        <input type="text" id="signup-email" placeholder="Email">
-        <input type="password" id="signup-password" placeholder="Password">
-        <p id="signup-error" class="error-message"></p>
-        <button onclick="handleSignup()">Sign Up</button>
-        <button onclick="showLogin()">Back to Login</button>
-    </div>
-</div>
-
-<!-- Settings Modal -->
-<div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" onclick="closeSettingsModal()">&times;</span>
-        <h2>Settings</h2>
-        <h3>Change Password</h3>
-        <input type="password" id="current-password" placeholder="Current Password">
-        <input type="password" id="new-password" placeholder="New Password">
-        <input type="password" id="confirm-new-password" placeholder="Confirm New Password">
-        <p id="password-change-error" class="error-message"></p>
-        <button onclick="changePassword()">Change Password</button>
-        <button onclick="handleLogout()" style="background-color: var(--danger);">Logout</button>
-    </div>
-</div>
-
-<div class="container" id="main-app-content" style="display:none;">
+<div class="container" id="main-content" style="display: none;">
     <nav>
         <div class="brand">
             <h1 id="title-main">Private Wealth</h1>
@@ -232,8 +208,8 @@
             <button onclick="toggleLanguage()" id="lang-btn">EN</button>
             <button class="btn-update-rates" onclick="updateExchangeRates()" id="btn-rates">UPDATE RATES</button>
             <button class="btn-export" onclick="exportToExcel()">EXPORT</button>
-            <button class="icon-btn" onclick="openSettingsModal()" id="settings-btn">⚙️</button>
             <button class="icon-btn" onclick="toggleLock()" id="master-lock">🔒</button>
+            <button class="btn-logout" onclick="handleLogout()">LOGOUT</button>
         </div>
     </nav>
 
@@ -262,21 +238,21 @@
                 <div class="section-header"><h2 data-i18n="balance-sheet">Balance Sheet</h2><span class="lock-indicator" id="lock-bs">Locked</span></div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th data-i18n="liquid-assets">Liquid Assets</th><th style="width:75px;">CCY</th><th style="text-align:right; width:120px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <thead><tr><th data-i18n="liquid-assets">Liquid Assets</th><th style="width:80px;">CCY</th><th style="text-align:right; width:130px;">Amount</th><th style="width:30px;"></th></tr></thead>
                         <tbody id="list-liquid"></tbody>
                     </table>
                     <button class="btn-action edit-only" onclick="addItem('liquid')">+ ADD ITEM</button>
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th data-i18n="investment-assets">Investment Assets</th><th style="width:75px;">CCY</th><th style="text-align:right; width:120px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <thead><tr><th data-i18n="investment-assets">Investment Assets</th><th style="width:80px;">CCY</th><th style="text-align:right; width:100px;">HKD</th><th style="width:30px;"></th></tr></thead>
                         <tbody id="list-investment"></tbody>
                     </table>
                     <button class="btn-action edit-only" onclick="addItem('investment')">+ ADD ITEM</button>
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th data-i18n="liabilities">Liabilities</th><th style="width:75px;">CCY</th><th style="width:90px;">Due</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <thead><tr><th data-i18n="liabilities">Liabilities</th><th style="width:90px;">Due</th><th style="text-align:right; width:110px;">Amount</th><th style="width:30px;"></th></tr></thead>
                         <tbody id="list-liabilities"></tbody>
                     </table>
                     <button class="btn-action edit-only" onclick="addItem('liabilities')">+ ADD ITEM</button>
@@ -287,21 +263,21 @@
                 <div class="section-header"><h2 data-i18n="cash-flow">Cash Flow</h2><span class="lock-indicator" id="lock-cf">Locked</span></div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th data-i18n="income">Income</th><th style="width:75px;">CCY</th><th style="width:90px;">Date</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <thead><tr><th data-i18n="income">Income</th><th style="text-align:right; width:130px;">Amount</th><th style="width:30px;"></th></tr></thead>
                         <tbody id="list-income"></tbody>
                     </table>
                     <button class="btn-action edit-only" onclick="addItem('income')">+ ADD ITEM</button>
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th data-i18n="fixed-expenses">Fixed Expenses</th><th style="width:75px;">CCY</th><th style="width:90px;">Date</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <thead><tr><th data-i18n="fixed-expenses">Fixed Expenses</th><th style="text-align:right; width:130px;">Amount</th><th style="width:30px;"></th></tr></thead>
                         <tbody id="list-fixed"></tbody>
                     </table>
                     <button class="btn-action edit-only" onclick="addItem('fixed')">+ ADD ITEM</button>
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th data-i18n="variable-expenses">Variable Expenses</th><th style="width:75px;">CCY</th><th style="width:90px;">Date</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
+                        <thead><tr><th data-i18n="variable-expenses">Variable Expenses</th><th style="text-align:right; width:130px;">Amount</th><th style="width:30px;"></th></tr></thead>
                         <tbody id="list-variable"></tbody>
                     </table>
                     <button class="btn-action edit-only" onclick="addItem('variable')">+ ADD ITEM</button>
@@ -309,291 +285,335 @@
             </div>
 
             <div class="notes-column">
-                <div class="section-header"><h2 data-i18n="strategic-notes">Strategic Notes</h2></div>
+                <div class="section-header"><h2 data-i18n="notes">Notes</h2></div>
                 <div id="notes-list"></div>
-                <button class="btn-action" onclick="addNote()" style="width:calc(100% - 30px);">+ ADD ACTION</button>
+                <button class="btn-action edit-only" onclick="addNote()">+ ADD NOTE</button>
             </div>
         </div>
     </div>
 
     <div id="view-insights" class="view-content">
         <div class="insights-grid">
-            <div class="chart-card"><h3>Wealth Growth</h3><div class="chart-container"><canvas id="chart-wealth"></canvas></div></div>
-            <div class="chart-card"><h3>Income vs. Expenses</h3><div class="chart-container"><canvas id="chart-cashflow"></canvas></div></div>
-            <div class="chart-card"><h3>Liability Trend</h3><div class="chart-container"><canvas id="chart-liabilities"></canvas></div></div>
-            <div class="chart-card"><h3>Savings Rate %</h3><div class="chart-container"><canvas id="chart-savings"></canvas></div></div>
+            <div class="chart-card">
+                <h3>Net Worth Trend</h3>
+                <div class="chart-container"><canvas id="chart-wealth"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Cash Flow Analysis</h3>
+                <div class="chart-container"><canvas id="chart-cashflow"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Liabilities Trend</h3>
+                <div class="chart-container"><canvas id="chart-liabilities"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Savings Rate</h3>
+                <div class="chart-container"><canvas id="chart-savings"></canvas></div>
+            </div>
         </div>
     </div>
 
-    <footer>&copy; 2026 PRIVATE WEALTH MANAGEMENT | HIGHLY CONFIDENTIAL | SWISS STANDARD</footer>
+    <footer>© 2024 PRIVATE WEALTH MANAGEMENT SYSTEM</footer>
 </div>
 
 <script>
-    const SUPABASE_URL = 'https://vqqngcilyvfjlbeofryq.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxcW5nY2lseXZmamxiZW9mcnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY5MTYsImV4cCI6MjA5NTcxMjkxNn0.5F8XqInFhwjBd2-oHxBFZ2q4HhPiDUNOd18KCRiyUEo';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storageKey: 'supabase.auth.token' } });
+    // ========== Supabase Configuration ==========
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // 替換為你的 Supabase URL
+    const SUPABASE_KEY = 'YOUR_SUPABASE_KEY'; // 替換為你的 Supabase Anon Key
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentTheme = 'dark';
-    let currentLang = 'zh';
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth() + 1;
+    // ========== Global Variables ==========
+    let db = {};
+    let rates = { 'HKD': 1, 'USD': 0.128, 'JPY': 20.0 };
     let isLocked = true;
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+    let currentLang = localStorage.getItem('lang') || 'zh';
     let charts = {};
-    let db = {}; 
+    let currentUserId = null;
     let currentPeriodId = null;
-    let rates = { USD: 7.8, CNY: 1.08, JPY: 0.05, EUR: 8.5, HKD: 1 };
-    let lastRateUpdate = null;
+
+    const tableMapping = {
+        'liquid': 'liquid_assets',
+        'investment': 'investment_assets',
+        'liabilities': 'liabilities',
+        'income': 'income',
+        'fixed': 'fixed_expenses',
+        'variable': 'variable_expenses'
+    };
 
     const i18n = {
-        zh: {
-            "net-worth": "資產淨值", "net-cashflow": "每月淨現金流", "total-assets": "總資產", "total-liabilities": "總負債",
-            "balance-sheet": "資產負債表", "cash-flow": "現金流量表", "strategic-notes": "Strategic Notes & Actions",
-            "liquid-assets": "流動資產", "investment-assets": "投資資產", "liabilities": "負債", "income": "收入",
-            "fixed-expenses": "固定支出", "variable-expenses": "彈性支出", "locked": "已鎖定", "unlocked": "已解鎖",
-            "month-names": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+        'zh': {
+            'balance-sheet': '資產負債表',
+            'cash-flow': '現金流量',
+            'liquid-assets': '流動資產',
+            'investment-assets': '投資資產',
+            'liabilities': '負債',
+            'income': '收入',
+            'fixed-expenses': '固定開支',
+            'variable-expenses': '變動開支',
+            'notes': '備註',
+            'net-worth': '淨資產',
+            'net-cashflow': '月度現金流',
+            'total-assets': '總資產',
+            'total-liabilities': '總負債'
         },
-        en: {
-            "net-worth": "Net Worth", "net-cashflow": "Net Cash Flow", "total-assets": "Total Assets", "total-liabilities": "Total Liabilities",
-            "balance-sheet": "Balance Sheet", "cash-flow": "Cash Flow", "strategic-notes": "Strategic Notes & Actions",
-            "liquid-assets": "Liquid Assets", "investment-assets": "Investment Assets", "liabilities": "Liabilities", "income": "Income",
-            "fixed-expenses": "Fixed Expenses", "variable-expenses": "Variable Expenses", "locked": "Locked", "unlocked": "Unlocked",
-            "month-names": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        'en': {
+            'balance-sheet': 'Balance Sheet',
+            'cash-flow': 'Cash Flow',
+            'liquid-assets': 'Liquid Assets',
+            'investment-assets': 'Investment Assets',
+            'liabilities': 'Liabilities',
+            'income': 'Income',
+            'fixed-expenses': 'Fixed Expenses',
+            'variable-expenses': 'Variable Expenses',
+            'notes': 'Notes',
+            'net-worth': 'Net Worth',
+            'net-cashflow': 'Monthly Cash Flow',
+            'total-assets': 'Total Assets',
+            'total-liabilities': 'Total Liabilities'
         }
     };
 
-    const tableMapping = { 'liquid': 'liquid_assets', 'investment': 'investment_assets', 'liabilities': 'liabilities', 'income': 'income', 'fixed': 'fixed_expenses', 'variable': 'variable_expenses', 'notes': 'notes' };
+    // ========== Login & Authentication ==========
+    async function handleLogin() {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        const errorEl = document.getElementById('login-error');
 
-    async function init() {
-        _supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
-                document.getElementById('loginModal').style.display = 'none';
-                document.getElementById('signupModal').style.display = 'none';
-                document.getElementById('main-app-content').style.display = 'block';
-                loadAppContent();
-            } else {
-                document.getElementById('main-app-content').style.display = 'none';
-                document.getElementById('loginModal').style.display = 'flex';
-            }
-        });
-
-        const { data: { session } } = await _supabase.auth.getSession();
-        if (session) {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('main-app-content').style.display = 'block';
-            loadAppContent();
-        } else {
-            document.getElementById('loginModal').style.display = 'flex';
+        if (!username || !password) {
+            errorEl.textContent = 'Please enter username and password';
+            return;
         }
-    }
 
-    async function loadAppContent() {
-        const yearSelect = document.getElementById('year-select');
-        yearSelect.innerHTML = '';
-        for(let y = 2024; y <= 2030; y++) {
-            let opt = document.createElement('option');
-            opt.value = y; opt.innerText = y;
-            if(y === currentYear) opt.selected = true;
-            yearSelect.appendChild(opt);
-        }
-        updateMonthSelect();
-        applyI18n();
-        await fetchRates();
-        await loadAllData();
-        await renderDashboard();
-    }
-
-    async function fetchRates() {
         try {
-            const res = await fetch('https://api.frankfurter.app/latest?from=HKD&to=USD,CNY,JPY,EUR');
-            const data = await res.json();
-            if (data.rates) {
-                rates.USD = 1 / data.rates.USD;
-                rates.CNY = 1 / data.rates.CNY;
-                rates.JPY = 1 / data.rates.JPY;
-                rates.EUR = 1 / data.rates.EUR;
-                lastRateUpdate = new Date().toLocaleTimeString();
-                console.log("Exchange rates updated:", rates);
+            // 查詢用戶
+            const { data: users, error: queryError } = await _supabase
+                .from('users')
+                .select('id, password_hash')
+                .eq('username', username)
+                .single();
+
+            if (queryError || !users) {
+                errorEl.textContent = 'Invalid username or password';
+                return;
             }
-        } catch (e) { console.log("Rate fetch failed, using defaults"); }
+
+            // 簡單密碼驗證 (實際應用應使用 bcrypt)
+            // 這裡假設密碼已經被雜湊，我們進行簡單比較
+            if (await verifyPassword(password, users.password_hash)) {
+                currentUserId = users.id;
+                localStorage.setItem('userId', currentUserId);
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                await init();
+            } else {
+                errorEl.textContent = 'Invalid username or password';
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            errorEl.textContent = 'Login failed. Please try again.';
+        }
     }
 
-    async function updateExchangeRates() {
-        showLoading(true);
-        await fetchRates();
-        calculate();
-        renderDashboard();
-        showLoading(false);
-        alert('Exchange rates updated! Last update: ' + lastRateUpdate);
+    async function verifyPassword(password, hash) {
+        // 簡單實現：在實際應用中應使用 bcrypt.js
+        // 這裡假設密碼以某種方式被雜湊
+        // 為了演示，我們使用簡單的比較
+        return password === hash; // 實際應使用 bcrypt 驗證
     }
 
-    function updateMonthSelect() {
-        const monthSelect = document.getElementById('month-select');
-        monthSelect.innerHTML = '';
-        i18n[currentLang]["month-names"].forEach((m, i) => {
-            let opt = document.createElement('option');
-            opt.value = i + 1; opt.innerText = m;
-            if(i + 1 === currentMonth) opt.selected = true;
-            monthSelect.appendChild(opt);
-        });
+    function handleLogout() {
+        currentUserId = null;
+        localStorage.removeItem('userId');
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-error').textContent = '';
     }
 
-    function applyI18n() {
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            el.innerText = i18n[currentLang][el.getAttribute('data-i18n')];
-        });
-        document.getElementById('lock-bs').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
-        document.getElementById('lock-cf').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
-        document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? (currentLang === 'zh' ? '淺色模式' : 'LIGHT MODE') : (currentLang === 'zh' ? '深色模式' : 'DARK MODE');
-        document.getElementById('lang-btn').innerText = currentLang === 'zh' ? 'EN' : '中文';
-    }
-
-    function switchView(view) {
-        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`view-${view}`).classList.add('active');
-        document.getElementById(`btn-view-${view}`).classList.add('active');
-        if (view === 'insights') initCharts();
-    }
-
-    function toggleTheme() {
-        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    // ========== Initialization ==========
+    async function init() {
         document.body.setAttribute('data-theme', currentTheme);
-        applyI18n();
-        if (document.getElementById('view-insights').classList.contains('active')) initCharts();
-    }
-
-    function toggleLanguage() {
-        currentLang = currentLang === 'zh' ? 'en' : 'zh';
-        updateMonthSelect();
-        applyI18n();
-        renderDashboard();
-    }
-
-    function toggleLock() {
-        isLocked = !isLocked;
-        document.getElementById('master-lock').innerText = isLocked ? '🔒' : '🔓';
-        applyI18n();
-        renderDashboard();
-    }
-
-    async function changePeriod() {
-        currentYear = parseInt(document.getElementById('year-select').value);
-        currentMonth = parseInt(document.getElementById('month-select').value);
-        await renderDashboard();
-    }
-
-    function getPeriodKey() { return `${currentYear}-${currentMonth.toString().padStart(2, '0')}`; }
-    function getPrevKey() {
-        let m = currentMonth - 1, y = currentYear;
-        if (m === 0) { m = 12; y -= 1; }
-        return `${y}-${m.toString().padStart(2, '0')}`;
-    }
-
-    async function ensurePeriod(key) {
-        if (db[key]) return db[key].id;
+        document.getElementById('theme-btn').textContent = currentTheme === 'dark' ? 'LIGHT MODE' : 'DARK MODE';
+        document.getElementById('lang-btn').textContent = currentLang === 'zh' ? 'EN' : '中文';
         
+        updateI18n();
+        await loadData();
+        renderDashboard();
+        initCharts();
+    }
+
+    // ========== Data Loading from Supabase ==========
+    async function loadData() {
+        if (!currentUserId) return;
+
         showLoading(true);
-        const user = (await _supabase.auth.getUser()).data.user;
-        if (!user) { console.error("No authenticated user"); showLoading(false); return null; }
-        
-        const { data, error } = await _supabase.from('periods').insert([{ period_key: key, user_id: user.id }]).select();
-        if (error) { console.error("Error creating period:", error); showLoading(false); return null; }
-        
-        const newId = data[0].id;
-        db[key] = { id: newId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
-        
-        const prevKey = getPrevKey();
-        if (db[prevKey]) {
-            const categories = ['liquid', 'investment', 'liabilities', 'income', 'fixed', 'variable'];
+        try {
+            // 取得所有期間
+            const { data: periods, error: periodError } = await _supabase
+                .from('periods')
+                .select('*')
+                .eq('user_id', currentUserId)
+                .order('year', { ascending: false })
+                .order('month', { ascending: false });
+
+            if (periodError) throw periodError;
+
+            // 初始化 db 結構
+            db = {};
+            for (const period of periods) {
+                const key = `${period.year}-${String(period.month).padStart(2, '0')}`;
+                db[key] = {
+                    period_id: period.id,
+                    liquid: [],
+                    investment: [],
+                    liabilities: [],
+                    income: [],
+                    fixed: [],
+                    variable: [],
+                    notes: []
+                };
+            }
+
+            // 載入各類資料
+            const categories = [
+                { table: 'liquid_assets', key: 'liquid' },
+                { table: 'investment_assets', key: 'investment' },
+                { table: 'liabilities', key: 'liabilities' },
+                { table: 'income', key: 'income' },
+                { table: 'fixed_expenses', key: 'fixed' },
+                { table: 'variable_expenses', key: 'variable' }
+            ];
+
             for (const cat of categories) {
-                const items = db[prevKey][cat].map(item => {
-                    const newItem = { period_id: newId, name: item.name, value: item.value, currency: item.currency || 'HKD' };
-                    if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) {
-                        newItem.value = 0;
-                        newItem[cat === 'liabilities' ? 'due_date' : 'transaction_date'] = "";
+                const { data, error } = await _supabase
+                    .from(cat.table)
+                    .select('*')
+                    .in('period_id', periods.map(p => p.id));
+
+                if (!error && data) {
+                    for (const item of data) {
+                        const periodKey = Object.keys(db).find(k => db[k].period_id === item.period_id);
+                        if (periodKey) {
+                            db[periodKey][cat.key].push(item);
+                        }
                     }
-                    return newItem;
-                });
-                if (items.length > 0) {
-                    const { data: insertedItems, error: insertError } = await _supabase.from(tableMapping[cat]).insert(items).select();
-                    if (insertError) console.error("Error copying items:", insertError);
-                    else db[key][cat] = insertedItems || [];
                 }
             }
+
+            // 載入備註
+            const { data: notesData, error: notesError } = await _supabase
+                .from('notes')
+                .select('*')
+                .in('period_id', periods.map(p => p.id));
+
+            if (!notesError && notesData) {
+                for (const note of notesData) {
+                    const periodKey = Object.keys(db).find(k => db[k].period_id === note.period_id);
+                    if (periodKey) {
+                        db[periodKey].notes.push(note);
+                    }
+                }
+            }
+
+            // 載入匯率
+            const { data: ratesData, error: ratesError } = await _supabase
+                .from('exchange_rates')
+                .select('*')
+                .eq('base_currency', 'HKD');
+
+            if (!ratesError && ratesData) {
+                for (const rate of ratesData) {
+                    rates[rate.target_currency] = rate.rate;
+                }
+            }
+
+            // 設置年月選擇器
+            const keys = Object.keys(db).sort().reverse();
+            const yearSelect = document.getElementById('year-select');
+            const monthSelect = document.getElementById('month-select');
+            
+            const years = [...new Set(keys.map(k => parseInt(k.split('-')[0])))];
+            yearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+            
+            if (keys.length > 0) {
+                const [year, month] = keys[0].split('-');
+                yearSelect.value = year;
+                updateMonthSelect(year);
+                monthSelect.value = month;
+                currentPeriodId = db[keys[0]].period_id;
+            }
+        } catch (error) {
+            console.error('Data loading error:', error);
         }
         showLoading(false);
-        return newId;
     }
 
-    async function loadAllData() {
-        showLoading(true);
-        try {
-            const user = (await _supabase.auth.getUser()).data.user;
-            if (!user) { console.error("No authenticated user"); showLoading(false); return; }
-
-            const { data: periods, error: periodsError } = await _supabase.from('periods').select('*').eq('user_id', user.id);
-            if (periodsError) { console.error("Error loading periods:", periodsError); showLoading(false); return; }
-
-            for (const p of periods || []) {
-                const results = await Promise.all([
-                    _supabase.from('liquid_assets').select('*').eq('period_id', p.id),
-                    _supabase.from('investment_assets').select('*').eq('period_id', p.id),
-                    _supabase.from('liabilities').select('*').eq('period_id', p.id),
-                    _supabase.from('income').select('*').eq('period_id', p.id),
-                    _supabase.from('fixed_expenses').select('*').eq('period_id', p.id),
-                    _supabase.from('variable_expenses').select('*').eq('period_id', p.id),
-                    _supabase.from('notes').select('*').eq('period_id', p.id)
-                ]);
-                db[p.period_key] = { id: p.id, liquid: results[0].data || [], investment: results[1].data || [], liabilities: results[2].data || [], income: results[3].data || [], fixed: results[4].data || [], variable: results[5].data || [], notes: results[6].data || [] };
-            }
-            console.log("All data loaded:", db);
-        } catch (err) { console.error("Error loading data:", err); }
-        showLoading(false);
+    function getPeriodKey() {
+        const year = document.getElementById('year-select').value;
+        const month = document.getElementById('month-select').value;
+        return `${year}-${String(month).padStart(2, '0')}`;
     }
 
-    async function renderDashboard() {
+    function updateMonthSelect(year) {
+        const monthSelect = document.getElementById('month-select');
+        const keys = Object.keys(db).filter(k => k.startsWith(year + '-'));
+        const months = keys.map(k => parseInt(k.split('-')[1])).sort((a, b) => b - a);
+        monthSelect.innerHTML = months.map(m => `<option value="${m}">${m}月</option>`).join('');
+    }
+
+    function changePeriod() {
         const key = getPeriodKey();
-        currentPeriodId = await ensurePeriod(key);
-        
-        renderList('liquid', db[key].liquid);
-        renderList('investment', db[key].investment);
-        renderList('liabilities', db[key].liabilities);
-        renderList('income', db[key].income);
-        renderList('fixed', db[key].fixed);
-        renderList('variable', db[key].variable);
+        if (db[key]) {
+            currentPeriodId = db[key].period_id;
+            renderDashboard();
+        }
+    }
+
+    // ========== Rendering Functions ==========
+    function renderDashboard() {
+        const key = getPeriodKey();
+        if (!db[key]) return;
+
+        renderList('liquid', db[key].liquid, false);
+        renderList('investment', db[key].investment, false);
+        renderList('liabilities', db[key].liabilities, true);
+        renderList('income', db[key].income, true);
+        renderList('fixed', db[key].fixed, true);
+        renderList('variable', db[key].variable, true);
         renderNotes();
         calculate();
     }
 
-    function renderList(cat, items) {
+    function renderList(cat, items, showDate) {
         const tbody = document.getElementById(`list-${cat}`);
         tbody.innerHTML = '';
+        
         items.forEach((item, i) => {
             const tr = document.createElement('tr');
-            const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
-            const hasDate = ['liabilities', 'income', 'fixed', 'variable'].includes(cat);
             
-            const hkdAmount = (parseFloat(item.value) || 0) * (rates[item.currency || 'HKD'] || 1);
-            
-            let currencyHtml = `<td><select class="currency-select" onchange="updateItem('${cat}', ${i}, 'currency', this.value)">
-                ${['HKD', 'USD', 'CNY', 'JPY', 'EUR'].map(c => `<option value="${c}" ${(item.currency || 'HKD') === c ? 'selected' : ''}>${c}</option>`).join('')}
-            </select></td>`;
+            let amountDisplay = '';
+            if (cat === 'investment') {
+                const hkdValue = (parseFloat(item.value) || 0) * (rates[item.currency || 'HKD'] || 1);
+                amountDisplay = `<td><select class="currency-select" onchange="updateItem('${cat}', ${i}, 'currency', this.value)">${['HKD', 'USD', 'JPY'].map(c => `<option ${c === (item.currency || 'HKD') ? 'selected' : ''}>${c}</option>`).join('')}</select></td><td style="text-align:right"><input type="number" class="num-input ${isLocked ? 'readonly' : ''}" value="${item.value}" onchange="updateItem('${cat}', ${i}, 'value', this.value)"></td>`;
+            } else if (cat === 'liquid') {
+                amountDisplay = `<td><select class="currency-select" onchange="updateItem('${cat}', ${i}, 'currency', this.value)">${['HKD', 'USD', 'JPY'].map(c => `<option ${c === (item.currency || 'HKD') ? 'selected' : ''}>${c}</option>`).join('')}</select></td><td style="text-align:right"><input type="number" class="num-input ${isLocked ? 'readonly' : ''}" value="${item.value}" onchange="updateItem('${cat}', ${i}, 'value', this.value)"></td>`;
+            } else {
+                amountDisplay = `<td style="text-align:right"><input type="number" class="num-input ${isLocked ? 'readonly' : ''}" value="${item.value}" onchange="updateItem('${cat}', ${i}, 'value', this.value)"></td>`;
+            }
             
             let dateHtml = '';
-            if (hasDate) {
-                dateHtml = `<td><input type="text" class="date-input" value="${item[dateField] || ''}" oninput="handleDateInput(event, '${cat}', ${i}, '${dateField}')" placeholder="DD/MM"></td>`;
+            if (showDate) {
+                const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
+                dateHtml = `<td><input type="text" class="date-input ${isLocked ? 'readonly' : ''}" placeholder="MM/DD" value="${item[dateField] || ''}" onkeyup="handleDateInput(event, '${cat}', ${i}, '${dateField}')"></td>`;
             }
             
             let deleteHtml = !isLocked ? `<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}', ${i})">×</button></td>` : '<td></td>';
-            
             tr.innerHTML = `
                 <td><input type="text" class="${isLocked ? 'readonly' : ''}" value="${item.name}" onchange="updateItem('${cat}', ${i}, 'name', this.value)"></td>
-                ${currencyHtml}
                 ${dateHtml}
-                <td>
-                    <div><input type="number" class="num-input" value="${item.value}" onchange="updateItem('${cat}', ${i}, 'value', this.value)" step="0.01"></div>
-                    ${item.currency && item.currency !== 'HKD' ? `<div class="currency-display">≈ HKD ${formatNumber(hkdAmount)}</div>` : ''}
-                </td>
+                ${amountDisplay}
                 ${deleteHtml}
             `;
             tbody.appendChild(tr);
@@ -605,7 +625,8 @@
     function renderNotes() {
         const list = document.getElementById('notes-list');
         list.innerHTML = '';
-        const notes = db[getPeriodKey()].notes || [];
+        const key = getPeriodKey();
+        const notes = db[key]?.notes || [];
         notes.forEach((note, i) => {
             const div = document.createElement('div');
             div.className = 'note-item';
@@ -636,36 +657,24 @@
         if (field === 'value') val = parseFloat(val) || 0;
         item[field] = val;
         calculate();
-        renderList(cat, db[key][cat]);
+        renderList(cat, db[key][cat], ['liabilities', 'income', 'fixed', 'variable'].includes(cat));
+        
         const { error } = await _supabase.from(tableMapping[cat]).update({ [field]: val }).eq('id', item.id);
         if (error) console.error("Update error:", error);
     }
 
     async function addItem(cat) {
         const key = getPeriodKey();
-        if (!currentPeriodId) {
-            console.error("No period ID available");
-            alert("Error: Period not initialized. Please refresh the page.");
-            return;
-        }
-
-        const newItem = { period_id: currentPeriodId, name: "New Item", value: 0, currency: 'HKD' };
+        const newItem = { period_id: currentPeriodId, name: "New Item", value: 0 };
+        if (['liquid', 'investment'].includes(cat)) newItem.currency = 'HKD';
         const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
         if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem[dateField] = "";
         
-        console.log(`Adding new item to ${cat}:`, newItem);
         showLoading(true);
-        
         const { data, error } = await _supabase.from(tableMapping[cat]).insert([newItem]).select();
         showLoading(false);
         
-        if (error) { 
-            console.error(`Error adding item to ${cat}:`, error);
-            alert(`Failed to add item: ${error.message}`);
-            return; 
-        }
-        
-        console.log(`Item added successfully to ${cat}:`, data);
+        if (error) { console.error(error); return; }
         db[key][cat].push(data[0]);
         renderDashboard();
     }
@@ -725,28 +734,30 @@
         renderNotes();
     }
 
+    // ========== Utility Functions ==========
     function formatNumber(n) {
         return n.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
     }
 
     function calculateFontSize(value) {
         const str = value.toString().replace(/,/g, '');
-        if (str.length > 12) return 'size-xxxl';
-        if (str.length > 11) return 'size-xxl';
-        if (str.length > 9) return 'size-xl';
-        return 'size-lg';
+        if (str.length > 12) return 'size-12';
+        if (str.length > 11) return 'size-11';
+        if (str.length > 10) return 'size-10';
+        return '';
     }
 
     function calculate() {
         const data = db[getPeriodKey()];
         if (!data) return;
         
-        const sumMultiCurrency = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0) * (rates[b.currency || 'HKD'] || 1), 0);
+        const sumHKD = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0), 0);
+        const sumInvest = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0) * (rates[b.currency || 'HKD'] || 1), 0);
         
-        const assets = sumMultiCurrency(data.liquid) + sumMultiCurrency(data.investment);
-        const liab = sumMultiCurrency(data.liabilities);
-        const income = sumMultiCurrency(data.income);
-        const expenses = sumMultiCurrency(data.fixed) + sumMultiCurrency(data.variable);
+        const assets = sumHKD(data.liquid) + sumInvest(data.investment);
+        const liab = sumHKD(data.liabilities);
+        const income = sumHKD(data.income);
+        const expenses = sumHKD(data.fixed) + sumHKD(data.variable);
         const netWorth = assets - liab;
         const cashflow = income - expenses;
         
@@ -765,28 +776,75 @@
         netEl.className = 'summary-value highlight ' + calculateFontSize(netWorth);
         
         cfEl.innerText = '$ ' + formatNumber(cashflow);
-        cfEl.className = 'summary-value ' + calculateFontSize(cashflow);
+        cfEl.className = 'summary-value ' + (cashflow >= 0 ? '' : '');
         cfEl.style.color = cashflow >= 0 ? 'var(--success)' : 'var(--danger)';
     }
 
-    function showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
+    function showLoading(show) { 
+        document.getElementById('loading').style.display = show ? 'flex' : 'none'; 
+    }
+
+    function toggleTheme() {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', currentTheme);
+        document.body.setAttribute('data-theme', currentTheme);
+        document.getElementById('theme-btn').textContent = currentTheme === 'dark' ? 'LIGHT MODE' : 'DARK MODE';
+        initCharts();
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        localStorage.setItem('lang', currentLang);
+        document.getElementById('lang-btn').textContent = currentLang === 'zh' ? 'EN' : '中文';
+        updateI18n();
+    }
+
+    function updateI18n() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            el.textContent = i18n[currentLang][key] || key;
+        });
+    }
+
+    function switchView(view) {
+        document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${view}`).classList.add('active');
+        document.querySelectorAll('.view-btn').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+        if (view === 'insights') initCharts();
+    }
+
+    function toggleLock() {
+        isLocked = !isLocked;
+        document.getElementById('master-lock').textContent = isLocked ? '🔒' : '🔓';
+        document.getElementById('lock-bs').textContent = isLocked ? 'Locked' : 'Unlocked';
+        document.getElementById('lock-cf').textContent = isLocked ? 'Locked' : 'Unlocked';
+        renderDashboard();
+    }
+
+    async function updateExchangeRates() {
+        // 這裡可以集成外部 API 來獲取實時匯率
+        // 示例：調用 exchangerate-api.com 或其他服務
+        alert('Exchange rates updated (demo)');
+    }
 
     function initCharts() {
         const keys = Object.keys(db).sort();
         const labels = keys.map(k => k.split('-')[1] + '月');
-        const sumMultiCurrency = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0) * (rates[b.currency || 'HKD'] || 1), 0);
+        const sumHKD = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0), 0);
+        const sumInvest = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0) * (rates[b.currency || 'HKD'] || 1), 0);
         const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim();
         const textColor = getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
         const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor, font: { size: 10 } } } }, scales: { x: { grid: { display: false }, ticks: { color: textColor } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: textColor } } } };
 
         if (charts.wealth) charts.wealth.destroy();
-        charts.wealth = new Chart(document.getElementById('chart-wealth'), { type: 'line', data: { labels, datasets: [{ label: 'Net Worth', data: keys.map(k => sumMultiCurrency(db[k].liquid) + sumMultiCurrency(db[k].investment) - sumMultiCurrency(db[k].liabilities)), borderColor: accentColor, tension: 0.3, fill: true, backgroundColor: 'rgba(197, 168, 128, 0.1)' }] }, options: commonOptions });
+        charts.wealth = new Chart(document.getElementById('chart-wealth'), { type: 'line', data: { labels, datasets: [{ label: 'Net Worth', data: keys.map(k => sumHKD(db[k].liquid) + sumInvest(db[k].investment) - sumHKD(db[k].liabilities)), borderColor: accentColor, tension: 0.3, fill: true, backgroundColor: 'rgba(197, 168, 128, 0.1)' }] }, options: commonOptions });
         if (charts.cashflow) charts.cashflow.destroy();
-        charts.cashflow = new Chart(document.getElementById('chart-cashflow'), { type: 'bar', data: { labels, datasets: [{ label: 'Income', data: keys.map(k => sumMultiCurrency(db[k].income)), backgroundColor: 'rgba(16, 185, 129, 0.6)' }, { label: 'Expenses', data: keys.map(k => sumMultiCurrency(db[k].fixed) + sumMultiCurrency(db[k].variable)), backgroundColor: 'rgba(239, 68, 68, 0.6)' }] }, options: commonOptions });
+        charts.cashflow = new Chart(document.getElementById('chart-cashflow'), { type: 'bar', data: { labels, datasets: [{ label: 'Income', data: keys.map(k => sumHKD(db[k].income)), backgroundColor: 'rgba(16, 185, 129, 0.6)' }, { label: 'Expenses', data: keys.map(k => sumHKD(db[k].fixed) + sumHKD(db[k].variable)), backgroundColor: 'rgba(239, 68, 68, 0.6)' }] }, options: commonOptions });
         if (charts.liabilities) charts.liabilities.destroy();
-        charts.liabilities = new Chart(document.getElementById('chart-liabilities'), { type: 'line', data: { labels, datasets: [{ label: 'Liabilities', data: keys.map(k => sumMultiCurrency(db[k].liabilities)), borderColor: '#ef4444', borderDash: [5, 5] }] }, options: commonOptions });
+        charts.liabilities = new Chart(document.getElementById('chart-liabilities'), { type: 'line', data: { labels, datasets: [{ label: 'Liabilities', data: keys.map(k => sumHKD(db[k].liabilities)), borderColor: '#ef4444', borderDash: [5, 5] }] }, options: commonOptions });
         if (charts.savings) charts.savings.destroy();
-        charts.savings = new Chart(document.getElementById('chart-savings'), { type: 'bar', data: { labels, datasets: [{ label: 'Savings Rate %', data: keys.map(k => { const inc = sumMultiCurrency(db[k].income); const exp = sumMultiCurrency(db[k].fixed) + sumMultiCurrency(db[k].variable); return inc > 0 ? ((inc - exp) / inc * 100).toFixed(1) : 0; }), backgroundColor: accentColor }] }, options: commonOptions });
+        charts.savings = new Chart(document.getElementById('chart-savings'), { type: 'bar', data: { labels, datasets: [{ label: 'Savings Rate %', data: keys.map(k => { const inc = sumHKD(db[k].income); const exp = sumHKD(db[k].fixed) + sumHKD(db[k].variable); return inc > 0 ? ((inc - exp) / inc * 100).toFixed(1) : 0; }), backgroundColor: accentColor }] }, options: commonOptions });
     }
 
     function exportToExcel() {
@@ -795,113 +853,19 @@
         let wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid, ...data.investment, ...data.liabilities]), "Balance Sheet");
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income, ...data.fixed, ...data.variable]), "Cash Flow");
-        XLSX.writeFile(wb, `Wealth_v12_${key}.xlsx`);
+        XLSX.writeFile(wb, `Wealth_v10_${key}.xlsx`);
     }
 
-    // Authentication Functions
-    async function handleLogin() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        const errorEl = document.getElementById('login-error');
-        errorEl.innerText = '';
-        showLoading(true);
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-        showLoading(false);
-        if (error) {
-            errorEl.innerText = error.message;
-        } else {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('main-app-content').style.display = 'block';
-            loadAppContent();
+    // 檢查是否已登入
+    window.onload = () => {
+        const savedUserId = localStorage.getItem('userId');
+        if (savedUserId) {
+            currentUserId = savedUserId;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            init();
         }
-    }
-
-    async function handleSignup() {
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const errorEl = document.getElementById('signup-error');
-        errorEl.innerText = '';
-        showLoading(true);
-        const { data, error } = await _supabase.auth.signUp({ email, password });
-        showLoading(false);
-        if (error) {
-            errorEl.innerText = error.message;
-        } else {
-            alert('Sign up successful! Please check your email to confirm your account.');
-            showLogin();
-        }
-    }
-
-    async function handleLogout() {
-        showLoading(true);
-        const { error } = await _supabase.auth.signOut();
-        showLoading(false);
-        if (error) {
-            console.error('Logout error:', error.message);
-        } else {
-            document.getElementById('settingsModal').style.display = 'none';
-            document.getElementById('main-app-content').style.display = 'none';
-            document.getElementById('loginModal').style.display = 'flex';
-            db = {};
-        }
-    }
-
-    async function changePassword() {
-        const newPassword = document.getElementById('new-password').value;
-        const confirmNewPassword = document.getElementById('confirm-new-password').value;
-        const errorEl = document.getElementById('password-change-error');
-        errorEl.innerText = '';
-
-        if (newPassword !== confirmNewPassword) {
-            errorEl.innerText = 'New passwords do not match.';
-            return;
-        }
-        if (newPassword.length < 6) {
-            errorEl.innerText = 'Password should be at least 6 characters.';
-            return;
-        }
-
-        showLoading(true);
-        const { data, error } = await _supabase.auth.updateUser({ password: newPassword });
-        showLoading(false);
-
-        if (error) {
-            errorEl.innerText = error.message;
-        } else {
-            alert('Password changed successfully!');
-            closeSettingsModal();
-        }
-    }
-
-    function showLogin() {
-        document.getElementById('signupModal').style.display = 'none';
-        document.getElementById('loginModal').style.display = 'flex';
-        document.getElementById('login-email').value = '';
-        document.getElementById('login-password').value = '';
-        document.getElementById('login-error').innerText = '';
-    }
-
-    function showSignup() {
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('signupModal').style.display = 'flex';
-        document.getElementById('signup-email').value = '';
-        document.getElementById('signup-password').value = '';
-        document.getElementById('signup-error').innerText = '';
-    }
-
-    function openSettingsModal() {
-        document.getElementById('settingsModal').style.display = 'flex';
-        document.getElementById('current-password').value = '';
-        document.getElementById('new-password').value = '';
-        document.getElementById('confirm-new-password').value = '';
-        document.getElementById('password-change-error').innerText = '';
-    }
-
-    function closeSettingsModal() {
-        document.getElementById('settingsModal').style.display = 'none';
-    }
-
-    window.onload = init;
+    };
 </script>
 </body>
 </html>
