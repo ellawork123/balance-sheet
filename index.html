@@ -476,14 +476,26 @@
         return `${y}-${m.toString().padStart(2, '0')}`;
     }
 
+    // ── FIX: replaced simple boolean guard with a promise-based wait ──
     async function initializePeriod() {
-        if (initializationInProgress) return;
+        // If already running, wait for it to finish instead of bailing silently
+        if (initializationInProgress) {
+            await new Promise(resolve => {
+                const poll = setInterval(() => {
+                    if (!initializationInProgress) { clearInterval(poll); resolve(); }
+                }, 100);
+            });
+            // After waiting, currentPeriodId should already be set — just re-render
+            renderDashboard();
+            return;
+        }
+
         initializationInProgress = true;
         showLoading(true);
 
         const key = getPeriodKey();
         try {
-            if (!db[key]) {
+            if (!db[key] || !db[key].id) {
                 currentPeriodId = await ensurePeriod(key);
             } else {
                 currentPeriodId = db[key].id;
@@ -669,25 +681,48 @@
         if (error) console.error("Update error:", error);
     }
 
-    async function addItem(cat) {
+    // ── FIX: robust ensurePeriodReady helper used by addItem and addNote ──
+    async function ensurePeriodReady() {
         const key = getPeriodKey();
-        
-        // AUTO-REPAIR: If period not initialized, do it now
-        if (!currentPeriodId || !db[key]) {
-            console.warn("Period not initialized, attempting auto-repair...");
-            await initializePeriod();
-            if (!currentPeriodId) {
-                alert("Failed to initialize period. Please refresh the page.");
-                return;
-            }
+        // If already good, return immediately
+        if (currentPeriodId && db[key] && db[key].id) return true;
+
+        // Wait out any in-progress initialization first
+        if (initializationInProgress) {
+            await new Promise(resolve => {
+                const poll = setInterval(() => {
+                    if (!initializationInProgress) { clearInterval(poll); resolve(); }
+                }, 100);
+            });
         }
 
+        // Re-check after waiting
+        if (currentPeriodId && db[key] && db[key].id) return true;
+
+        // Still not ready — run initialization now
+        await initializePeriod();
+
+        // Final fallback: read from db if initializePeriod succeeded but didn't set currentPeriodId
+        if (!currentPeriodId && db[key] && db[key].id) {
+            currentPeriodId = db[key].id;
+        }
+
+        return !!currentPeriodId;
+    }
+
+    async function addItem(cat) {
+        const ready = await ensurePeriodReady();
+        if (!ready) {
+            alert("Failed to initialize period. Please refresh the page.");
+            return;
+        }
+
+        const key = getPeriodKey();
         const newItem = { period_id: currentPeriodId, name: "New Item", value: 0, currency: 'HKD' };
         const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
         if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem[dateField] = "";
         
         showLoading(true);
-        
         const { data, error } = await _supabase.from(tableMapping[cat]).insert([newItem]).select();
         showLoading(false);
         
@@ -715,14 +750,10 @@
     }
 
     async function addNote() {
-        const key = getPeriodKey();
-        
-        // AUTO-REPAIR
-        if (!currentPeriodId || !db[key]) {
-            await initializePeriod();
-            if (!currentPeriodId) return;
-        }
+        const ready = await ensurePeriodReady();
+        if (!ready) return;
 
+        const key = getPeriodKey();
         const newNote = { period_id: currentPeriodId, text: "", status: "pending" };
         
         showLoading(true);
