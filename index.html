@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Private Wealth Management | Professional Statement v13</title>
+    <title>Private Wealth Management | Professional Statement v14</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -340,6 +340,7 @@
     let db = {}; 
     let currentPeriodId = null;
     let rates = { USD: 7.8, CNY: 1.08, JPY: 0.05, EUR: 8.5, HKD: 1 };
+    let initializationInProgress = false;
 
     const i18n = {
         zh: {
@@ -476,26 +477,60 @@
     }
 
     async function initializePeriod() {
+        if (initializationInProgress) return;
+        initializationInProgress = true;
+        showLoading(true);
+
         const key = getPeriodKey();
-        if (!db[key]) {
-            currentPeriodId = await ensurePeriod(key);
-        } else {
-            currentPeriodId = db[key].id;
+        try {
+            if (!db[key]) {
+                currentPeriodId = await ensurePeriod(key);
+            } else {
+                currentPeriodId = db[key].id;
+            }
+        } catch (err) {
+            console.error("Error initializing period:", err);
         }
+
+        initializationInProgress = false;
+        showLoading(false);
         renderDashboard();
     }
 
     async function ensurePeriod(key) {
-        showLoading(true);
         const user = (await _supabase.auth.getUser()).data.user;
-        if (!user) { console.error("No authenticated user"); showLoading(false); return null; }
+        if (!user) { console.error("No authenticated user"); return null; }
         
+        // Check if period exists
+        const { data: existingPeriods, error: checkError } = await _supabase.from('periods').select('id').eq('period_key', key).eq('user_id', user.id);
+        if (checkError) { console.error("Error checking period:", checkError); return null; }
+        
+        if (existingPeriods && existingPeriods.length > 0) {
+            const existingId = existingPeriods[0].id;
+            db[key] = { id: existingId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
+            
+            // Load existing data
+            const results = await Promise.all([
+                _supabase.from('liquid_assets').select('*').eq('period_id', existingId),
+                _supabase.from('investment_assets').select('*').eq('period_id', existingId),
+                _supabase.from('liabilities').select('*').eq('period_id', existingId),
+                _supabase.from('income').select('*').eq('period_id', existingId),
+                _supabase.from('fixed_expenses').select('*').eq('period_id', existingId),
+                _supabase.from('variable_expenses').select('*').eq('period_id', existingId),
+                _supabase.from('notes').select('*').eq('period_id', existingId)
+            ]);
+            db[key] = { id: existingId, liquid: results[0].data || [], investment: results[1].data || [], liabilities: results[2].data || [], income: results[3].data || [], fixed: results[4].data || [], variable: results[5].data || [], notes: results[6].data || [] };
+            return existingId;
+        }
+
+        // Create new period
         const { data, error } = await _supabase.from('periods').insert([{ period_key: key, user_id: user.id }]).select();
-        if (error) { console.error("Error creating period:", error); showLoading(false); return null; }
+        if (error) { console.error("Error creating period:", error); return null; }
         
         const newId = data[0].id;
         db[key] = { id: newId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
         
+        // Copy from previous month
         const prevKey = getPrevKey();
         if (db[prevKey]) {
             const categories = ['liquid', 'investment', 'liabilities', 'income', 'fixed', 'variable'];
@@ -515,7 +550,6 @@
                 }
             }
         }
-        showLoading(false);
         return newId;
     }
 
@@ -637,10 +671,15 @@
 
     async function addItem(cat) {
         const key = getPeriodKey();
-        if (!currentPeriodId) {
-            console.error("No period ID available");
-            alert("Error: Period not initialized. Please refresh the page.");
-            return;
+        
+        // AUTO-REPAIR: If period not initialized, do it now
+        if (!currentPeriodId || !db[key]) {
+            console.warn("Period not initialized, attempting auto-repair...");
+            await initializePeriod();
+            if (!currentPeriodId) {
+                alert("Failed to initialize period. Please refresh the page.");
+                return;
+            }
         }
 
         const newItem = { period_id: currentPeriodId, name: "New Item", value: 0, currency: 'HKD' };
@@ -677,6 +716,13 @@
 
     async function addNote() {
         const key = getPeriodKey();
+        
+        // AUTO-REPAIR
+        if (!currentPeriodId || !db[key]) {
+            await initializePeriod();
+            if (!currentPeriodId) return;
+        }
+
         const newNote = { period_id: currentPeriodId, text: "", status: "pending" };
         
         showLoading(true);
@@ -787,7 +833,7 @@
         let wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid, ...data.investment, ...data.liabilities]), "Balance Sheet");
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income, ...data.fixed, ...data.variable]), "Cash Flow");
-        XLSX.writeFile(wb, `Wealth_v13_${key}.xlsx`);
+        XLSX.writeFile(wb, `Wealth_v14_${key}.xlsx`);
     }
 
     // Authentication Functions
@@ -835,6 +881,7 @@
             document.getElementById('main-app-content').style.display = 'none';
             document.getElementById('loginModal').style.display = 'flex';
             db = {};
+            currentPeriodId = null;
         }
     }
 
