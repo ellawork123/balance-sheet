@@ -510,18 +510,25 @@
     }
 
     async function ensurePeriod(key) {
-        const user = (await _supabase.auth.getUser()).data.user;
-        if (!user) { console.error("No authenticated user"); return null; }
-        
-        // Check if period exists
-        const { data: existingPeriods, error: checkError } = await _supabase.from('periods').select('id').eq('period_key', key).eq('user_id', user.id);
-        if (checkError) { console.error("Error checking period:", checkError); return null; }
-        
+        // ── Get current user ──
+        const { data: userData, error: userError } = await _supabase.auth.getUser();
+        if (userError || !userData?.user) {
+            showError(`Auth error: ${userError?.message || 'No user session found. Please log in again.'}`);
+            return null;
+        }
+        const user = userData.user;
+
+        // ── Check if period already exists ──
+        const { data: existingPeriods, error: checkError } = await _supabase
+            .from('periods').select('id').eq('period_key', key).eq('user_id', user.id);
+
+        if (checkError) {
+            showError(`DB read error: ${checkError.message} (code: ${checkError.code})`);
+            return null;
+        }
+
         if (existingPeriods && existingPeriods.length > 0) {
             const existingId = existingPeriods[0].id;
-            db[key] = { id: existingId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
-            
-            // Load existing data
             const results = await Promise.all([
                 _supabase.from('liquid_assets').select('*').eq('period_id', existingId),
                 _supabase.from('investment_assets').select('*').eq('period_id', existingId),
@@ -531,18 +538,36 @@
                 _supabase.from('variable_expenses').select('*').eq('period_id', existingId),
                 _supabase.from('notes').select('*').eq('period_id', existingId)
             ]);
-            db[key] = { id: existingId, liquid: results[0].data || [], investment: results[1].data || [], liabilities: results[2].data || [], income: results[3].data || [], fixed: results[4].data || [], variable: results[5].data || [], notes: results[6].data || [] };
+            db[key] = {
+                id: existingId,
+                liquid: results[0].data || [], investment: results[1].data || [],
+                liabilities: results[2].data || [], income: results[3].data || [],
+                fixed: results[4].data || [], variable: results[5].data || [],
+                notes: results[6].data || []
+            };
             return existingId;
         }
 
-        // Create new period
-        const { data, error } = await _supabase.from('periods').insert([{ period_key: key, user_id: user.id }]).select();
-        if (error) { console.error("Error creating period:", error); return null; }
-        
-        const newId = data[0].id;
+        // ── Create new period ──
+        const { data: insertData, error: insertError } = await _supabase
+            .from('periods')
+            .insert([{ period_key: key, user_id: user.id }])
+            .select();
+
+        if (insertError) {
+            showError(`DB insert error: ${insertError.message} (code: ${insertError.code}) — Check Supabase RLS policies on the "periods" table.`);
+            return null;
+        }
+
+        if (!insertData || insertData.length === 0) {
+            showError('Period insert returned no data. Check Supabase RLS: make sure INSERT and SELECT policies exist for the "periods" table.');
+            return null;
+        }
+
+        const newId = insertData[0].id;
         db[key] = { id: newId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
-        
-        // Copy from previous month
+
+        // ── Copy structure from previous month ──
         const prevKey = getPrevKey();
         if (db[prevKey]) {
             const categories = ['liquid', 'investment', 'liabilities', 'income', 'fixed', 'variable'];
@@ -556,13 +581,38 @@
                     return newItem;
                 });
                 if (items.length > 0) {
-                    const { data: insertedItems, error: insertError } = await _supabase.from(tableMapping[cat]).insert(items).select();
-                    if (insertError) console.error("Error copying items:", insertError);
-                    else db[key][cat] = insertedItems || [];
+                    const { data: copiedItems, error: copyError } = await _supabase.from(tableMapping[cat]).insert(items).select();
+                    if (copyError) console.error("Error copying items:", copyError);
+                    else db[key][cat] = copiedItems || [];
                 }
             }
         }
         return newId;
+    }
+
+    // ── Show a visible on-screen error (not just console) ──
+    function showError(msg) {
+        console.error(msg);
+        // Remove old error banner if any
+        const old = document.getElementById('app-error-banner');
+        if (old) old.remove();
+        const banner = document.createElement('div');
+        banner.id = 'app-error-banner';
+        banner.style.cssText = `
+            position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+            background: #7f1d1d; color: #fef2f2; padding: 14px 20px;
+            font-family: monospace; font-size: 13px; line-height: 1.5;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        `;
+        banner.innerHTML = `
+            <span>⚠️ <strong>Error:</strong> ${msg}</span>
+            <button onclick="this.parentElement.remove()" style="
+                background:transparent; border:1px solid #fef2f2; color:#fef2f2;
+                padding:4px 10px; cursor:pointer; font-size:12px; margin-left:20px; flex-shrink:0;
+            ">✕ Dismiss</button>
+        `;
+        document.body.prepend(banner);
     }
 
     async function loadAllData() {
@@ -713,7 +763,7 @@
     async function addItem(cat) {
         const ready = await ensurePeriodReady();
         if (!ready) {
-            alert("Failed to initialize period. Please refresh the page.");
+            showError("Failed to initialize period — see error banner for the exact Supabase error. Check RLS policies on your 'periods' table.");
             return;
         }
 
