@@ -13,8 +13,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif;transition:background 0.4s,color 0.4s;padding-bottom:80px}
 .container{max-width:1400px;margin:0 auto;padding:0 20px}
-
-/* LOCK SCREEN */
 #lock-screen{position:fixed;inset:0;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
 .lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:40px 36px;text-align:center;width:320px;box-shadow:var(--shadow)}
 .lock-logo{font-family:'Cinzel',serif;font-size:16px;letter-spacing:4px;color:var(--accent);margin-bottom:6px}
@@ -23,12 +21,10 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',
 .lock-input:focus{border-color:var(--accent)}
 .lock-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:12px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif}
 .lock-err{color:var(--danger);font-size:11px;height:16px;letter-spacing:0.5px;margin-top:8px}
-.sync-status{font-size:9px;letter-spacing:1px;color:var(--text-secondary);margin-top:10px;height:14px;text-align:center}
-
-/* CONTROL PANEL MODAL */
+.lock-syncing{font-size:10px;color:var(--text-secondary);margin-top:10px;height:14px;letter-spacing:1px}
 #ctrl-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:8000;align-items:center;justify-content:center}
 #ctrl-overlay.open{display:flex}
-.ctrl-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:32px;width:360px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
+.ctrl-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:32px;width:380px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
 .ctrl-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--accent);margin-bottom:22px;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .ctrl-section{margin-bottom:20px}
 .ctrl-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin-bottom:7px;display:block}
@@ -37,17 +33,16 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',
 .ctrl-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:10px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:4px}
 .ctrl-btn.danger{background:var(--danger);margin-top:8px}
 .ctrl-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text-secondary);margin-top:8px}
-.ctrl-btn.info{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);margin-top:8px}
-.ctrl-msg{font-size:11px;height:16px;margin-top:6px;letter-spacing:0.5px}
+.ctrl-btn.info{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);margin-top:6px}
+.ctrl-msg{font-size:11px;min-height:16px;margin-top:6px;letter-spacing:0.5px;word-break:break-all}
 .ctrl-msg.ok{color:var(--success)}
 .ctrl-msg.err{color:var(--danger)}
-.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--text-secondary)}
+.sync-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:10px 12px;background:var(--bg-secondary);border-radius:3px}
+.sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--text-secondary)}
 .sync-dot.ok{background:var(--success)}
 .sync-dot.err{background:var(--danger)}
-.sync-dot.loading{background:var(--accent);animation:pulse 1s infinite}
+.sync-dot.spin{background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-
-/* NAV */
 nav{display:flex;flex-direction:column;gap:14px;padding:22px 0;border-bottom:1px solid var(--border);margin-bottom:30px}
 .brand h1{font-family:'Cinzel',serif;font-size:20px;letter-spacing:3px;color:var(--accent);text-transform:uppercase}
 .brand span{font-size:10px;letter-spacing:2px;color:var(--text-secondary);margin-top:4px;display:block}
@@ -59,33 +54,22 @@ nav{display:flex;flex-direction:column;gap:14px;padding:22px 0;border-bottom:1px
 .nav-btn.accent{background:var(--accent);color:var(--bg-primary);font-weight:700;border:none}
 .icon-btn{background:transparent;border:none;font-size:16px;padding:4px 7px;color:var(--accent);cursor:pointer}
 select.nav-btn{min-width:60px}
-
-/* SUMMARY */
 .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:36px}
 .summary-item{background:var(--bg-card);padding:22px 14px;text-align:center}
 .summary-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);margin-bottom:8px}
 .summary-value{font-weight:700;color:var(--text-primary);word-break:break-word;line-height:1.2}
 .summary-value.highlight{color:var(--accent)}
 .sz-lg{font-size:22px}.sz-md{font-size:17px}.sz-sm{font-size:13px}
-
-/* LAYOUT */
-.view-content{display:none}
-.view-content.active{display:block}
+.view-content{display:none}.view-content.active{display:block}
 .statement-layout{display:grid;grid-template-columns:1fr;gap:28px}
-
-/* SECTION */
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:2px solid var(--accent);padding-bottom:7px}
 .section-header h2{font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;color:var(--accent)}
 .lock-indicator{font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px}
-
-/* TABLE */
 .table-wrapper{background:var(--bg-card);border-radius:4px;margin-bottom:22px;box-shadow:var(--shadow);overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{padding:11px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);background:rgba(0,0,0,0.05);border-bottom:1px solid var(--border)}
 td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px}
 tr:last-child td{border-bottom:none}
-
-/* INPUTS */
 input,textarea{background:transparent;border:1px solid transparent;color:var(--text-primary);width:100%;padding:5px;font-size:13px;border-radius:2px;font-family:'Inter',sans-serif}
 input:focus,textarea:focus{background:var(--input-bg);border-color:var(--accent);outline:none}
 input.readonly{pointer-events:none}
@@ -97,27 +81,19 @@ input.readonly{pointer-events:none}
 .btn-action:hover{background:rgba(197,168,128,0.08)}
 .btn-delete{color:var(--text-secondary);background:transparent;border:none;cursor:pointer;font-size:15px;opacity:0.25;padding:3px 5px;transition:opacity 0.2s}
 .btn-delete:hover{opacity:1;color:var(--danger)}
-
-/* NOTES */
 .notes-column{background:rgba(197,168,128,0.03);padding:16px;border-radius:4px;border:1px solid var(--border)}
 .note-item{background:var(--bg-card);padding:12px;border-radius:4px;margin-bottom:12px;border-left:3px solid var(--accent);box-shadow:var(--shadow)}
 .note-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
 .note-status{font-size:8px;text-transform:uppercase;letter-spacing:0.5px;padding:3px 8px;border-radius:10px;background:var(--bg-secondary);color:var(--accent);cursor:pointer}
 .note-status.done{background:var(--success);color:#fff}
 textarea{resize:vertical;min-height:50px;font-size:12px;line-height:1.4}
-
-/* INSIGHTS */
 .insights-grid{display:grid;grid-template-columns:1fr;gap:22px}
 .chart-card{background:var(--bg-card);padding:20px;border-radius:4px;border:1px solid var(--border);box-shadow:var(--shadow)}
 .chart-card h3{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.5px;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
 .chart-container{position:relative;height:240px;width:100%}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--accent);color:var(--text-primary);padding:10px 22px;border-radius:3px;font-size:12px;letter-spacing:0.5px;opacity:0;transition:all 0.3s;z-index:7000;pointer-events:none;box-shadow:var(--shadow)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
 footer{margin-top:60px;text-align:center;padding:28px;border-top:1px solid var(--border);font-size:9px;letter-spacing:2.5px;color:var(--text-secondary);text-transform:uppercase}
-
 @media(min-width:768px){
 .container{padding:0 40px}
 nav{flex-direction:row;justify-content:space-between;align-items:center;padding:38px 0;margin-bottom:50px}
@@ -130,45 +106,40 @@ nav{flex-direction:row;justify-content:space-between;align-items:center;padding:
 .sz-lg{font-size:28px}.sz-md{font-size:22px}.sz-sm{font-size:17px}
 .statement-layout{grid-template-columns:1fr 1fr 320px;gap:44px}
 .section-header h2{font-size:16px;letter-spacing:2px}
-th{padding:14px;font-size:10px}
-td{padding:9px 14px;font-size:14px}
+th{padding:14px;font-size:10px}td{padding:9px 14px;font-size:14px}
 .num-input{font-size:15px}
 .insights-grid{grid-template-columns:repeat(2,1fr);gap:36px}
 .chart-container{height:320px}
-footer{margin-top:90px;padding:38px;font-size:10px}
-}
+footer{margin-top:90px;padding:38px;font-size:10px}}
 </style>
 </head>
 <body data-theme="dark">
 
-<!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-box">
     <div class="lock-logo">PRIVATE WEALTH</div>
     <div class="lock-sub">PREMIUM FINANCIAL STATEMENT · V8</div>
-    <input class="lock-input" type="password" id="pw-input" placeholder="· · · · · · · ·" maxlength="32" onkeydown="if(event.key==='Enter')unlock()">
+    <input class="lock-input" type="password" id="pw-input" placeholder="· · · · · · · ·" maxlength="32">
     <button class="lock-btn" onclick="unlock()">ENTER</button>
     <div class="lock-err" id="pw-err"></div>
-    <div class="sync-status" id="lock-sync-status"></div>
+    <div class="lock-syncing" id="lock-syncing"></div>
   </div>
 </div>
 
-<!-- CONTROL PANEL MODAL -->
 <div id="ctrl-overlay">
   <div class="ctrl-box">
     <div class="ctrl-title">⚙ Control Panel</div>
-
     <div class="ctrl-section">
       <span class="ctrl-label">Cloud Sync Status</span>
-      <div style="font-size:12px;padding:10px;background:var(--bg-secondary);border-radius:3px;display:flex;align-items:center;gap:6px">
-        <span class="sync-dot" id="ctrl-sync-dot"></span>
-        <span id="ctrl-sync-label" style="color:var(--text-secondary)">Checking...</span>
+      <div class="sync-row">
+        <span class="sync-dot" id="ctrl-dot"></span>
+        <span id="ctrl-sync-label" style="color:var(--text-secondary);font-size:12px">—</span>
       </div>
-      <button class="ctrl-btn info" onclick="forcePush()">PUSH LOCAL → CLOUD</button>
-      <button class="ctrl-btn info" onclick="forcePull()">PULL CLOUD → LOCAL</button>
-      <div class="ctrl-msg" id="sync-msg"></div>
+      <div class="ctrl-msg err" id="sync-err-detail" style="margin-top:8px;font-size:10px"></div>
+      <button class="ctrl-btn info" style="margin-top:10px" onclick="forcePush()">↑ PUSH LOCAL → CLOUD</button>
+      <button class="ctrl-btn info" onclick="forcePull()">↓ PULL CLOUD → LOCAL</button>
+      <div class="ctrl-msg" id="sync-action-msg"></div>
     </div>
-
     <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
       <span class="ctrl-label">Change Password</span>
       <input class="ctrl-input" type="password" id="new-pw1" placeholder="New password">
@@ -176,12 +147,10 @@ footer{margin-top:90px;padding:38px;font-size:10px}
       <button class="ctrl-btn" onclick="changePw()">UPDATE PASSWORD</button>
       <div class="ctrl-msg" id="pw-change-msg"></div>
     </div>
-
     <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
       <span class="ctrl-label">Danger Zone</span>
-      <button class="ctrl-btn danger" onclick="if(confirm('Reset ALL local data? This cannot be undone.'))clearAllData()">RESET ALL LOCAL DATA</button>
+      <button class="ctrl-btn danger" onclick="if(confirm('Reset ALL local data?'))clearAllData()">RESET ALL LOCAL DATA</button>
     </div>
-
     <button class="ctrl-btn secondary" onclick="closeCtrl()">CLOSE</button>
   </div>
 </div>
@@ -251,559 +220,363 @@ footer{margin-top:90px;padding:38px;font-size:10px}
 </div>
 
 <script>
-// ─────────────────────────────────────────
-//  SUPABASE CONFIG
-// ─────────────────────────────────────────
+// ── CONFIG ──
 const SUPABASE_URL  = 'https://zvevigywfonuyzrqavmj.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2ZXZpZ3l3Zm9udXl6cnFhdm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTM4NDksImV4cCI6MjA5NjA4OTg0OX0.9xSEv9ti14y7rrB4_8OlUd5U0me6UVx1sqg6dn4mg-c';
 const TABLE         = 'wealth_data';
+const DEFAULT_PW    = 'wealth2026';
+const PW_KEY        = 'wealth_pw_v8';
+const DB_KEY        = 'wealth_db_v8';
 
-const SB_HEADERS = {
-  'Content-Type':  'application/json',
-  'apikey':        SUPABASE_ANON,
-  'Authorization': 'Bearer ' + SUPABASE_ANON,
-  'Prefer':        'resolution=merge-duplicates'
-};
+// ── STATE ──
+let userHash = null, currentTheme='dark', currentLang='zh';
+let currentYear=new Date().getFullYear(), currentMonth=new Date().getMonth()+1;
+let isLocked=true, charts={}, saveTimer=null;
+let syncStatus = 'idle'; // idle | ok | err | loading
+let lastErrDetail = '';
+let rates={HKD:1,USD:7.8,CNY:1.08,JPY:0.052,EUR:8.6};
+let db={};
+try{db=JSON.parse(localStorage.getItem(DB_KEY))||{};}catch(e){db={};}
 
-// Simple hash of the password — used as user identity (no real auth needed)
-async function hashPw(pw) {
-  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,16);
+function getStoredPw(){return localStorage.getItem(PW_KEY)||DEFAULT_PW;}
+
+// ── HASH ──
+async function hashPw(pw){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
 }
 
-// ─────────────────────────────────────────
-//  SUPABASE SYNC
-// ─────────────────────────────────────────
-let userHash = null;
-
-async function sbFetch(path, method='GET', body=null) {
-  const opts = { method, headers: SB_HEADERS };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
-  if (!res.ok) throw new Error(await res.text());
-  return method === 'GET' ? res.json() : res;
+// ── SUPABASE CORE ──
+// Uses POST with Prefer: resolution=merge-duplicates for upsert
+async function sbUpsert(row){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'apikey':        SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'Prefer':        'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify(row)
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`${res.status}: ${txt}`);
+  }
+  return true;
 }
 
-// Load ALL period rows for this user from Supabase into db
-async function pullFromCloud() {
-  setSyncStatus('loading', 'Syncing…');
-  try {
-    const rows = await sbFetch(`${TABLE}?user_hash=eq.${userHash}&select=period_key,data`);
-    rows.forEach(r => { db[r.period_key] = r.data; });
-    localStorage.setItem(DB_KEY, JSON.stringify(db));
-    setSyncStatus('ok', 'Synced · ' + new Date().toLocaleTimeString());
+async function sbSelect(userH){
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/${TABLE}?user_hash=eq.${userH}&select=period_key,data`,
+    { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON } }
+  );
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`${res.status}: ${txt}`);
+  }
+  return res.json();
+}
+
+// ── SYNC ──
+function setSyncUI(state, detail=''){
+  syncStatus = state;
+  lastErrDetail = state==='err' ? detail : '';
+  const dot   = document.getElementById('ctrl-dot');
+  const label = document.getElementById('ctrl-sync-label');
+  const errEl = document.getElementById('sync-err-detail');
+  if(dot){
+    dot.className = 'sync-dot' + (state==='ok'?' ok':state==='err'?' err':state==='loading'?' spin':'');
+  }
+  if(label){
+    const map={ok:'Cloud saved ✓ '+new Date().toLocaleTimeString(), err:'Save failed', loading:'Syncing…', idle:'—'};
+    label.innerText = map[state]||state;
+  }
+  if(errEl) errEl.innerText = detail;
+}
+
+async function pushPeriod(key){
+  if(!userHash||!db[key]) return;
+  setSyncUI('loading');
+  try{
+    await sbUpsert({
+      user_hash:  userHash,
+      period_key: key,
+      data:       db[key],
+      updated_at: new Date().toISOString()
+    });
+    setSyncUI('ok');
+  }catch(e){
+    console.error('Supabase push error:', e.message);
+    setSyncUI('err', e.message);
+  }
+}
+
+async function pullFromCloud(){
+  if(!userHash) return false;
+  setSyncUI('loading');
+  try{
+    const rows = await sbSelect(userHash);
+    if(rows.length){
+      rows.forEach(r=>{ db[r.period_key]=r.data; });
+      localStorage.setItem(DB_KEY, JSON.stringify(db));
+    }
+    setSyncUI('ok');
     return true;
-  } catch(e) {
-    setSyncStatus('err', 'Cloud unavailable — using local');
+  }catch(e){
+    console.error('Supabase pull error:', e.message);
+    setSyncUI('err', e.message);
     return false;
   }
 }
 
-// Push a single period row to Supabase (upsert)
-async function pushPeriod(periodKey) {
-  if (!userHash) return;
-  try {
-    await sbFetch(TABLE, 'POST', {
-      user_hash:  userHash,
-      period_key: periodKey,
-      data:       db[periodKey],
-      updated_at: new Date().toISOString()
-    });
-    setSyncStatus('ok', 'Saved · ' + new Date().toLocaleTimeString());
-  } catch(e) {
-    setSyncStatus('err', 'Save failed — stored locally');
+async function forcePush(){
+  const msg=document.getElementById('sync-action-msg');
+  msg.className='ctrl-msg'; msg.innerText='Pushing…';
+  try{
+    for(const k of Object.keys(db)) await pushPeriod(k);
+    msg.className='ctrl-msg ok'; msg.innerText='All data pushed ✓';
+  }catch(e){ msg.className='ctrl-msg err'; msg.innerText='Push failed: '+e.message; }
+  setTimeout(()=>msg.innerText='',4000);
+}
+
+async function forcePull(){
+  const msg=document.getElementById('sync-action-msg');
+  msg.className='ctrl-msg'; msg.innerText='Pulling…';
+  const ok=await pullFromCloud();
+  if(ok){ renderDashboard(); msg.className='ctrl-msg ok'; msg.innerText='Data pulled ✓'; }
+  else   { msg.className='ctrl-msg err'; msg.innerText='Pull failed — check error above'; }
+  setTimeout(()=>msg.innerText='',4000);
+}
+
+// ── SAVE (local instant + cloud debounced) ──
+function save(){
+  try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); }catch(e){}
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>pushPeriod(getPeriodKey()),1500);
+}
+
+// ── LOCK / UNLOCK ──
+async function unlock(){
+  const val=document.getElementById('pw-input').value;
+  if(val!==getStoredPw()){
+    const err=document.getElementById('pw-err');
+    err.innerText='Incorrect password';
+    setTimeout(()=>err.innerText='',2000);
+    document.getElementById('pw-input').value='';
+    return;
   }
+  userHash=await hashPw(val);
+  const syncing=document.getElementById('lock-syncing');
+  syncing.innerText='Loading from cloud…';
+  await pullFromCloud();
+  syncing.innerText='';
+  document.getElementById('lock-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  init();
 }
 
-// Push ALL local periods to cloud
-async function forcePush() {
-  setSyncMsg('Pushing…', false);
-  try {
-    const keys = Object.keys(db);
-    for (const k of keys) await pushPeriod(k);
-    setSyncMsg('All data pushed ✓', false);
-  } catch(e) {
-    setSyncMsg('Push failed', true);
-  }
-}
-
-// Pull everything fresh from cloud
-async function forcePull() {
-  setSyncMsg('Pulling…', false);
-  const ok = await pullFromCloud();
-  if (ok) { renderDashboard(); setSyncMsg('Data pulled ✓', false); }
-  else     { setSyncMsg('Pull failed — offline?', true); }
-}
-
-function setSyncStatus(state, label) {
-  ['ctrl-sync-dot','lock-sync-dot'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.className = 'sync-dot ' + state;
-  });
-  const lblEl = document.getElementById('ctrl-sync-label');
-  if (lblEl) lblEl.innerText = label;
-  const lockEl = document.getElementById('lock-sync-status');
-  if (lockEl) lockEl.innerText = label;
-}
-
-function setSyncMsg(msg, isErr) {
-  const el = document.getElementById('sync-msg');
-  if (!el) return;
-  el.className = 'ctrl-msg ' + (isErr ? 'err' : 'ok');
-  el.innerText = msg;
-  setTimeout(() => { el.innerText = ''; }, 3000);
-}
-
-// ─────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────
-const DEFAULT_PW = 'wealth2026';
-const PW_KEY     = 'wealth_pw_v8';
-const DB_KEY     = 'wealth_db_v8';
-
-let currentTheme = 'dark';
-let currentLang  = 'zh';
-let currentYear  = new Date().getFullYear();
-let currentMonth = new Date().getMonth() + 1;
-let isLocked     = true;
-let charts       = {};
-let rates        = { HKD:1, USD:7.8, CNY:1.08, JPY:0.052, EUR:8.6 };
-
-let db = {};
-try { db = JSON.parse(localStorage.getItem(DB_KEY)) || {}; } catch(e) { db = {}; }
-
-function getStoredPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
-
-// ─────────────────────────────────────────
-//  LOCK / UNLOCK
-// ─────────────────────────────────────────
-async function unlock() {
-  const val = document.getElementById('pw-input').value;
-  if (val === getStoredPw()) {
-    userHash = await hashPw(val);
-    document.getElementById('pw-err').innerText = '';
-    // Pull cloud data then show app
-    document.getElementById('lock-sync-status').innerText = 'Loading from cloud…';
-    await pullFromCloud();
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    init();
-  } else {
-    const err = document.getElementById('pw-err');
-    err.innerText = 'Incorrect password';
-    setTimeout(() => err.innerText = '', 2000);
-    document.getElementById('pw-input').value = '';
-  }
-}
-
-async function changePw() {
-  const p1  = document.getElementById('new-pw1').value.trim();
-  const p2  = document.getElementById('new-pw2').value.trim();
-  const msg = document.getElementById('pw-change-msg');
-  if (!p1)   { msg.className='ctrl-msg err'; msg.innerText='Password cannot be empty'; return; }
-  if (p1!==p2){ msg.className='ctrl-msg err'; msg.innerText='Passwords do not match'; return; }
-  localStorage.setItem(PW_KEY, p1);
-  userHash = await hashPw(p1);
-  msg.className='ctrl-msg ok'; msg.innerText='Password updated ✓';
+async function changePw(){
+  const p1=document.getElementById('new-pw1').value.trim();
+  const p2=document.getElementById('new-pw2').value.trim();
+  const msg=document.getElementById('pw-change-msg');
+  if(!p1){msg.className='ctrl-msg err';msg.innerText='Cannot be empty';return;}
+  if(p1!==p2){msg.className='ctrl-msg err';msg.innerText='Passwords do not match';return;}
+  localStorage.setItem(PW_KEY,p1);
+  userHash=await hashPw(p1);
+  msg.className='ctrl-msg ok';msg.innerText='Updated ✓';
   document.getElementById('new-pw1').value='';
   document.getElementById('new-pw2').value='';
-  setTimeout(() => msg.innerText='', 3000);
+  setTimeout(()=>msg.innerText='',3000);
 }
 
-function clearAllData() {
-  localStorage.removeItem(DB_KEY);
-  db = {};
-  closeCtrl();
-  renderDashboard();
-  showToast('All local data cleared');
+function clearAllData(){
+  localStorage.removeItem(DB_KEY); db={};
+  closeCtrl(); renderDashboard(); showToast('Local data cleared');
 }
 
-function openCtrl() { updateCtrlSyncUI(); document.getElementById('ctrl-overlay').classList.add('open'); }
+function openCtrl(){ document.getElementById('ctrl-overlay').classList.add('open'); setSyncUI(syncStatus,lastErrDetail); }
 function closeCtrl(){ document.getElementById('ctrl-overlay').classList.remove('open'); }
-function updateCtrlSyncUI() {
-  const dot = document.getElementById('ctrl-sync-dot');
-  // Reflect current status — just show what we last set
-}
+document.getElementById('ctrl-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('ctrl-overlay'))closeCtrl();});
+document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
 
-document.getElementById('ctrl-overlay').addEventListener('click', function(e) { if(e.target===this) closeCtrl(); });
-document.getElementById('pw-input').addEventListener('keydown', function(e) { if(e.key==='Enter') unlock(); });
-
-// ─────────────────────────────────────────
-//  I18N
-// ─────────────────────────────────────────
-const i18n = {
-  zh: {
-    "net-worth":"資產淨值","net-cashflow":"每月淨現金流","total-assets":"總資產","total-liabilities":"總負債",
-    "balance-sheet":"資產負債表","cash-flow":"現金流量表","strategic-notes":"Strategic Notes & Actions",
-    "liquid-assets":"流動資產","investment-assets":"投資資產","liabilities":"負債","income":"收入",
-    "fixed-expenses":"固定支出","variable-expenses":"彈性支出","locked":"已鎖定","unlocked":"已解鎖",
-    "month-names":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
-  },
-  en: {
-    "net-worth":"Net Worth","net-cashflow":"Net Cash Flow","total-assets":"Total Assets","total-liabilities":"Total Liabilities",
-    "balance-sheet":"Balance Sheet","cash-flow":"Cash Flow","strategic-notes":"Strategic Notes & Actions",
-    "liquid-assets":"Liquid Assets","investment-assets":"Investment Assets","liabilities":"Liabilities","income":"Income",
-    "fixed-expenses":"Fixed Expenses","variable-expenses":"Variable Expenses","locked":"Locked","unlocked":"Unlocked",
-    "month-names":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-  }
+// ── I18N ──
+const i18n={
+  zh:{"net-worth":"資產淨值","net-cashflow":"每月淨現金流","total-assets":"總資產","total-liabilities":"總負債","balance-sheet":"資產負債表","cash-flow":"現金流量表","strategic-notes":"Strategic Notes & Actions","liquid-assets":"流動資產","investment-assets":"投資資產","liabilities":"負債","income":"收入","fixed-expenses":"固定支出","variable-expenses":"彈性支出","locked":"已鎖定","unlocked":"已解鎖","month-names":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]},
+  en:{"net-worth":"Net Worth","net-cashflow":"Net Cash Flow","total-assets":"Total Assets","total-liabilities":"Total Liabilities","balance-sheet":"Balance Sheet","cash-flow":"Cash Flow","strategic-notes":"Strategic Notes & Actions","liquid-assets":"Liquid Assets","investment-assets":"Investment Assets","liabilities":"Liabilities","income":"Income","fixed-expenses":"Fixed Expenses","variable-expenses":"Variable Expenses","locked":"Locked","unlocked":"Unlocked","month-names":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}
 };
+const defaultStructure=()=>({liquid:[{name:"主要戶口",value:0,ccy:"HKD"}],investment:[{name:"股票/ETF",value:0,ccy:"HKD"}],liabilities:[{name:"信用卡",value:0,ccy:"HKD",date:""}],income:[{name:"薪金",value:0,ccy:"HKD",date:""}],fixed:[{name:"家用",value:0,ccy:"HKD",date:""}],variable:[{name:"餐飲",value:0,ccy:"HKD",date:""}],notes:[]});
 
-const defaultStructure = () => ({
-  liquid:      [{ name:"主要戶口", value:0, ccy:"HKD" }],
-  investment:  [{ name:"股票/ETF", value:0, ccy:"HKD" }],
-  liabilities: [{ name:"信用卡",   value:0, ccy:"HKD", date:"" }],
-  income:      [{ name:"薪金",     value:0, ccy:"HKD", date:"" }],
-  fixed:       [{ name:"家用",     value:0, ccy:"HKD", date:"" }],
-  variable:    [{ name:"餐飲",     value:0, ccy:"HKD", date:"" }],
-  notes: []
-});
-
-// ─────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────
-async function init() {
-  const ys = document.getElementById('year-select');
-  for (let y = 2024; y <= 2030; y++) {
-    let o = document.createElement('option');
-    o.value = y; o.innerText = y;
-    if (y === currentYear) o.selected = true;
-    ys.appendChild(o);
-  }
-  updateMonthSelect();
-  applyI18n();
+// ── INIT ──
+async function init(){
+  const ys=document.getElementById('year-select');
+  for(let y=2024;y<=2030;y++){const o=document.createElement('option');o.value=y;o.innerText=y;if(y===currentYear)o.selected=true;ys.appendChild(o);}
+  updateMonthSelect(); applyI18n();
   await fetchRates();
   renderDashboard();
 }
 
-async function fetchRates() {
-  try {
-    const res  = await fetch('https://api.frankfurter.app/latest?from=HKD&to=USD,CNY,JPY,EUR');
-    const data = await res.json();
-    if (data.rates) {
-      rates.USD = 1 / data.rates.USD;
-      rates.CNY = 1 / data.rates.CNY;
-      rates.JPY = 1 / data.rates.JPY;
-      rates.EUR = 1 / data.rates.EUR;
-    }
-  } catch(e) { /* use defaults */ }
+async function fetchRates(){
+  try{
+    const r=await fetch('https://api.frankfurter.app/latest?from=HKD&to=USD,CNY,JPY,EUR');
+    const d=await r.json();
+    if(d.rates){rates.USD=1/d.rates.USD;rates.CNY=1/d.rates.CNY;rates.JPY=1/d.rates.JPY;rates.EUR=1/d.rates.EUR;}
+  }catch(e){}
 }
 
-// ─────────────────────────────────────────
-//  PERIOD
-// ─────────────────────────────────────────
-function getPeriodKey() { return `${currentYear}-${String(currentMonth).padStart(2,'0')}`; }
-function getPrevKey() {
-  let m = currentMonth - 1, y = currentYear;
-  if (m === 0) { m = 12; y--; }
-  return `${y}-${String(m).padStart(2,'0')}`;
-}
-
-function ensurePeriod() {
-  const key = getPeriodKey();
-  if (db[key]) return;
-  const prev = getPrevKey();
-  if (db[prev]) {
-    db[key] = JSON.parse(JSON.stringify(db[prev]));
-    ['income','fixed','variable','liabilities'].forEach(cat =>
-      db[key][cat].forEach(i => { i.value = 0; i.date = ""; })
-    );
-    db[key].notes = db[key].notes.filter(n => n.status !== 'done');
-  } else {
-    db[key] = defaultStructure();
-  }
+// ── PERIOD ──
+function getPeriodKey(){return`${currentYear}-${String(currentMonth).padStart(2,'0')}`;}
+function getPrevKey(){let m=currentMonth-1,y=currentYear;if(m===0){m=12;y--;}return`${y}-${String(m).padStart(2,'0')}`;}
+function ensurePeriod(){
+  const key=getPeriodKey();if(db[key])return;
+  const prev=getPrevKey();
+  if(db[prev]){
+    db[key]=JSON.parse(JSON.stringify(db[prev]));
+    ['income','fixed','variable','liabilities'].forEach(c=>db[key][c].forEach(i=>{i.value=0;i.date="";}));
+    db[key].notes=db[key].notes.filter(n=>n.status!=='done');
+  }else{db[key]=defaultStructure();}
   save();
 }
+function changePeriod(){currentYear=parseInt(document.getElementById('year-select').value);currentMonth=parseInt(document.getElementById('month-select').value);renderDashboard();}
 
-function changePeriod() {
-  currentYear  = parseInt(document.getElementById('year-select').value);
-  currentMonth = parseInt(document.getElementById('month-select').value);
-  renderDashboard();
-}
-
-// ─────────────────────────────────────────
-//  RENDER
-// ─────────────────────────────────────────
-function renderDashboard() {
+// ── RENDER ──
+function renderDashboard(){
   ensurePeriod();
-  const data = db[getPeriodKey()];
-  renderList('liquid',      data.liquid,      false);
-  renderList('investment',  data.investment,  false);
-  renderList('liabilities', data.liabilities, true);
-  renderList('income',      data.income,      true);
-  renderList('fixed',       data.fixed,       true);
-  renderList('variable',    data.variable,    true);
-  renderNotes();
-  calculate();
+  const d=db[getPeriodKey()];
+  renderList('liquid',d.liquid,false);renderList('investment',d.investment,false);
+  renderList('liabilities',d.liabilities,true);renderList('income',d.income,true);
+  renderList('fixed',d.fixed,true);renderList('variable',d.variable,true);
+  renderNotes();calculate();
 }
 
-function renderList(cat, items, hasDate) {
-  const tbody = document.getElementById(`list-${cat}`);
-  tbody.innerHTML = '';
-  items.forEach((item, i) => {
-    const ccy    = item.ccy || 'HKD';
-    const hkdAmt = (parseFloat(item.value) || 0) * (rates[ccy] || 1);
-    const showEqv= ccy !== 'HKD';
-    const ccyOpts= ['HKD','USD','CNY','JPY','EUR']
-      .map(c => `<option value="${c}"${ccy===c?' selected':''}>${c}</option>`).join('');
-    const dateCell = hasDate
-      ? `<td><input type="text" class="date-input${isLocked?' readonly':''}" value="${item.date||''}"
-             oninput="handleDate(event,'${cat}',${i})" placeholder="DD/MM"></td>` : '';
-    const delCell = !isLocked
-      ? `<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}',${i})">×</button></td>`
-      : '<td></td>';
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><input type="text" class="${isLocked?'readonly':''}" value="${escHtml(item.name)}"
-          onchange="updateItem('${cat}',${i},'name',this.value)"></td>
-      <td><select class="ccy-select" onchange="updateItem('${cat}',${i},'ccy',this.value)"
-          ${isLocked?'disabled':''}>${ccyOpts}</select></td>
-      ${dateCell}
-      <td>
-        <input type="number" class="num-input" value="${item.value}"
-            onchange="updateItem('${cat}',${i},'value',this.value)" step="0.01">
-        ${showEqv ? `<div class="hkd-equiv">≈ HKD ${fmtNum(hkdAmt)}</div>` : ''}
-      </td>
-      ${delCell}`;
+function renderList(cat,items,hasDate){
+  const tbody=document.getElementById(`list-${cat}`);tbody.innerHTML='';
+  items.forEach((item,i)=>{
+    const ccy=item.ccy||'HKD';const hkdAmt=(parseFloat(item.value)||0)*(rates[ccy]||1);const showEqv=ccy!=='HKD';
+    const ccyOpts=['HKD','USD','CNY','JPY','EUR'].map(c=>`<option value="${c}"${ccy===c?' selected':''}>${c}</option>`).join('');
+    const dateCell=hasDate?`<td><input type="text" class="date-input${isLocked?' readonly':''}" value="${item.date||''}" oninput="handleDate(event,'${cat}',${i})" placeholder="DD/MM"></td>`:'';
+    const delCell=!isLocked?`<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}',${i})">×</button></td>`:'<td></td>';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="text" class="${isLocked?'readonly':''}" value="${escHtml(item.name)}" onchange="updateItem('${cat}',${i},'name',this.value)"></td><td><select class="ccy-select" onchange="updateItem('${cat}',${i},'ccy',this.value)"${isLocked?' disabled':''}>${ccyOpts}</select></td>${dateCell}<td><input type="number" class="num-input" value="${item.value}" onchange="updateItem('${cat}',${i},'value',this.value)" step="0.01">${showEqv?`<div class="hkd-equiv">≈ HKD ${fmtNum(hkdAmt)}</div>`:''}</td>${delCell}`;
     tbody.appendChild(tr);
   });
-  const addBtn = tbody.parentElement.nextElementSibling;
-  if (addBtn) addBtn.style.display = isLocked ? 'none' : 'block';
+  const addBtn=tbody.parentElement.nextElementSibling;
+  if(addBtn)addBtn.style.display=isLocked?'none':'block';
 }
 
-function renderNotes() {
-  const list  = document.getElementById('notes-list');
-  list.innerHTML = '';
-  const notes = db[getPeriodKey()].notes || [];
-  notes.forEach((note, i) => {
-    const div = document.createElement('div');
-    div.className = 'note-item';
-    div.innerHTML = `
-      <div class="note-header">
-        <span class="note-status${note.status==='done'?' done':''}" onclick="toggleNote(${i})">${note.status.toUpperCase()}</span>
-        <button class="btn-delete" onclick="deleteNote(${i})">×</button>
-      </div>
-      <textarea onchange="updateNote(${i},this.value)">${escHtml(note.text)}</textarea>`;
+function renderNotes(){
+  const list=document.getElementById('notes-list');list.innerHTML='';
+  (db[getPeriodKey()].notes||[]).forEach((note,i)=>{
+    const div=document.createElement('div');div.className='note-item';
+    div.innerHTML=`<div class="note-header"><span class="note-status${note.status==='done'?' done':''}" onclick="toggleNote(${i})">${note.status.toUpperCase()}</span><button class="btn-delete" onclick="deleteNote(${i})">×</button></div><textarea onchange="updateNote(${i},this.value)">${escHtml(note.text)}</textarea>`;
     list.appendChild(div);
   });
 }
 
-// ─────────────────────────────────────────
-//  MUTATIONS
-// ─────────────────────────────────────────
-function updateItem(cat, i, field, val) {
-  if (field === 'value') val = parseFloat(val) || 0;
-  db[getPeriodKey()][cat][i][field] = val;
-  calculate();
-  renderList(cat, db[getPeriodKey()][cat], ['liabilities','income','fixed','variable'].includes(cat));
-  save();
+// ── MUTATIONS ──
+function updateItem(cat,i,field,val){
+  if(field==='value')val=parseFloat(val)||0;
+  db[getPeriodKey()][cat][i][field]=val;
+  calculate();renderList(cat,db[getPeriodKey()][cat],['liabilities','income','fixed','variable'].includes(cat));save();
+}
+function addItem(cat){
+  const item={name:"New Item",value:0,ccy:"HKD"};
+  if(['liabilities','income','fixed','variable'].includes(cat))item.date="";
+  db[getPeriodKey()][cat].push(item);renderDashboard();save();
+}
+function deleteItem(cat,i){db[getPeriodKey()][cat].splice(i,1);renderDashboard();save();}
+function addNote(){if(!db[getPeriodKey()].notes)db[getPeriodKey()].notes=[];db[getPeriodKey()].notes.push({text:"",status:"pending"});renderNotes();save();}
+function updateNote(i,val){db[getPeriodKey()].notes[i].text=val;save();}
+function toggleNote(i){const n=db[getPeriodKey()].notes[i];n.status=n.status==='done'?'pending':'done';renderNotes();save();}
+function deleteNote(i){db[getPeriodKey()].notes.splice(i,1);renderNotes();save();}
+
+function handleDate(e,cat,i){
+  let raw=e.target.value.replace(/\D/g,'');let d=raw.slice(0,2),m=raw.slice(2,4);
+  if(d.length===1&&parseInt(d)>3)d='0'+d;if(d.length===2&&m.length===1&&parseInt(m)>1)m='0'+m;
+  const f=d+(m?'/'+m:'');e.target.value=f;if(f.length===5)updateItem(cat,i,'date',f);
 }
 
-function addItem(cat) {
-  const hasDate = ['liabilities','income','fixed','variable'].includes(cat);
-  const item = { name:"New Item", value:0, ccy:"HKD" };
-  if (hasDate) item.date = "";
-  db[getPeriodKey()][cat].push(item);
-  renderDashboard(); save();
+// ── CALCULATE ──
+function calculate(){
+  const data=db[getPeriodKey()];if(!data)return;
+  const sumHKD=arr=>arr.reduce((a,b)=>a+(parseFloat(b.value)||0)*(rates[b.ccy||'HKD']||1),0);
+  const assets=sumHKD(data.liquid)+sumHKD(data.investment),liab=sumHKD(data.liabilities);
+  const income=sumHKD(data.income),expenses=sumHKD(data.fixed)+sumHKD(data.variable);
+  setSummary('sum-assets',assets,false);setSummary('sum-liabilities',liab,false);
+  setSummary('sum-net-worth',assets-liab,true);setSummary('sum-cashflow',income-expenses,false,true);
+}
+function setSummary(id,val,isH,isCF){
+  const el=document.getElementById(id);const str='$ '+fmtNum(val);el.innerText=str;
+  const len=str.replace(/[$,\s]/g,'').length;
+  el.className='summary-value'+(isH?' highlight':'');
+  el.classList.add(len>10?'sz-sm':len>7?'sz-md':'sz-lg');
+  if(isCF)el.style.color=val>=0?'var(--success)':'var(--danger)';
+  else if(isH)el.style.color=val<0?'var(--danger)':'var(--accent)';
+  else el.style.color='';
 }
 
-function deleteItem(cat, i) {
-  db[getPeriodKey()][cat].splice(i, 1);
-  renderDashboard(); save();
-}
-
-function addNote() {
-  if (!db[getPeriodKey()].notes) db[getPeriodKey()].notes = [];
-  db[getPeriodKey()].notes.push({ text:"", status:"pending" });
-  renderNotes(); save();
-}
-function updateNote(i, val) { db[getPeriodKey()].notes[i].text = val; save(); }
-function toggleNote(i) {
-  const n = db[getPeriodKey()].notes[i];
-  n.status = n.status === 'done' ? 'pending' : 'done';
-  renderNotes(); save();
-}
-function deleteNote(i) {
-  db[getPeriodKey()].notes.splice(i, 1);
-  renderNotes(); save();
-}
-
-// ─────────────────────────────────────────
-//  DATE INPUT
-// ─────────────────────────────────────────
-function handleDate(e, cat, i) {
-  let raw = e.target.value.replace(/\D/g,'');
-  let d = raw.slice(0,2), m = raw.slice(2,4);
-  if (d.length===1 && parseInt(d)>3) d = '0'+d;
-  if (d.length===2 && m.length===1 && parseInt(m)>1) m = '0'+m;
-  const formatted = d + (m ? '/'+m : '');
-  e.target.value = formatted;
-  if (formatted.length === 5) updateItem(cat, i, 'date', formatted);
-}
-
-// ─────────────────────────────────────────
-//  CALCULATE
-// ─────────────────────────────────────────
-function calculate() {
-  const data = db[getPeriodKey()];
-  if (!data) return;
-  const sumHKD = arr => arr.reduce((a,b) => {
-    const ccy = b.ccy || 'HKD';
-    return a + (parseFloat(b.value)||0) * (rates[ccy]||1);
-  }, 0);
-  const assets   = sumHKD(data.liquid) + sumHKD(data.investment);
-  const liab     = sumHKD(data.liabilities);
-  const income   = sumHKD(data.income);
-  const expenses = sumHKD(data.fixed) + sumHKD(data.variable);
-  setSummary('sum-assets',      assets,         false);
-  setSummary('sum-liabilities', liab,           false);
-  setSummary('sum-net-worth',   assets - liab,  true);
-  setSummary('sum-cashflow',    income-expenses, false, true);
-}
-
-function setSummary(id, val, isH, isCF) {
-  const el  = document.getElementById(id);
-  const str = '$ ' + fmtNum(val);
-  el.innerText = str;
-  const len = str.replace(/[$,\s]/g,'').length;
-  el.className = 'summary-value' + (isH?' highlight':'');
-  el.classList.add(len > 10 ? 'sz-sm' : len > 7 ? 'sz-md' : 'sz-lg');
-  if (isCF)      el.style.color = val >= 0 ? 'var(--success)' : 'var(--danger)';
-  else if (isH)  el.style.color = val < 0  ? 'var(--danger)'  : 'var(--accent)';
-  else           el.style.color = '';
-}
-
-// ─────────────────────────────────────────
-//  UI CONTROLS
-// ─────────────────────────────────────────
-function switchView(view) {
-  document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+// ── UI ──
+function switchView(view){
+  document.querySelectorAll('.view-content').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`view-${view}`).classList.add('active');
   document.getElementById(`btn-view-${view}`).classList.add('active');
-  if (view === 'insights') initCharts();
+  if(view==='insights')initCharts();
+}
+function toggleTheme(){
+  currentTheme=currentTheme==='dark'?'light':'dark';
+  document.body.setAttribute('data-theme',currentTheme);
+  document.getElementById('theme-btn').innerText=currentTheme==='dark'?'LIGHT':'DARK';
+  if(document.getElementById('view-insights').classList.contains('active'))initCharts();
+}
+function toggleLanguage(){
+  currentLang=currentLang==='zh'?'en':'zh';
+  document.getElementById('lang-btn').innerText=currentLang==='zh'?'EN':'中文';
+  updateMonthSelect();applyI18n();renderDashboard();
+}
+function toggleLock(){
+  isLocked=!isLocked;
+  document.getElementById('master-lock').innerText=isLocked?'🔒':'🔓';
+  applyI18n();renderDashboard();
+  showToast(isLocked?'🔒 已鎖定':'🔓 已解鎖，可以編輯');
+}
+function updateMonthSelect(){
+  const sel=document.getElementById('month-select');sel.innerHTML='';
+  i18n[currentLang]["month-names"].forEach((m,i)=>{const o=document.createElement('option');o.value=i+1;o.innerText=m;if(i+1===currentMonth)o.selected=true;sel.appendChild(o);});
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(i18n[currentLang][k])el.innerText=i18n[currentLang][k];});
+  document.getElementById('lock-bs').innerText=i18n[currentLang][isLocked?'locked':'unlocked'];
+  document.getElementById('lock-cf').innerText=i18n[currentLang][isLocked?'locked':'unlocked'];
 }
 
-function toggleTheme() {
-  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.body.setAttribute('data-theme', currentTheme);
-  document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? 'LIGHT' : 'DARK';
-  if (document.getElementById('view-insights').classList.contains('active')) initCharts();
+// ── CHARTS ──
+function initCharts(){
+  const keys=Object.keys(db).sort();const labels=keys.map(k=>k.split('-')[1]+'月');
+  const sumHKD=arr=>arr.reduce((a,b)=>a+(parseFloat(b.value)||0)*(rates[b.ccy||'HKD']||1),0);
+  const accent=getComputedStyle(document.body).getPropertyValue('--accent').trim();
+  const txt=getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
+  const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:txt,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{color:txt}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:txt}}}};
+  const mk=(id,cfg)=>{const k=id.replace('chart-','');if(charts[k])charts[k].destroy();charts[k]=new Chart(document.getElementById(id),cfg);};
+  mk('chart-wealth',{type:'line',data:{labels,datasets:[{label:'Net Worth HKD',data:keys.map(k=>sumHKD(db[k].liquid)+sumHKD(db[k].investment)-sumHKD(db[k].liabilities)),borderColor:accent,tension:0.35,fill:true,backgroundColor:'rgba(197,168,128,0.08)'}]},options:opts});
+  mk('chart-cashflow',{type:'bar',data:{labels,datasets:[{label:'Income',data:keys.map(k=>sumHKD(db[k].income)),backgroundColor:'rgba(16,185,129,0.6)'},{label:'Expenses',data:keys.map(k=>sumHKD(db[k].fixed)+sumHKD(db[k].variable)),backgroundColor:'rgba(239,68,68,0.6)'}]},options:opts});
+  mk('chart-liabilities',{type:'line',data:{labels,datasets:[{label:'Liabilities',data:keys.map(k=>sumHKD(db[k].liabilities)),borderColor:'#ef4444',borderDash:[5,5],tension:0.2}]},options:opts});
+  mk('chart-savings',{type:'bar',data:{labels,datasets:[{label:'Savings Rate %',data:keys.map(k=>{const inc=sumHKD(db[k].income);const exp=sumHKD(db[k].fixed)+sumHKD(db[k].variable);return inc>0?+((inc-exp)/inc*100).toFixed(1):0;}),backgroundColor:accent}]},options:opts});
 }
 
-function toggleLanguage() {
-  currentLang = currentLang === 'zh' ? 'en' : 'zh';
-  document.getElementById('lang-btn').innerText = currentLang === 'zh' ? 'EN' : '中文';
-  updateMonthSelect(); applyI18n(); renderDashboard();
+// ── EXPORT ──
+function exportToExcel(){
+  const key=getPeriodKey();const data=db[key];if(!data)return;
+  let wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...data.liquid,...data.investment,...data.liabilities]),"Balance Sheet");
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...data.income,...data.fixed,...data.variable]),"Cash Flow");
+  XLSX.writeFile(wb,`PrivateWealth_v8_${key}.xlsx`);showToast('✓ Excel exported');
 }
 
-function toggleLock() {
-  isLocked = !isLocked;
-  document.getElementById('master-lock').innerText = isLocked ? '🔒' : '🔓';
-  applyI18n(); renderDashboard();
-  showToast(isLocked ? '🔒 已鎖定' : '🔓 已解鎖，可以編輯');
-}
-
-function updateMonthSelect() {
-  const sel = document.getElementById('month-select');
-  sel.innerHTML = '';
-  i18n[currentLang]["month-names"].forEach((m, i) => {
-    let o = document.createElement('option');
-    o.value = i+1; o.innerText = m;
-    if (i+1 === currentMonth) o.selected = true;
-    sel.appendChild(o);
-  });
-}
-
-function applyI18n() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
-  });
-  document.getElementById('lock-bs').innerText = i18n[currentLang][isLocked?'locked':'unlocked'];
-  document.getElementById('lock-cf').innerText = i18n[currentLang][isLocked?'locked':'unlocked'];
-}
-
-// ─────────────────────────────────────────
-//  CHARTS
-// ─────────────────────────────────────────
-function initCharts() {
-  const keys   = Object.keys(db).sort();
-  const labels = keys.map(k => k.split('-')[1] + '月');
-  const sumHKD = arr => arr.reduce((a,b) => a + (parseFloat(b.value)||0) * (rates[b.ccy||'HKD']||1), 0);
-  const accent = getComputedStyle(document.body).getPropertyValue('--accent').trim();
-  const txt    = getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
-  const opts   = {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{ labels:{ color:txt, font:{size:10} } } },
-    scales:{ x:{ grid:{display:false}, ticks:{color:txt} }, y:{ grid:{color:'rgba(128,128,128,0.1)'}, ticks:{color:txt} } }
-  };
-  const mk = (id, cfg) => {
-    const key = id.replace('chart-','');
-    if (charts[key]) charts[key].destroy();
-    charts[key] = new Chart(document.getElementById(id), cfg);
-  };
-  mk('chart-wealth', { type:'line', data:{ labels, datasets:[{
-    label:'Net Worth HKD',
-    data: keys.map(k => sumHKD(db[k].liquid) + sumHKD(db[k].investment) - sumHKD(db[k].liabilities)),
-    borderColor:accent, tension:0.35, fill:true, backgroundColor:'rgba(197,168,128,0.08)'
-  }]}, options:opts });
-  mk('chart-cashflow', { type:'bar', data:{ labels, datasets:[
-    { label:'Income',   data:keys.map(k=>sumHKD(db[k].income)), backgroundColor:'rgba(16,185,129,0.6)' },
-    { label:'Expenses', data:keys.map(k=>sumHKD(db[k].fixed)+sumHKD(db[k].variable)), backgroundColor:'rgba(239,68,68,0.6)' }
-  ]}, options:opts });
-  mk('chart-liabilities', { type:'line', data:{ labels, datasets:[{
-    label:'Liabilities', data:keys.map(k=>sumHKD(db[k].liabilities)),
-    borderColor:'#ef4444', borderDash:[5,5], tension:0.2
-  }]}, options:opts });
-  mk('chart-savings', { type:'bar', data:{ labels, datasets:[{
-    label:'Savings Rate %',
-    data: keys.map(k => {
-      const inc = sumHKD(db[k].income);
-      const exp = sumHKD(db[k].fixed) + sumHKD(db[k].variable);
-      return inc > 0 ? +((inc-exp)/inc*100).toFixed(1) : 0;
-    }),
-    backgroundColor: accent
-  }]}, options:opts });
-}
-
-// ─────────────────────────────────────────
-//  EXPORT
-// ─────────────────────────────────────────
-function exportToExcel() {
-  const key  = getPeriodKey();
-  const data = db[key];
-  if (!data) return;
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid,...data.investment,...data.liabilities]), "Balance Sheet");
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income,...data.fixed,...data.variable]), "Cash Flow");
-  XLSX.writeFile(wb, `PrivateWealth_v8_${key}.xlsx`);
-  showToast('✓ Excel exported');
-}
-
-// ─────────────────────────────────────────
-//  SAVE (local + cloud)
-// ─────────────────────────────────────────
-let saveTimer = null;
-function save() {
-  // Always save locally first (instant)
-  try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch(e) {}
-  // Debounce cloud push by 1.5s so rapid edits don't spam Supabase
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => pushPeriod(getPeriodKey()), 1500);
-}
-
-// ─────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────
-function fmtNum(n) { return n.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:0 }); }
-function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
+// ── HELPERS ──
+function fmtNum(n){return n.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});}
+function escHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function showToast(msg){const t=document.getElementById('toast');t.innerText=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 </script>
 </body>
 </html>
