@@ -221,8 +221,8 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
 
 <script>
 // ── CONFIG ──
-const SUPABASE_URL  = 'https://ttoadbftwbdfhbwsggyc.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0b2FkYmZ0d2JkZmhid3NnZ3ljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTc5OTMsImV4cCI6MjA5NjEzMzk5M30.TaXkklrr3Wl6FyBhDGgJ9J71WqdAadKmTrUhpU1HuHY';
+const SUPABASE_URL  = 'https://zvevigywfonuyzrqavmj.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2ZXZpZ3l3Zm9udXl6cnFhdm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTM4NDksImV4cCI6MjA5NjA4OTg0OX0.9xSEv9ti14y7rrB4_8OlUd5U0me6UVx1sqg6dn4mg-c';
 const TABLE         = 'wealth_data';
 const DEFAULT_PW    = 'wealth2026';
 const PW_KEY        = 'wealth_pw_v8';
@@ -249,7 +249,9 @@ async function hashPw(pw){
 // ── SUPABASE CORE ──
 // Uses POST with Prefer: resolution=merge-duplicates for upsert
 async function sbUpsert(row){
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+  // ?on_conflict= tells Supabase which columns to match on for upsert
+  const url = `${SUPABASE_URL}/rest/v1/${TABLE}?on_conflict=user_hash,period_key`;
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type':  'application/json',
