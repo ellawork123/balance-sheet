@@ -1,1027 +1,809 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Private Wealth Management | Professional Statement v14</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --accent: #c5a880;
-            --accent-hover: #d4bc9c;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border: rgba(197, 168, 128, 0.2);
-            --input-bg: rgba(255, 255, 255, 0.03);
-            --danger: #ef4444;
-            --success: #10b981;
-            --shadow: 0 10px 30px rgba(0,0,0,0.5);
-            --modal-bg: rgba(0,0,0,0.8);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Private Wealth Management | v8</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-card:#1e293b;--accent:#c5a880;--text-primary:#f8fafc;--text-secondary:#94a3b8;--border:rgba(197,168,128,0.2);--input-bg:rgba(255,255,255,0.03);--danger:#ef4444;--success:#10b981;--shadow:0 10px 30px rgba(0,0,0,0.5)}
+[data-theme="light"]{--bg-primary:#fcfbf7;--bg-secondary:#f3f1e9;--bg-card:#ffffff;--accent:#8e734b;--text-primary:#1a1a1a;--text-secondary:#64748b;--border:rgba(142,115,75,0.2);--input-bg:rgba(0,0,0,0.02);--danger:#dc2626;--success:#059669;--shadow:0 10px 30px rgba(0,0,0,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif;transition:background 0.4s,color 0.4s;padding-bottom:80px}
+.container{max-width:1400px;margin:0 auto;padding:0 20px}
 
-        [data-theme="light"] {
-            --bg-primary: #fcfbf7;
-            --bg-secondary: #f3f1e9;
-            --bg-card: #ffffff;
-            --accent: #8e734b;
-            --accent-hover: #725a3a;
-            --text-primary: #1a1a1a;
-            --text-secondary: #64748b;
-            --border: rgba(142, 115, 75, 0.2);
-            --input-bg: rgba(0, 0, 0, 0.02);
-            --danger: #dc2626;
-            --success: #059669;
-            --shadow: 0 10px 30px rgba(0,0,0,0.05);
-            --modal-bg: rgba(255,255,255,0.8);
-        }
+/* LOCK SCREEN */
+#lock-screen{position:fixed;inset:0;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
+.lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:40px 36px;text-align:center;width:320px;box-shadow:var(--shadow)}
+.lock-logo{font-family:'Cinzel',serif;font-size:16px;letter-spacing:4px;color:var(--accent);margin-bottom:6px}
+.lock-sub{font-size:9px;letter-spacing:2px;color:var(--text-secondary);margin-bottom:28px}
+.lock-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:12px 14px;border-radius:3px;font-size:16px;text-align:center;letter-spacing:4px;font-family:'Inter',sans-serif;outline:none;margin-bottom:12px}
+.lock-input:focus{border-color:var(--accent)}
+.lock-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:12px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif}
+.lock-err{color:var(--danger);font-size:11px;height:16px;letter-spacing:0.5px;margin-top:8px}
+.sync-status{font-size:9px;letter-spacing:1px;color:var(--text-secondary);margin-top:10px;height:14px;text-align:center}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; transition: all 0.4s ease; padding-bottom: 80px; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+/* CONTROL PANEL MODAL */
+#ctrl-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:8000;align-items:center;justify-content:center}
+#ctrl-overlay.open{display:flex}
+.ctrl-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:32px;width:360px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
+.ctrl-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--accent);margin-bottom:22px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.ctrl-section{margin-bottom:20px}
+.ctrl-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin-bottom:7px;display:block}
+.ctrl-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:9px 12px;border-radius:3px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:8px}
+.ctrl-input:focus{border-color:var(--accent)}
+.ctrl-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:10px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:4px}
+.ctrl-btn.danger{background:var(--danger);margin-top:8px}
+.ctrl-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text-secondary);margin-top:8px}
+.ctrl-btn.info{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);margin-top:8px}
+.ctrl-msg{font-size:11px;height:16px;margin-top:6px;letter-spacing:0.5px}
+.ctrl-msg.ok{color:var(--success)}
+.ctrl-msg.err{color:var(--danger)}
+.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--text-secondary)}
+.sync-dot.ok{background:var(--success)}
+.sync-dot.err{background:var(--danger)}
+.sync-dot.loading{background:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 
-        nav { display: flex; flex-direction: column; gap: 15px; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
-        .brand { display: flex; flex-direction: column; }
-        .brand h1 { font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
-        .brand span { font-size: 10px; letter-spacing: 1px; color: var(--text-secondary); margin-top: 3px; }
-        
-        .nav-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .view-toggle { display: flex; background: var(--bg-secondary); padding: 3px; border-radius: 3px; border: 1px solid var(--border); }
-        .view-btn { padding: 6px 12px; border-radius: 2px; font-size: 10px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); transition: all 0.3s; }
-        .view-btn.active { background: var(--accent); color: var(--bg-primary); }
+/* NAV */
+nav{display:flex;flex-direction:column;gap:14px;padding:22px 0;border-bottom:1px solid var(--border);margin-bottom:30px}
+.brand h1{font-family:'Cinzel',serif;font-size:20px;letter-spacing:3px;color:var(--accent);text-transform:uppercase}
+.brand span{font-size:10px;letter-spacing:2px;color:var(--text-secondary);margin-top:4px;display:block}
+.nav-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.view-toggle{display:flex;background:var(--bg-secondary);padding:3px;border-radius:3px;border:1px solid var(--border)}
+.view-btn{padding:6px 14px;border-radius:2px;font-size:10px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--text-secondary);transition:all 0.25s;letter-spacing:0.5px}
+.view-btn.active{background:var(--accent);color:var(--bg-primary)}
+.nav-btn{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);padding:7px 13px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif}
+.nav-btn.accent{background:var(--accent);color:var(--bg-primary);font-weight:700;border:none}
+.icon-btn{background:transparent;border:none;font-size:16px;padding:4px 7px;color:var(--accent);cursor:pointer}
+select.nav-btn{min-width:60px}
 
-        select, button { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: 2px; font-size: 11px; cursor: pointer; flex: 1; min-width: 60px; font-family: 'Inter', sans-serif; }
-        .btn-export { background: var(--accent); color: var(--bg-primary); font-weight: 700; border: none; }
-        .icon-btn { background: transparent; border: none; font-size: 16px; padding: 5px; color: var(--accent); cursor: pointer; flex: 0 0 auto; }
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:36px}
+.summary-item{background:var(--bg-card);padding:22px 14px;text-align:center}
+.summary-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);margin-bottom:8px}
+.summary-value{font-weight:700;color:var(--text-primary);word-break:break-word;line-height:1.2}
+.summary-value.highlight{color:var(--accent)}
+.sz-lg{font-size:22px}.sz-md{font-size:17px}.sz-sm{font-size:13px}
 
-        .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 40px; }
-        .summary-item { background: var(--bg-card); padding: 20px 15px; text-align: center; }
-        .summary-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 8px; }
-        .summary-value { 
-            font-family: 'Inter', sans-serif;
-            font-weight: 700; 
-            color: var(--text-primary); 
-            word-break: break-word;
-            line-height: 1.15;
-            overflow-wrap: break-word;
-        }
-        .summary-value.highlight { color: var(--accent); }
-        .summary-value.size-lg { font-size: 18px; letter-spacing: -0.5px; }
-        .summary-value.size-xl { font-size: 16px; letter-spacing: -0.8px; }
-        .summary-value.size-xxl { font-size: 14px; letter-spacing: -1px; }
-        .summary-value.size-xxxl { font-size: 12px; letter-spacing: -1.2px; }
+/* LAYOUT */
+.view-content{display:none}
+.view-content.active{display:block}
+.statement-layout{display:grid;grid-template-columns:1fr;gap:28px}
 
-        .view-content { display: none; }
-        .view-content.active { display: block; }
-        .statement-layout { display: grid; grid-template-columns: 1fr; gap: 30px; }
+/* SECTION */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:2px solid var(--accent);padding-bottom:7px}
+.section-header h2{font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;color:var(--accent)}
+.lock-indicator{font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px}
 
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
-        .section-header h2 { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1px; color: var(--accent); }
-        .table-wrapper { background: var(--bg-card); border-radius: 4px; margin-bottom: 25px; box-shadow: var(--shadow); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { padding: 12px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); font-family: 'Inter', sans-serif; }
-        td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; font-family: 'Inter', sans-serif; }
+/* TABLE */
+.table-wrapper{background:var(--bg-card);border-radius:4px;margin-bottom:22px;box-shadow:var(--shadow);overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);background:rgba(0,0,0,0.05);border-bottom:1px solid var(--border)}
+td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px}
+tr:last-child td{border-bottom:none}
 
-        input, textarea { background: transparent; border: 1px solid transparent; color: var(--text-primary); width: 100%; padding: 6px; font-size: 13px; border-radius: 2px; font-family: 'Inter', sans-serif; }
-        input:focus, textarea:focus { background: var(--input-bg); border-color: var(--accent); outline: none; }
-        input.readonly { pointer-events: none; }
-        .num-input { text-align: right; font-weight: 600; font-size: 14px; letter-spacing: -0.5px; font-family: 'Inter', sans-serif; }
-        .date-input { font-size: 11px; color: var(--text-secondary); text-align: center; font-family: 'Inter', sans-serif; }
-        .currency-select { 
-            font-size: 11px; padding: 4px; border: 1px solid var(--border); width: auto; min-width: 65px;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .btn-action { font-size: 10px; padding: 8px 12px; text-transform: uppercase; letter-spacing: 1px; margin: 12px; border: 1px dashed var(--accent); color: var(--accent); background: transparent; cursor: pointer; width: calc(100% - 24px); font-family: 'Inter', sans-serif; }
-        .btn-delete { color: var(--text-secondary); background: transparent; border: none; cursor: pointer; font-size: 16px; opacity: 0.3; padding: 4px; }
-        .btn-delete:hover { opacity: 1; color: var(--danger); }
+/* INPUTS */
+input,textarea{background:transparent;border:1px solid transparent;color:var(--text-primary);width:100%;padding:5px;font-size:13px;border-radius:2px;font-family:'Inter',sans-serif}
+input:focus,textarea:focus{background:var(--input-bg);border-color:var(--accent);outline:none}
+input.readonly{pointer-events:none}
+.num-input{text-align:right;font-weight:600;font-size:14px;letter-spacing:-0.3px}
+.date-input{font-size:11px;color:var(--text-secondary);text-align:center}
+.ccy-select{font-size:11px;padding:3px 5px;border:1px solid var(--border);border-radius:2px;background:var(--bg-secondary);color:var(--text-primary);font-family:'Inter',sans-serif;width:auto;min-width:62px;cursor:pointer}
+.hkd-equiv{font-size:10px;color:var(--text-secondary);margin-top:2px;text-align:right}
+.btn-action{font-size:10px;padding:8px 14px;text-transform:uppercase;letter-spacing:1px;margin:10px;border:1px dashed var(--accent);color:var(--accent);background:transparent;cursor:pointer;width:calc(100% - 20px);font-family:'Inter',sans-serif;border-radius:2px;transition:background 0.2s}
+.btn-action:hover{background:rgba(197,168,128,0.08)}
+.btn-delete{color:var(--text-secondary);background:transparent;border:none;cursor:pointer;font-size:15px;opacity:0.25;padding:3px 5px;transition:opacity 0.2s}
+.btn-delete:hover{opacity:1;color:var(--danger)}
 
-        .currency-display { font-size: 10px; color: var(--text-secondary); margin-top: 2px; font-family: 'Inter', sans-serif; }
+/* NOTES */
+.notes-column{background:rgba(197,168,128,0.03);padding:16px;border-radius:4px;border:1px solid var(--border)}
+.note-item{background:var(--bg-card);padding:12px;border-radius:4px;margin-bottom:12px;border-left:3px solid var(--accent);box-shadow:var(--shadow)}
+.note-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.note-status{font-size:8px;text-transform:uppercase;letter-spacing:0.5px;padding:3px 8px;border-radius:10px;background:var(--bg-secondary);color:var(--accent);cursor:pointer}
+.note-status.done{background:var(--success);color:#fff}
+textarea{resize:vertical;min-height:50px;font-size:12px;line-height:1.4}
 
-        .notes-column { background: rgba(197, 168, 128, 0.03); padding: 15px; border-radius: 4px; border: 1px solid var(--border); }
-        .note-item { background: var(--bg-card); padding: 12px; border-radius: 4px; margin-bottom: 12px; border-left: 3px solid var(--accent); box-shadow: var(--shadow); }
-        .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .note-status { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 10px; background: var(--bg-secondary); color: var(--accent); cursor: pointer; font-family: 'Inter', sans-serif; }
-        .note-status.done { background: var(--success); color: white; }
-        textarea { resize: vertical; min-height: 50px; font-size: 12px; line-height: 1.4; font-family: 'Inter', sans-serif; }
+/* INSIGHTS */
+.insights-grid{display:grid;grid-template-columns:1fr;gap:22px}
+.chart-card{background:var(--bg-card);padding:20px;border-radius:4px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.chart-card h3{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.5px;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.chart-container{position:relative;height:240px;width:100%}
 
-        .insights-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
-        .chart-card { background: var(--bg-card); padding: 20px; border-radius: 4px; border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .chart-card h3 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; }
-        .chart-container { position: relative; height: 250px; width: 100%; }
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--accent);color:var(--text-primary);padding:10px 22px;border-radius:3px;font-size:12px;letter-spacing:0.5px;opacity:0;transition:all 0.3s;z-index:7000;pointer-events:none;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-        footer { margin-top: 60px; text-align: center; padding: 25px 15px; border-top: 1px solid var(--border); font-size: 9px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase; font-family: 'Inter', sans-serif; }
-        .lock-indicator { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; color: var(--accent); font-family: 'Cinzel', serif; letter-spacing: 2px; }
-        
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-bg); justify-content: center; align-items: center; }
-        .modal-content { background-color: var(--bg-card); margin: auto; padding: 30px; border: 1px solid var(--border); width: 90%; max-width: 400px; border-radius: 8px; box-shadow: var(--shadow); text-align: center; }
-        .modal-content h2 { font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 20px; font-size: 18px; letter-spacing: 1px; }
-        .modal-content input[type="text"], .modal-content input[type="password"] {
-            width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 4px; background-color: var(--input-bg); color: var(--text-primary); font-family: 'Inter', sans-serif;
-        }
-        .modal-content button { width: 100%; padding: 10px; margin-top: 10px; font-family: 'Inter', sans-serif; }
-        .modal-content .error-message { color: var(--danger); font-size: 12px; margin-top: -10px; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
-        .modal-content .close-button { color: var(--text-secondary); float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-content .close-button:hover, .modal-content .close-button:focus { color: var(--accent); text-decoration: none; cursor: pointer; }
+footer{margin-top:60px;text-align:center;padding:28px;border-top:1px solid var(--border);font-size:9px;letter-spacing:2.5px;color:var(--text-secondary);text-transform:uppercase}
 
-        @media (min-width: 768px) {
-            .container { padding: 0 40px; }
-            nav { flex-direction: row; justify-content: space-between; align-items: center; padding: 40px 0; margin-bottom: 50px; }
-            .nav-controls { flex-wrap: nowrap; gap: 15px; }
-            select, button { flex: 0 1 auto; min-width: auto; }
-            .brand h1 { font-size: 24px; letter-spacing: 4px; }
-            .brand span { font-size: 11px; letter-spacing: 2px; margin-top: 5px; }
-            
-            .summary-grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 60px; }
-            .summary-item { padding: 40px 20px; }
-            .summary-label { font-size: 11px; letter-spacing: 2px; margin-bottom: 12px; }
-            .summary-value.size-lg { font-size: 28px; letter-spacing: -0.5px; }
-            .summary-value.size-xl { font-size: 24px; letter-spacing: -0.8px; }
-            .summary-value.size-xxl { font-size: 20px; letter-spacing: -1px; }
-            .summary-value.size-xxxl { font-size: 16px; letter-spacing: -1.2px; }
-
-            .statement-layout { grid-template-columns: 1fr 1fr 350px; gap: 50px; }
-            .section-header h2 { font-size: 17px; letter-spacing: 2px; }
-            .section-header { margin-bottom: 25px; padding-bottom: 10px; }
-            
-            th { padding: 15px; font-size: 10px; letter-spacing: 1px; }
-            td { padding: 10px 15px; font-size: 14px; }
-            .num-input { font-size: 16px; }
-            .date-input { width: 85px; }
-            .btn-action { margin: 15px; width: auto; }
-            
-            .note-item { padding: 15px; margin-bottom: 15px; }
-            .note-status { font-size: 9px; letter-spacing: 1px; }
-            textarea { min-height: 60px; font-size: 12px; }
-
-            .insights-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
-            .chart-card { padding: 30px; }
-            .chart-card h3 { font-size: 15px; letter-spacing: 1px; margin-bottom: 25px; }
-            .chart-container { height: 350px; }
-
-            footer { margin-top: 100px; padding: 40px; font-size: 10px; letter-spacing: 3px; }
-        }
-    </style>
+@media(min-width:768px){
+.container{padding:0 40px}
+nav{flex-direction:row;justify-content:space-between;align-items:center;padding:38px 0;margin-bottom:50px}
+.nav-controls{flex-wrap:nowrap}
+.brand h1{font-size:24px;letter-spacing:4px}
+.brand span{font-size:11px}
+.summary-grid{grid-template-columns:repeat(4,1fr);margin-bottom:55px}
+.summary-item{padding:38px 18px}
+.summary-label{font-size:10px;letter-spacing:2px;margin-bottom:12px}
+.sz-lg{font-size:28px}.sz-md{font-size:22px}.sz-sm{font-size:17px}
+.statement-layout{grid-template-columns:1fr 1fr 320px;gap:44px}
+.section-header h2{font-size:16px;letter-spacing:2px}
+th{padding:14px;font-size:10px}
+td{padding:9px 14px;font-size:14px}
+.num-input{font-size:15px}
+.insights-grid{grid-template-columns:repeat(2,1fr);gap:36px}
+.chart-container{height:320px}
+footer{margin-top:90px;padding:38px;font-size:10px}
+}
+</style>
 </head>
 <body data-theme="dark">
 
-<div id="loading" class="loading-overlay">SYNCHRONIZING...</div>
-
-<!-- Login Modal -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <h2>Login to Private Wealth</h2>
-        <input type="text" id="login-email" placeholder="Email">
-        <input type="password" id="login-password" placeholder="Password">
-        <p id="login-error" class="error-message"></p>
-        <button onclick="handleLogin()">Login</button>
-        <button onclick="showSignup()">Sign Up</button>
-    </div>
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-logo">PRIVATE WEALTH</div>
+    <div class="lock-sub">PREMIUM FINANCIAL STATEMENT · V8</div>
+    <input class="lock-input" type="password" id="pw-input" placeholder="· · · · · · · ·" maxlength="32" onkeydown="if(event.key==='Enter')unlock()">
+    <button class="lock-btn" onclick="unlock()">ENTER</button>
+    <div class="lock-err" id="pw-err"></div>
+    <div class="sync-status" id="lock-sync-status"></div>
+  </div>
 </div>
 
-<!-- Signup Modal -->
-<div id="signupModal" class="modal">
-    <div class="modal-content">
-        <h2>Sign Up for Private Wealth</h2>
-        <input type="text" id="signup-email" placeholder="Email">
-        <input type="password" id="signup-password" placeholder="Password">
-        <p id="signup-error" class="error-message"></p>
-        <button onclick="handleSignup()">Sign Up</button>
-        <button onclick="showLogin()">Back to Login</button>
+<!-- CONTROL PANEL MODAL -->
+<div id="ctrl-overlay">
+  <div class="ctrl-box">
+    <div class="ctrl-title">⚙ Control Panel</div>
+
+    <div class="ctrl-section">
+      <span class="ctrl-label">Cloud Sync Status</span>
+      <div style="font-size:12px;padding:10px;background:var(--bg-secondary);border-radius:3px;display:flex;align-items:center;gap:6px">
+        <span class="sync-dot" id="ctrl-sync-dot"></span>
+        <span id="ctrl-sync-label" style="color:var(--text-secondary)">Checking...</span>
+      </div>
+      <button class="ctrl-btn info" onclick="forcePush()">PUSH LOCAL → CLOUD</button>
+      <button class="ctrl-btn info" onclick="forcePull()">PULL CLOUD → LOCAL</button>
+      <div class="ctrl-msg" id="sync-msg"></div>
     </div>
+
+    <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
+      <span class="ctrl-label">Change Password</span>
+      <input class="ctrl-input" type="password" id="new-pw1" placeholder="New password">
+      <input class="ctrl-input" type="password" id="new-pw2" placeholder="Confirm new password">
+      <button class="ctrl-btn" onclick="changePw()">UPDATE PASSWORD</button>
+      <div class="ctrl-msg" id="pw-change-msg"></div>
+    </div>
+
+    <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
+      <span class="ctrl-label">Danger Zone</span>
+      <button class="ctrl-btn danger" onclick="if(confirm('Reset ALL local data? This cannot be undone.'))clearAllData()">RESET ALL LOCAL DATA</button>
+    </div>
+
+    <button class="ctrl-btn secondary" onclick="closeCtrl()">CLOSE</button>
+  </div>
 </div>
 
-<!-- Settings Modal -->
-<div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" onclick="closeSettingsModal()">&times;</span>
-        <h2>Settings</h2>
-        <h3>Change Password</h3>
-        <input type="password" id="current-password" placeholder="Current Password">
-        <input type="password" id="new-password" placeholder="New Password">
-        <input type="password" id="confirm-new-password" placeholder="Confirm New Password">
-        <p id="password-change-error" class="error-message"></p>
-        <button onclick="changePassword()">Change Password</button>
-        <button onclick="handleLogout()" style="background-color: var(--danger);">Logout</button>
+<div class="toast" id="toast"></div>
+
+<div class="container" id="app" style="display:none">
+  <nav>
+    <div class="brand">
+      <h1>Private Wealth</h1>
+      <span>PREMIUM FINANCIAL STATEMENT · V8</span>
     </div>
-</div>
-
-<div class="container" id="main-app-content" style="display:none;">
-    <nav>
-        <div class="brand">
-            <h1 id="title-main">Private Wealth</h1>
-            <span id="title-sub">PREMIUM FINANCIAL STATEMENT</span>
-        </div>
-        <div class="nav-controls">
-            <div class="view-toggle">
-                <div class="view-btn active" onclick="switchView('statement')" id="btn-view-statement">STATEMENT</div>
-                <div class="view-btn" onclick="switchView('insights')" id="btn-view-insights">INSIGHTS</div>
-            </div>
-            <select id="year-select" onchange="changePeriod()"></select>
-            <select id="month-select" onchange="changePeriod()"></select>
-            <button onclick="toggleTheme()" id="theme-btn">LIGHT MODE</button>
-            <button onclick="toggleLanguage()" id="lang-btn">EN</button>
-            <button class="btn-export" onclick="exportToExcel()">EXPORT</button>
-            <button class="icon-btn" onclick="openSettingsModal()" id="settings-btn">⚙️</button>
-            <button class="icon-btn" onclick="toggleLock()" id="master-lock">🔒</button>
-        </div>
-    </nav>
-
-    <div class="summary-grid">
-        <div class="summary-item">
-            <div class="summary-label" data-i18n="net-worth">Net Worth</div>
-            <div class="summary-value highlight" id="sum-net-worth">$ 0</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label" data-i18n="net-cashflow">Monthly Cash Flow</div>
-            <div class="summary-value" id="sum-cashflow">$ 0</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label" data-i18n="total-assets">Total Assets</div>
-            <div class="summary-value" id="sum-assets">$ 0</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label" data-i18n="total-liabilities">Total Liabilities</div>
-            <div class="summary-value" id="sum-liabilities">$ 0</div>
-        </div>
+    <div class="nav-controls">
+      <div class="view-toggle">
+        <div class="view-btn active" onclick="switchView('statement')" id="btn-view-statement">STATEMENT</div>
+        <div class="view-btn" onclick="switchView('insights')" id="btn-view-insights">INSIGHTS</div>
+      </div>
+      <select class="nav-btn" id="year-select" onchange="changePeriod()"></select>
+      <select class="nav-btn" id="month-select" onchange="changePeriod()"></select>
+      <button class="nav-btn" onclick="toggleTheme()" id="theme-btn">LIGHT</button>
+      <button class="nav-btn" onclick="toggleLanguage()" id="lang-btn">EN</button>
+      <button class="nav-btn accent" onclick="exportToExcel()">EXPORT</button>
+      <button class="icon-btn" onclick="openCtrl()" title="Control Panel">⚙</button>
+      <button class="icon-btn" onclick="toggleLock()" id="master-lock">🔒</button>
     </div>
+  </nav>
 
-    <div id="view-statement" class="view-content active">
-        <div class="statement-layout">
-            <div class="column">
-                <div class="section-header"><h2 data-i18n="balance-sheet">Balance Sheet</h2><span class="lock-indicator" id="lock-bs">Locked</span></div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th data-i18n="liquid-assets">Liquid Assets</th><th style="width:75px;">CCY</th><th style="text-align:right; width:120px;">Amount</th><th style="width:30px;"></th></tr></thead>
-                        <tbody id="list-liquid"></tbody>
-                    </table>
-                    <button class="btn-action edit-only" onclick="addItem('liquid')">+ ADD ITEM</button>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th data-i18n="investment-assets">Investment Assets</th><th style="width:75px;">CCY</th><th style="text-align:right; width:120px;">Amount</th><th style="width:30px;"></th></tr></thead>
-                        <tbody id="list-investment"></tbody>
-                    </table>
-                    <button class="btn-action edit-only" onclick="addItem('investment')">+ ADD ITEM</button>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th data-i18n="liabilities">Liabilities</th><th style="width:75px;">CCY</th><th style="width:90px;">Due</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
-                        <tbody id="list-liabilities"></tbody>
-                    </table>
-                    <button class="btn-action edit-only" onclick="addItem('liabilities')">+ ADD ITEM</button>
-                </div>
-            </div>
+  <div class="summary-grid">
+    <div class="summary-item"><div class="summary-label" data-i18n="net-worth">資產淨值</div><div class="summary-value highlight sz-lg" id="sum-net-worth">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-i18n="net-cashflow">每月淨現金流</div><div class="summary-value sz-lg" id="sum-cashflow">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-i18n="total-assets">總資產</div><div class="summary-value sz-lg" id="sum-assets">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-i18n="total-liabilities">總負債</div><div class="summary-value sz-lg" id="sum-liabilities">$ 0</div></div>
+  </div>
 
-            <div class="column">
-                <div class="section-header"><h2 data-i18n="cash-flow">Cash Flow</h2><span class="lock-indicator" id="lock-cf">Locked</span></div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th data-i18n="income">Income</th><th style="width:75px;">CCY</th><th style="width:90px;">Date</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
-                        <tbody id="list-income"></tbody>
-                    </table>
-                    <button class="btn-action edit-only" onclick="addItem('income')">+ ADD ITEM</button>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th data-i18n="fixed-expenses">Fixed Expenses</th><th style="width:75px;">CCY</th><th style="width:90px;">Date</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
-                        <tbody id="list-fixed"></tbody>
-                    </table>
-                    <button class="btn-action edit-only" onclick="addItem('fixed')">+ ADD ITEM</button>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th data-i18n="variable-expenses">Variable Expenses</th><th style="width:75px;">CCY</th><th style="width:90px;">Date</th><th style="text-align:right; width:90px;">Amount</th><th style="width:30px;"></th></tr></thead>
-                        <tbody id="list-variable"></tbody>
-                    </table>
-                    <button class="btn-action edit-only" onclick="addItem('variable')">+ ADD ITEM</button>
-                </div>
-            </div>
-
-            <div class="notes-column">
-                <div class="section-header"><h2 data-i18n="strategic-notes">Strategic Notes</h2></div>
-                <div id="notes-list"></div>
-                <button class="btn-action" onclick="addNote()" style="width:calc(100% - 30px);">+ ADD ACTION</button>
-            </div>
-        </div>
+  <div id="view-statement" class="view-content active">
+    <div class="statement-layout">
+      <div class="column">
+        <div class="section-header"><h2 data-i18n="balance-sheet">資產負債表</h2><span class="lock-indicator" id="lock-bs">已鎖定</span></div>
+        <div class="table-wrapper"><table><thead><tr><th data-i18n="liquid-assets">流動資產</th><th style="width:70px">CCY</th><th style="text-align:right;width:110px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-liquid"></tbody></table><button class="btn-action edit-only" onclick="addItem('liquid')">+ ADD ITEM</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-i18n="investment-assets">投資資產</th><th style="width:70px">CCY</th><th style="text-align:right;width:110px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-investment"></tbody></table><button class="btn-action edit-only" onclick="addItem('investment')">+ ADD ITEM</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-i18n="liabilities">負債</th><th style="width:70px">CCY</th><th style="width:82px">Due</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-liabilities"></tbody></table><button class="btn-action edit-only" onclick="addItem('liabilities')">+ ADD ITEM</button></div>
+      </div>
+      <div class="column">
+        <div class="section-header"><h2 data-i18n="cash-flow">現金流量表</h2><span class="lock-indicator" id="lock-cf">已鎖定</span></div>
+        <div class="table-wrapper"><table><thead><tr><th data-i18n="income">收入</th><th style="width:70px">CCY</th><th style="width:82px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-income"></tbody></table><button class="btn-action edit-only" onclick="addItem('income')">+ ADD ITEM</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-i18n="fixed-expenses">固定支出</th><th style="width:70px">CCY</th><th style="width:82px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-fixed"></tbody></table><button class="btn-action edit-only" onclick="addItem('fixed')">+ ADD ITEM</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-i18n="variable-expenses">彈性支出</th><th style="width:70px">CCY</th><th style="width:82px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-variable"></tbody></table><button class="btn-action edit-only" onclick="addItem('variable')">+ ADD ITEM</button></div>
+      </div>
+      <div class="notes-column">
+        <div class="section-header"><h2 data-i18n="strategic-notes">Strategic Notes</h2></div>
+        <div id="notes-list"></div>
+        <button class="btn-action" onclick="addNote()" style="width:calc(100% - 20px);margin:10px">+ ADD ACTION</button>
+      </div>
     </div>
+  </div>
 
-    <div id="view-insights" class="view-content">
-        <div class="insights-grid">
-            <div class="chart-card"><h3>Wealth Growth</h3><div class="chart-container"><canvas id="chart-wealth"></canvas></div></div>
-            <div class="chart-card"><h3>Income vs. Expenses</h3><div class="chart-container"><canvas id="chart-cashflow"></canvas></div></div>
-            <div class="chart-card"><h3>Liability Trend</h3><div class="chart-container"><canvas id="chart-liabilities"></canvas></div></div>
-            <div class="chart-card"><h3>Savings Rate %</h3><div class="chart-container"><canvas id="chart-savings"></canvas></div></div>
-        </div>
+  <div id="view-insights" class="view-content">
+    <div class="insights-grid">
+      <div class="chart-card"><h3>Wealth Growth</h3><div class="chart-container"><canvas id="chart-wealth"></canvas></div></div>
+      <div class="chart-card"><h3>Income vs. Expenses</h3><div class="chart-container"><canvas id="chart-cashflow"></canvas></div></div>
+      <div class="chart-card"><h3>Liability Trend</h3><div class="chart-container"><canvas id="chart-liabilities"></canvas></div></div>
+      <div class="chart-card"><h3>Savings Rate %</h3><div class="chart-container"><canvas id="chart-savings"></canvas></div></div>
     </div>
+  </div>
 
-    <footer>&copy; 2026 PRIVATE WEALTH MANAGEMENT | HIGHLY CONFIDENTIAL | SWISS STANDARD</footer>
+  <footer>&copy; 2026 PRIVATE WEALTH MANAGEMENT · HIGHLY CONFIDENTIAL · SWISS STANDARD</footer>
 </div>
 
 <script>
-    const SUPABASE_URL = 'https://vqqngcilyvfjlbeofryq.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxcW5nY2lseXZmamxiZW9mcnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzY5MTYsImV4cCI6MjA5NTcxMjkxNn0.5F8XqInFhwjBd2-oHxBFZ2q4HhPiDUNOd18KCRiyUEo';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storageKey: 'supabase.auth.token' } });
+// ─────────────────────────────────────────
+//  SUPABASE CONFIG
+// ─────────────────────────────────────────
+const SUPABASE_URL  = 'https://zvevigywfonuyzrqavmj.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2ZXZpZ3l3Zm9udXl6cnFhdm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTM4NDksImV4cCI6MjA5NjA4OTg0OX0.9xSEv9ti14y7rrB4_8OlUd5U0me6UVx1sqg6dn4mg-c';
+const TABLE         = 'wealth_data';
 
-    let currentTheme = 'dark';
-    let currentLang = 'zh';
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth() + 1;
-    let isLocked = true;
-    let charts = {};
-    let db = {}; 
-    let currentPeriodId = null;
-    let rates = { USD: 7.8, CNY: 1.08, JPY: 0.05, EUR: 8.5, HKD: 1 };
-    let initializationInProgress = false;
+const SB_HEADERS = {
+  'Content-Type':  'application/json',
+  'apikey':        SUPABASE_ANON,
+  'Authorization': 'Bearer ' + SUPABASE_ANON,
+  'Prefer':        'resolution=merge-duplicates'
+};
 
-    const i18n = {
-        zh: {
-            "net-worth": "資產淨值", "net-cashflow": "每月淨現金流", "total-assets": "總資產", "total-liabilities": "總負債",
-            "balance-sheet": "資產負債表", "cash-flow": "現金流量表", "strategic-notes": "Strategic Notes & Actions",
-            "liquid-assets": "流動資產", "investment-assets": "投資資產", "liabilities": "負債", "income": "收入",
-            "fixed-expenses": "固定支出", "variable-expenses": "彈性支出", "locked": "已鎖定", "unlocked": "已解鎖",
-            "month-names": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
-        },
-        en: {
-            "net-worth": "Net Worth", "net-cashflow": "Net Cash Flow", "total-assets": "Total Assets", "total-liabilities": "Total Liabilities",
-            "balance-sheet": "Balance Sheet", "cash-flow": "Cash Flow", "strategic-notes": "Strategic Notes & Actions",
-            "liquid-assets": "Liquid Assets", "investment-assets": "Investment Assets", "liabilities": "Liabilities", "income": "Income",
-            "fixed-expenses": "Fixed Expenses", "variable-expenses": "Variable Expenses", "locked": "Locked", "unlocked": "Unlocked",
-            "month-names": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        }
-    };
+// Simple hash of the password — used as user identity (no real auth needed)
+async function hashPw(pw) {
+  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,16);
+}
 
-    const tableMapping = { 'liquid': 'liquid_assets', 'investment': 'investment_assets', 'liabilities': 'liabilities', 'income': 'income', 'fixed': 'fixed_expenses', 'variable': 'variable_expenses', 'notes': 'notes' };
+// ─────────────────────────────────────────
+//  SUPABASE SYNC
+// ─────────────────────────────────────────
+let userHash = null;
 
-    async function init() {
-        _supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
-                document.getElementById('loginModal').style.display = 'none';
-                document.getElementById('signupModal').style.display = 'none';
-                document.getElementById('main-app-content').style.display = 'block';
-                loadAppContent();
-            } else {
-                document.getElementById('main-app-content').style.display = 'none';
-                document.getElementById('loginModal').style.display = 'flex';
-            }
-        });
+async function sbFetch(path, method='GET', body=null) {
+  const opts = { method, headers: SB_HEADERS };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
+  if (!res.ok) throw new Error(await res.text());
+  return method === 'GET' ? res.json() : res;
+}
 
-        const { data: { session } } = await _supabase.auth.getSession();
-        if (session) {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('main-app-content').style.display = 'block';
-            loadAppContent();
-        } else {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
+// Load ALL period rows for this user from Supabase into db
+async function pullFromCloud() {
+  setSyncStatus('loading', 'Syncing…');
+  try {
+    const rows = await sbFetch(`${TABLE}?user_hash=eq.${userHash}&select=period_key,data`);
+    rows.forEach(r => { db[r.period_key] = r.data; });
+    localStorage.setItem(DB_KEY, JSON.stringify(db));
+    setSyncStatus('ok', 'Synced · ' + new Date().toLocaleTimeString());
+    return true;
+  } catch(e) {
+    setSyncStatus('err', 'Cloud unavailable — using local');
+    return false;
+  }
+}
+
+// Push a single period row to Supabase (upsert)
+async function pushPeriod(periodKey) {
+  if (!userHash) return;
+  try {
+    await sbFetch(TABLE, 'POST', {
+      user_hash:  userHash,
+      period_key: periodKey,
+      data:       db[periodKey],
+      updated_at: new Date().toISOString()
+    });
+    setSyncStatus('ok', 'Saved · ' + new Date().toLocaleTimeString());
+  } catch(e) {
+    setSyncStatus('err', 'Save failed — stored locally');
+  }
+}
+
+// Push ALL local periods to cloud
+async function forcePush() {
+  setSyncMsg('Pushing…', false);
+  try {
+    const keys = Object.keys(db);
+    for (const k of keys) await pushPeriod(k);
+    setSyncMsg('All data pushed ✓', false);
+  } catch(e) {
+    setSyncMsg('Push failed', true);
+  }
+}
+
+// Pull everything fresh from cloud
+async function forcePull() {
+  setSyncMsg('Pulling…', false);
+  const ok = await pullFromCloud();
+  if (ok) { renderDashboard(); setSyncMsg('Data pulled ✓', false); }
+  else     { setSyncMsg('Pull failed — offline?', true); }
+}
+
+function setSyncStatus(state, label) {
+  ['ctrl-sync-dot','lock-sync-dot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'sync-dot ' + state;
+  });
+  const lblEl = document.getElementById('ctrl-sync-label');
+  if (lblEl) lblEl.innerText = label;
+  const lockEl = document.getElementById('lock-sync-status');
+  if (lockEl) lockEl.innerText = label;
+}
+
+function setSyncMsg(msg, isErr) {
+  const el = document.getElementById('sync-msg');
+  if (!el) return;
+  el.className = 'ctrl-msg ' + (isErr ? 'err' : 'ok');
+  el.innerText = msg;
+  setTimeout(() => { el.innerText = ''; }, 3000);
+}
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+const DEFAULT_PW = 'wealth2026';
+const PW_KEY     = 'wealth_pw_v8';
+const DB_KEY     = 'wealth_db_v8';
+
+let currentTheme = 'dark';
+let currentLang  = 'zh';
+let currentYear  = new Date().getFullYear();
+let currentMonth = new Date().getMonth() + 1;
+let isLocked     = true;
+let charts       = {};
+let rates        = { HKD:1, USD:7.8, CNY:1.08, JPY:0.052, EUR:8.6 };
+
+let db = {};
+try { db = JSON.parse(localStorage.getItem(DB_KEY)) || {}; } catch(e) { db = {}; }
+
+function getStoredPw() { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
+
+// ─────────────────────────────────────────
+//  LOCK / UNLOCK
+// ─────────────────────────────────────────
+async function unlock() {
+  const val = document.getElementById('pw-input').value;
+  if (val === getStoredPw()) {
+    userHash = await hashPw(val);
+    document.getElementById('pw-err').innerText = '';
+    // Pull cloud data then show app
+    document.getElementById('lock-sync-status').innerText = 'Loading from cloud…';
+    await pullFromCloud();
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    init();
+  } else {
+    const err = document.getElementById('pw-err');
+    err.innerText = 'Incorrect password';
+    setTimeout(() => err.innerText = '', 2000);
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+async function changePw() {
+  const p1  = document.getElementById('new-pw1').value.trim();
+  const p2  = document.getElementById('new-pw2').value.trim();
+  const msg = document.getElementById('pw-change-msg');
+  if (!p1)   { msg.className='ctrl-msg err'; msg.innerText='Password cannot be empty'; return; }
+  if (p1!==p2){ msg.className='ctrl-msg err'; msg.innerText='Passwords do not match'; return; }
+  localStorage.setItem(PW_KEY, p1);
+  userHash = await hashPw(p1);
+  msg.className='ctrl-msg ok'; msg.innerText='Password updated ✓';
+  document.getElementById('new-pw1').value='';
+  document.getElementById('new-pw2').value='';
+  setTimeout(() => msg.innerText='', 3000);
+}
+
+function clearAllData() {
+  localStorage.removeItem(DB_KEY);
+  db = {};
+  closeCtrl();
+  renderDashboard();
+  showToast('All local data cleared');
+}
+
+function openCtrl() { updateCtrlSyncUI(); document.getElementById('ctrl-overlay').classList.add('open'); }
+function closeCtrl(){ document.getElementById('ctrl-overlay').classList.remove('open'); }
+function updateCtrlSyncUI() {
+  const dot = document.getElementById('ctrl-sync-dot');
+  // Reflect current status — just show what we last set
+}
+
+document.getElementById('ctrl-overlay').addEventListener('click', function(e) { if(e.target===this) closeCtrl(); });
+document.getElementById('pw-input').addEventListener('keydown', function(e) { if(e.key==='Enter') unlock(); });
+
+// ─────────────────────────────────────────
+//  I18N
+// ─────────────────────────────────────────
+const i18n = {
+  zh: {
+    "net-worth":"資產淨值","net-cashflow":"每月淨現金流","total-assets":"總資產","total-liabilities":"總負債",
+    "balance-sheet":"資產負債表","cash-flow":"現金流量表","strategic-notes":"Strategic Notes & Actions",
+    "liquid-assets":"流動資產","investment-assets":"投資資產","liabilities":"負債","income":"收入",
+    "fixed-expenses":"固定支出","variable-expenses":"彈性支出","locked":"已鎖定","unlocked":"已解鎖",
+    "month-names":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
+  },
+  en: {
+    "net-worth":"Net Worth","net-cashflow":"Net Cash Flow","total-assets":"Total Assets","total-liabilities":"Total Liabilities",
+    "balance-sheet":"Balance Sheet","cash-flow":"Cash Flow","strategic-notes":"Strategic Notes & Actions",
+    "liquid-assets":"Liquid Assets","investment-assets":"Investment Assets","liabilities":"Liabilities","income":"Income",
+    "fixed-expenses":"Fixed Expenses","variable-expenses":"Variable Expenses","locked":"Locked","unlocked":"Unlocked",
+    "month-names":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+  }
+};
+
+const defaultStructure = () => ({
+  liquid:      [{ name:"主要戶口", value:0, ccy:"HKD" }],
+  investment:  [{ name:"股票/ETF", value:0, ccy:"HKD" }],
+  liabilities: [{ name:"信用卡",   value:0, ccy:"HKD", date:"" }],
+  income:      [{ name:"薪金",     value:0, ccy:"HKD", date:"" }],
+  fixed:       [{ name:"家用",     value:0, ccy:"HKD", date:"" }],
+  variable:    [{ name:"餐飲",     value:0, ccy:"HKD", date:"" }],
+  notes: []
+});
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+async function init() {
+  const ys = document.getElementById('year-select');
+  for (let y = 2024; y <= 2030; y++) {
+    let o = document.createElement('option');
+    o.value = y; o.innerText = y;
+    if (y === currentYear) o.selected = true;
+    ys.appendChild(o);
+  }
+  updateMonthSelect();
+  applyI18n();
+  await fetchRates();
+  renderDashboard();
+}
+
+async function fetchRates() {
+  try {
+    const res  = await fetch('https://api.frankfurter.app/latest?from=HKD&to=USD,CNY,JPY,EUR');
+    const data = await res.json();
+    if (data.rates) {
+      rates.USD = 1 / data.rates.USD;
+      rates.CNY = 1 / data.rates.CNY;
+      rates.JPY = 1 / data.rates.JPY;
+      rates.EUR = 1 / data.rates.EUR;
     }
-
-    async function loadAppContent() {
-        const yearSelect = document.getElementById('year-select');
-        yearSelect.innerHTML = '';
-        for(let y = 2024; y <= 2030; y++) {
-            let opt = document.createElement('option');
-            opt.value = y; opt.innerText = y;
-            if(y === currentYear) opt.selected = true;
-            yearSelect.appendChild(opt);
-        }
-        updateMonthSelect();
-        applyI18n();
-        await fetchRates();
-        await loadAllData();
-        await initializePeriod();
-    }
-
-    async function fetchRates() {
-        try {
-            const res = await fetch('https://api.frankfurter.app/latest?from=HKD&to=USD,CNY,JPY,EUR');
-            const data = await res.json();
-            if (data.rates) {
-                rates.USD = 1 / data.rates.USD;
-                rates.CNY = 1 / data.rates.CNY;
-                rates.JPY = 1 / data.rates.JPY;
-                rates.EUR = 1 / data.rates.EUR;
-            }
-        } catch (e) { console.log("Rate fetch failed, using defaults"); }
-    }
-
-    function updateMonthSelect() {
-        const monthSelect = document.getElementById('month-select');
-        monthSelect.innerHTML = '';
-        i18n[currentLang]["month-names"].forEach((m, i) => {
-            let opt = document.createElement('option');
-            opt.value = i + 1; opt.innerText = m;
-            if(i + 1 === currentMonth) opt.selected = true;
-            monthSelect.appendChild(opt);
-        });
-    }
-
-    function applyI18n() {
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            el.innerText = i18n[currentLang][el.getAttribute('data-i18n')];
-        });
-        document.getElementById('lock-bs').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
-        document.getElementById('lock-cf').innerText = i18n[currentLang][isLocked ? 'locked' : 'unlocked'];
-        document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? (currentLang === 'zh' ? '淺色模式' : 'LIGHT MODE') : (currentLang === 'zh' ? '深色模式' : 'DARK MODE');
-        document.getElementById('lang-btn').innerText = currentLang === 'zh' ? 'EN' : '中文';
-    }
-
-    function switchView(view) {
-        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`view-${view}`).classList.add('active');
-        document.getElementById(`btn-view-${view}`).classList.add('active');
-        if (view === 'insights') initCharts();
-    }
-
-    function toggleTheme() {
-        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.body.setAttribute('data-theme', currentTheme);
-        applyI18n();
-        if (document.getElementById('view-insights').classList.contains('active')) initCharts();
-    }
-
-    function toggleLanguage() {
-        currentLang = currentLang === 'zh' ? 'en' : 'zh';
-        updateMonthSelect();
-        applyI18n();
-        renderDashboard();
-    }
-
-    function toggleLock() {
-        isLocked = !isLocked;
-        document.getElementById('master-lock').innerText = isLocked ? '🔒' : '🔓';
-        applyI18n();
-        renderDashboard();
-    }
-
-    async function changePeriod() {
-        currentYear = parseInt(document.getElementById('year-select').value);
-        currentMonth = parseInt(document.getElementById('month-select').value);
-        await initializePeriod();
-    }
-
-    function getPeriodKey() { return `${currentYear}-${currentMonth.toString().padStart(2, '0')}`; }
-    function getPrevKey() {
-        let m = currentMonth - 1, y = currentYear;
-        if (m === 0) { m = 12; y -= 1; }
-        return `${y}-${m.toString().padStart(2, '0')}`;
-    }
-
-    // ── FIX: replaced simple boolean guard with a promise-based wait ──
-    async function initializePeriod() {
-        // If already running, wait for it to finish instead of bailing silently
-        if (initializationInProgress) {
-            await new Promise(resolve => {
-                const poll = setInterval(() => {
-                    if (!initializationInProgress) { clearInterval(poll); resolve(); }
-                }, 100);
-            });
-            // After waiting, currentPeriodId should already be set — just re-render
-            renderDashboard();
-            return;
-        }
-
-        initializationInProgress = true;
-        showLoading(true);
-
-        const key = getPeriodKey();
-        try {
-            if (!db[key] || !db[key].id) {
-                currentPeriodId = await ensurePeriod(key);
-            } else {
-                currentPeriodId = db[key].id;
-            }
-        } catch (err) {
-            console.error("Error initializing period:", err);
-        }
-
-        initializationInProgress = false;
-        showLoading(false);
-        renderDashboard();
-    }
-
-    async function ensurePeriod(key) {
-        // ── Get current user ──
-        const { data: userData, error: userError } = await _supabase.auth.getUser();
-        if (userError || !userData?.user) {
-            showError(`Auth error: ${userError?.message || 'No user session found. Please log in again.'}`);
-            return null;
-        }
-        const user = userData.user;
-
-        // ── Check if period already exists ──
-        const { data: existingPeriods, error: checkError } = await _supabase
-            .from('periods').select('id').eq('period_key', key).eq('user_id', user.id);
-
-        if (checkError) {
-            showError(`DB read error: ${checkError.message} (code: ${checkError.code})`);
-            return null;
-        }
-
-        if (existingPeriods && existingPeriods.length > 0) {
-            const existingId = existingPeriods[0].id;
-            const results = await Promise.all([
-                _supabase.from('liquid_assets').select('*').eq('period_id', existingId),
-                _supabase.from('investment_assets').select('*').eq('period_id', existingId),
-                _supabase.from('liabilities').select('*').eq('period_id', existingId),
-                _supabase.from('income').select('*').eq('period_id', existingId),
-                _supabase.from('fixed_expenses').select('*').eq('period_id', existingId),
-                _supabase.from('variable_expenses').select('*').eq('period_id', existingId),
-                _supabase.from('notes').select('*').eq('period_id', existingId)
-            ]);
-            db[key] = {
-                id: existingId,
-                liquid: results[0].data || [], investment: results[1].data || [],
-                liabilities: results[2].data || [], income: results[3].data || [],
-                fixed: results[4].data || [], variable: results[5].data || [],
-                notes: results[6].data || []
-            };
-            return existingId;
-        }
-
-        // ── Create new period ──
-        const { data: insertData, error: insertError } = await _supabase
-            .from('periods')
-            .insert([{ period_key: key, user_id: user.id }])
-            .select();
-
-        if (insertError) {
-            showError(`DB insert error: ${insertError.message} (code: ${insertError.code}) — Check Supabase RLS policies on the "periods" table.`);
-            return null;
-        }
-
-        if (!insertData || insertData.length === 0) {
-            showError('Period insert returned no data. Check Supabase RLS: make sure INSERT and SELECT policies exist for the "periods" table.');
-            return null;
-        }
-
-        const newId = insertData[0].id;
-        db[key] = { id: newId, liquid: [], investment: [], liabilities: [], income: [], fixed: [], variable: [], notes: [] };
-
-        // ── Copy structure from previous month ──
-        const prevKey = getPrevKey();
-        if (db[prevKey]) {
-            const categories = ['liquid', 'investment', 'liabilities', 'income', 'fixed', 'variable'];
-            for (const cat of categories) {
-                const items = db[prevKey][cat].map(item => {
-                    const newItem = { period_id: newId, name: item.name, value: item.value, currency: item.currency || 'HKD' };
-                    if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) {
-                        newItem.value = 0;
-                        newItem[cat === 'liabilities' ? 'due_date' : 'transaction_date'] = "";
-                    }
-                    return newItem;
-                });
-                if (items.length > 0) {
-                    const { data: copiedItems, error: copyError } = await _supabase.from(tableMapping[cat]).insert(items).select();
-                    if (copyError) console.error("Error copying items:", copyError);
-                    else db[key][cat] = copiedItems || [];
-                }
-            }
-        }
-        return newId;
-    }
-
-    // ── Show a visible on-screen error (not just console) ──
-    function showError(msg) {
-        console.error(msg);
-        // Remove old error banner if any
-        const old = document.getElementById('app-error-banner');
-        if (old) old.remove();
-        const banner = document.createElement('div');
-        banner.id = 'app-error-banner';
-        banner.style.cssText = `
-            position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-            background: #7f1d1d; color: #fef2f2; padding: 14px 20px;
-            font-family: monospace; font-size: 13px; line-height: 1.5;
-            display: flex; justify-content: space-between; align-items: flex-start;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        `;
-        banner.innerHTML = `
-            <span>⚠️ <strong>Error:</strong> ${msg}</span>
-            <button onclick="this.parentElement.remove()" style="
-                background:transparent; border:1px solid #fef2f2; color:#fef2f2;
-                padding:4px 10px; cursor:pointer; font-size:12px; margin-left:20px; flex-shrink:0;
-            ">✕ Dismiss</button>
-        `;
-        document.body.prepend(banner);
-    }
-
-    async function loadAllData() {
-        showLoading(true);
-        try {
-            const user = (await _supabase.auth.getUser()).data.user;
-            if (!user) { console.error("No authenticated user"); showLoading(false); return; }
-
-            const { data: periods, error: periodsError } = await _supabase.from('periods').select('*').eq('user_id', user.id);
-            if (periodsError) { console.error("Error loading periods:", periodsError); showLoading(false); return; }
-
-            for (const p of periods || []) {
-                const results = await Promise.all([
-                    _supabase.from('liquid_assets').select('*').eq('period_id', p.id),
-                    _supabase.from('investment_assets').select('*').eq('period_id', p.id),
-                    _supabase.from('liabilities').select('*').eq('period_id', p.id),
-                    _supabase.from('income').select('*').eq('period_id', p.id),
-                    _supabase.from('fixed_expenses').select('*').eq('period_id', p.id),
-                    _supabase.from('variable_expenses').select('*').eq('period_id', p.id),
-                    _supabase.from('notes').select('*').eq('period_id', p.id)
-                ]);
-                db[p.period_key] = { id: p.id, liquid: results[0].data || [], investment: results[1].data || [], liabilities: results[2].data || [], income: results[3].data || [], fixed: results[4].data || [], variable: results[5].data || [], notes: results[6].data || [] };
-            }
-        } catch (err) { console.error("Error loading data:", err); }
-        showLoading(false);
-    }
-
-    function renderDashboard() {
-        const key = getPeriodKey();
-        const data = db[key];
-        if (!data) return;
-        
-        renderList('liquid', data.liquid);
-        renderList('investment', data.investment);
-        renderList('liabilities', data.liabilities);
-        renderList('income', data.income);
-        renderList('fixed', data.fixed);
-        renderList('variable', data.variable);
-        renderNotes();
-        calculate();
-    }
-
-    function renderList(cat, items) {
-        const tbody = document.getElementById(`list-${cat}`);
-        tbody.innerHTML = '';
-        items.forEach((item, i) => {
-            const tr = document.createElement('tr');
-            const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
-            const hasDate = ['liabilities', 'income', 'fixed', 'variable'].includes(cat);
-            
-            const hkdAmount = (parseFloat(item.value) || 0) * (rates[item.currency || 'HKD'] || 1);
-            
-            let currencyHtml = `<td><select class="currency-select" onchange="updateItem('${cat}', ${i}, 'currency', this.value)">
-                ${['HKD', 'USD', 'CNY', 'JPY', 'EUR'].map(c => `<option value="${c}" ${(item.currency || 'HKD') === c ? 'selected' : ''}>${c}</option>`).join('')}
-            </select></td>`;
-            
-            let dateHtml = '';
-            if (hasDate) {
-                dateHtml = `<td><input type="text" class="date-input" value="${item[dateField] || ''}" oninput="handleDateInput(event, '${cat}', ${i}, '${dateField}')" placeholder="DD/MM"></td>`;
-            }
-            
-            let deleteHtml = !isLocked ? `<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}', ${i})">×</button></td>` : '<td></td>';
-            
-            tr.innerHTML = `
-                <td><input type="text" class="${isLocked ? 'readonly' : ''}" value="${item.name}" onchange="updateItem('${cat}', ${i}, 'name', this.value)"></td>
-                ${currencyHtml}
-                ${dateHtml}
-                <td>
-                    <div><input type="number" class="num-input" value="${item.value}" onchange="updateItem('${cat}', ${i}, 'value', this.value)" step="0.01"></div>
-                    ${item.currency && item.currency !== 'HKD' ? `<div class="currency-display">≈ HKD ${formatNumber(hkdAmount)}</div>` : ''}
-                </td>
-                ${deleteHtml}
-            `;
-            tbody.appendChild(tr);
-        });
-        const addBtn = tbody.parentElement.nextElementSibling;
-        if(addBtn) addBtn.style.display = isLocked ? 'none' : 'inline-block';
-    }
-
-    function renderNotes() {
-        const list = document.getElementById('notes-list');
-        list.innerHTML = '';
-        const notes = db[getPeriodKey()].notes || [];
-        notes.forEach((note, i) => {
-            const div = document.createElement('div');
-            div.className = 'note-item';
-            div.innerHTML = `<div class="note-header"><span class="note-status ${note.status === 'done' ? 'done' : ''}" onclick="toggleNoteStatus(${i})">${note.status.toUpperCase()}</span><button class="btn-delete" onclick="deleteNote(${i})">×</button></div><textarea onchange="updateNote(${i}, this.value)">${note.text}</textarea>`;
-            list.appendChild(div);
-        });
-    }
-
-    function handleDateInput(e, cat, i, field) {
-        let val = e.target.value.replace(/\D/g, '');
-        if (val.length > 0) {
-            let d = val.substring(0, 2);
-            let m = val.substring(2, 4);
-            
-            if (d.length === 1 && parseInt(d) > 3) d = '0' + d;
-            if (d.length === 2 && m.length === 1 && parseInt(m) > 1) m = '0' + m;
-            
-            let formatted = d + (m ? '/' + m : '');
-            e.target.value = formatted;
-            
-            if (formatted.length === 5) updateItem(cat, i, field, formatted);
-        }
-    }
-
-    async function updateItem(cat, i, field, val) {
-        const key = getPeriodKey();
-        const item = db[key][cat][i];
-        if (field === 'value') val = parseFloat(val) || 0;
-        item[field] = val;
-        calculate();
-        renderList(cat, db[key][cat]);
-        const { error } = await _supabase.from(tableMapping[cat]).update({ [field]: val }).eq('id', item.id);
-        if (error) console.error("Update error:", error);
-    }
-
-    // ── FIX: robust ensurePeriodReady helper used by addItem and addNote ──
-    async function ensurePeriodReady() {
-        const key = getPeriodKey();
-        // If already good, return immediately
-        if (currentPeriodId && db[key] && db[key].id) return true;
-
-        // Wait out any in-progress initialization first
-        if (initializationInProgress) {
-            await new Promise(resolve => {
-                const poll = setInterval(() => {
-                    if (!initializationInProgress) { clearInterval(poll); resolve(); }
-                }, 100);
-            });
-        }
-
-        // Re-check after waiting
-        if (currentPeriodId && db[key] && db[key].id) return true;
-
-        // Still not ready — run initialization now
-        await initializePeriod();
-
-        // Final fallback: read from db if initializePeriod succeeded but didn't set currentPeriodId
-        if (!currentPeriodId && db[key] && db[key].id) {
-            currentPeriodId = db[key].id;
-        }
-
-        return !!currentPeriodId;
-    }
-
-    async function addItem(cat) {
-        const ready = await ensurePeriodReady();
-        if (!ready) {
-            showError("Failed to initialize period — see error banner for the exact Supabase error. Check RLS policies on your 'periods' table.");
-            return;
-        }
-
-        const key = getPeriodKey();
-        const newItem = { period_id: currentPeriodId, name: "New Item", value: 0, currency: 'HKD' };
-        const dateField = cat === 'liabilities' ? 'due_date' : 'transaction_date';
-        if (['liabilities', 'income', 'fixed', 'variable'].includes(cat)) newItem[dateField] = "";
-        
-        showLoading(true);
-        const { data, error } = await _supabase.from(tableMapping[cat]).insert([newItem]).select();
-        showLoading(false);
-        
-        if (error) { 
-            console.error(`Error adding item to ${cat}:`, error);
-            alert(`Failed to add item: ${error.message}`);
-            return; 
-        }
-        
-        db[key][cat].push(data[0]);
-        renderDashboard();
-    }
-
-    async function deleteItem(cat, i) {
-        const key = getPeriodKey();
-        const item = db[key][cat][i];
-        
-        showLoading(true);
-        const { error } = await _supabase.from(tableMapping[cat]).delete().eq('id', item.id);
-        showLoading(false);
-        
-        if (error) { console.error(error); return; }
-        db[key][cat].splice(i, 1);
-        renderDashboard();
-    }
-
-    async function addNote() {
-        const ready = await ensurePeriodReady();
-        if (!ready) return;
-
-        const key = getPeriodKey();
-        const newNote = { period_id: currentPeriodId, text: "", status: "pending" };
-        
-        showLoading(true);
-        const { data, error } = await _supabase.from('notes').insert([newNote]).select();
-        showLoading(false);
-        
-        if (error) { console.error(error); return; }
-        db[key].notes.push(data[0]);
-        renderNotes();
-    }
-
-    async function updateNote(i, val) {
-        const key = getPeriodKey();
-        const note = db[key].notes[i];
-        note.text = val;
-        await _supabase.from('notes').update({ text: val }).eq('id', note.id);
-    }
-
-    async function toggleNoteStatus(i) {
-        const key = getPeriodKey();
-        const note = db[key].notes[i];
-        const newStatus = note.status === 'done' ? 'pending' : 'done';
-        note.status = newStatus;
-        renderNotes();
-        await _supabase.from('notes').update({ status: newStatus }).eq('id', note.id);
-    }
-
-    async function deleteNote(i) {
-        const key = getPeriodKey();
-        const note = db[key].notes[i];
-        
-        showLoading(true);
-        const { error } = await _supabase.from('notes').delete().eq('id', note.id);
-        showLoading(false);
-        
-        if (error) { console.error(error); return; }
-        db[key].notes.splice(i, 1);
-        renderNotes();
-    }
-
-    function formatNumber(n) {
-        return n.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
-    }
-
-    function calculateFontSize(value) {
-        const str = value.toString().replace(/,/g, '');
-        if (str.length > 12) return 'size-xxxl';
-        if (str.length > 11) return 'size-xxl';
-        if (str.length > 9) return 'size-xl';
-        return 'size-lg';
-    }
-
-    function calculate() {
-        const data = db[getPeriodKey()];
-        if (!data) return;
-        
-        const sumMultiCurrency = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0) * (rates[b.currency || 'HKD'] || 1), 0);
-        
-        const assets = sumMultiCurrency(data.liquid) + sumMultiCurrency(data.investment);
-        const liab = sumMultiCurrency(data.liabilities);
-        const income = sumMultiCurrency(data.income);
-        const expenses = sumMultiCurrency(data.fixed) + sumMultiCurrency(data.variable);
-        const netWorth = assets - liab;
-        const cashflow = income - expenses;
-        
-        const assetEl = document.getElementById('sum-assets');
-        const liabEl = document.getElementById('sum-liabilities');
-        const netEl = document.getElementById('sum-net-worth');
-        const cfEl = document.getElementById('sum-cashflow');
-        
-        assetEl.innerText = '$ ' + formatNumber(assets);
-        assetEl.className = 'summary-value ' + calculateFontSize(assets);
-        
-        liabEl.innerText = '$ ' + formatNumber(liab);
-        liabEl.className = 'summary-value ' + calculateFontSize(liab);
-        
-        netEl.innerText = '$ ' + formatNumber(netWorth);
-        netEl.className = 'summary-value highlight ' + calculateFontSize(netWorth);
-        
-        cfEl.innerText = '$ ' + formatNumber(cashflow);
-        cfEl.className = 'summary-value ' + calculateFontSize(cashflow);
-        cfEl.style.color = cashflow >= 0 ? 'var(--success)' : 'var(--danger)';
-    }
-
-    function showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
-
-    function initCharts() {
-        const keys = Object.keys(db).sort();
-        const labels = keys.map(k => k.split('-')[1] + '月');
-        const sumMultiCurrency = (arr) => arr.reduce((a, b) => a + (parseFloat(b.value) || 0) * (rates[b.currency || 'HKD'] || 1), 0);
-        const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim();
-        const textColor = getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
-        const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor, font: { size: 10 } } } }, scales: { x: { grid: { display: false }, ticks: { color: textColor } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: textColor } } } };
-
-        if (charts.wealth) charts.wealth.destroy();
-        charts.wealth = new Chart(document.getElementById('chart-wealth'), { type: 'line', data: { labels, datasets: [{ label: 'Net Worth', data: keys.map(k => sumMultiCurrency(db[k].liquid) + sumMultiCurrency(db[k].investment) - sumMultiCurrency(db[k].liabilities)), borderColor: accentColor, tension: 0.3, fill: true, backgroundColor: 'rgba(197, 168, 128, 0.1)' }] }, options: commonOptions });
-        if (charts.cashflow) charts.cashflow.destroy();
-        charts.cashflow = new Chart(document.getElementById('chart-cashflow'), { type: 'bar', data: { labels, datasets: [{ label: 'Income', data: keys.map(k => sumMultiCurrency(db[k].income)), backgroundColor: 'rgba(16, 185, 129, 0.6)' }, { label: 'Expenses', data: keys.map(k => sumMultiCurrency(db[k].fixed) + sumMultiCurrency(db[k].variable)), backgroundColor: 'rgba(239, 68, 68, 0.6)' }] }, options: commonOptions });
-        if (charts.liabilities) charts.liabilities.destroy();
-        charts.liabilities = new Chart(document.getElementById('chart-liabilities'), { type: 'line', data: { labels, datasets: [{ label: 'Liabilities', data: keys.map(k => sumMultiCurrency(db[k].liabilities)), borderColor: '#ef4444', borderDash: [5, 5] }] }, options: commonOptions });
-        if (charts.savings) charts.savings.destroy();
-        charts.savings = new Chart(document.getElementById('chart-savings'), { type: 'bar', data: { labels, datasets: [{ label: 'Savings Rate %', data: keys.map(k => { const inc = sumMultiCurrency(db[k].income); const exp = sumMultiCurrency(db[k].fixed) + sumMultiCurrency(db[k].variable); return inc > 0 ? ((inc - exp) / inc * 100).toFixed(1) : 0; }), backgroundColor: accentColor }] }, options: commonOptions });
-    }
-
-    function exportToExcel() {
-        const key = getPeriodKey();
-        const data = db[key];
-        let wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid, ...data.investment, ...data.liabilities]), "Balance Sheet");
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income, ...data.fixed, ...data.variable]), "Cash Flow");
-        XLSX.writeFile(wb, `Wealth_v14_${key}.xlsx`);
-    }
-
-    // Authentication Functions
-    async function handleLogin() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        const errorEl = document.getElementById('login-error');
-        errorEl.innerText = '';
-        showLoading(true);
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-        showLoading(false);
-        if (error) {
-            errorEl.innerText = error.message;
-        } else {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('main-app-content').style.display = 'block';
-            loadAppContent();
-        }
-    }
-
-    async function handleSignup() {
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const errorEl = document.getElementById('signup-error');
-        errorEl.innerText = '';
-        showLoading(true);
-        const { data, error } = await _supabase.auth.signUp({ email, password });
-        showLoading(false);
-        if (error) {
-            errorEl.innerText = error.message;
-        } else {
-            alert('Sign up successful! Please check your email to confirm your account.');
-            showLogin();
-        }
-    }
-
-    async function handleLogout() {
-        showLoading(true);
-        const { error } = await _supabase.auth.signOut();
-        showLoading(false);
-        if (error) {
-            console.error('Logout error:', error.message);
-        } else {
-            document.getElementById('settingsModal').style.display = 'none';
-            document.getElementById('main-app-content').style.display = 'none';
-            document.getElementById('loginModal').style.display = 'flex';
-            db = {};
-            currentPeriodId = null;
-        }
-    }
-
-    async function changePassword() {
-        const newPassword = document.getElementById('new-password').value;
-        const confirmNewPassword = document.getElementById('confirm-new-password').value;
-        const errorEl = document.getElementById('password-change-error');
-        errorEl.innerText = '';
-
-        if (newPassword !== confirmNewPassword) {
-            errorEl.innerText = 'New passwords do not match.';
-            return;
-        }
-        if (newPassword.length < 6) {
-            errorEl.innerText = 'Password should be at least 6 characters.';
-            return;
-        }
-
-        showLoading(true);
-        const { data, error } = await _supabase.auth.updateUser({ password: newPassword });
-        showLoading(false);
-
-        if (error) {
-            errorEl.innerText = error.message;
-        } else {
-            alert('Password changed successfully!');
-            closeSettingsModal();
-        }
-    }
-
-    function showLogin() {
-        document.getElementById('signupModal').style.display = 'none';
-        document.getElementById('loginModal').style.display = 'flex';
-        document.getElementById('login-email').value = '';
-        document.getElementById('login-password').value = '';
-        document.getElementById('login-error').innerText = '';
-    }
-
-    function showSignup() {
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('signupModal').style.display = 'flex';
-        document.getElementById('signup-email').value = '';
-        document.getElementById('signup-password').value = '';
-        document.getElementById('signup-error').innerText = '';
-    }
-
-    function openSettingsModal() {
-        document.getElementById('settingsModal').style.display = 'flex';
-        document.getElementById('current-password').value = '';
-        document.getElementById('new-password').value = '';
-        document.getElementById('confirm-new-password').value = '';
-        document.getElementById('password-change-error').innerText = '';
-    }
-
-    function closeSettingsModal() {
-        document.getElementById('settingsModal').style.display = 'none';
-    }
-
-    window.onload = init;
+  } catch(e) { /* use defaults */ }
+}
+
+// ─────────────────────────────────────────
+//  PERIOD
+// ─────────────────────────────────────────
+function getPeriodKey() { return `${currentYear}-${String(currentMonth).padStart(2,'0')}`; }
+function getPrevKey() {
+  let m = currentMonth - 1, y = currentYear;
+  if (m === 0) { m = 12; y--; }
+  return `${y}-${String(m).padStart(2,'0')}`;
+}
+
+function ensurePeriod() {
+  const key = getPeriodKey();
+  if (db[key]) return;
+  const prev = getPrevKey();
+  if (db[prev]) {
+    db[key] = JSON.parse(JSON.stringify(db[prev]));
+    ['income','fixed','variable','liabilities'].forEach(cat =>
+      db[key][cat].forEach(i => { i.value = 0; i.date = ""; })
+    );
+    db[key].notes = db[key].notes.filter(n => n.status !== 'done');
+  } else {
+    db[key] = defaultStructure();
+  }
+  save();
+}
+
+function changePeriod() {
+  currentYear  = parseInt(document.getElementById('year-select').value);
+  currentMonth = parseInt(document.getElementById('month-select').value);
+  renderDashboard();
+}
+
+// ─────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────
+function renderDashboard() {
+  ensurePeriod();
+  const data = db[getPeriodKey()];
+  renderList('liquid',      data.liquid,      false);
+  renderList('investment',  data.investment,  false);
+  renderList('liabilities', data.liabilities, true);
+  renderList('income',      data.income,      true);
+  renderList('fixed',       data.fixed,       true);
+  renderList('variable',    data.variable,    true);
+  renderNotes();
+  calculate();
+}
+
+function renderList(cat, items, hasDate) {
+  const tbody = document.getElementById(`list-${cat}`);
+  tbody.innerHTML = '';
+  items.forEach((item, i) => {
+    const ccy    = item.ccy || 'HKD';
+    const hkdAmt = (parseFloat(item.value) || 0) * (rates[ccy] || 1);
+    const showEqv= ccy !== 'HKD';
+    const ccyOpts= ['HKD','USD','CNY','JPY','EUR']
+      .map(c => `<option value="${c}"${ccy===c?' selected':''}>${c}</option>`).join('');
+    const dateCell = hasDate
+      ? `<td><input type="text" class="date-input${isLocked?' readonly':''}" value="${item.date||''}"
+             oninput="handleDate(event,'${cat}',${i})" placeholder="DD/MM"></td>` : '';
+    const delCell = !isLocked
+      ? `<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}',${i})">×</button></td>`
+      : '<td></td>';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" class="${isLocked?'readonly':''}" value="${escHtml(item.name)}"
+          onchange="updateItem('${cat}',${i},'name',this.value)"></td>
+      <td><select class="ccy-select" onchange="updateItem('${cat}',${i},'ccy',this.value)"
+          ${isLocked?'disabled':''}>${ccyOpts}</select></td>
+      ${dateCell}
+      <td>
+        <input type="number" class="num-input" value="${item.value}"
+            onchange="updateItem('${cat}',${i},'value',this.value)" step="0.01">
+        ${showEqv ? `<div class="hkd-equiv">≈ HKD ${fmtNum(hkdAmt)}</div>` : ''}
+      </td>
+      ${delCell}`;
+    tbody.appendChild(tr);
+  });
+  const addBtn = tbody.parentElement.nextElementSibling;
+  if (addBtn) addBtn.style.display = isLocked ? 'none' : 'block';
+}
+
+function renderNotes() {
+  const list  = document.getElementById('notes-list');
+  list.innerHTML = '';
+  const notes = db[getPeriodKey()].notes || [];
+  notes.forEach((note, i) => {
+    const div = document.createElement('div');
+    div.className = 'note-item';
+    div.innerHTML = `
+      <div class="note-header">
+        <span class="note-status${note.status==='done'?' done':''}" onclick="toggleNote(${i})">${note.status.toUpperCase()}</span>
+        <button class="btn-delete" onclick="deleteNote(${i})">×</button>
+      </div>
+      <textarea onchange="updateNote(${i},this.value)">${escHtml(note.text)}</textarea>`;
+    list.appendChild(div);
+  });
+}
+
+// ─────────────────────────────────────────
+//  MUTATIONS
+// ─────────────────────────────────────────
+function updateItem(cat, i, field, val) {
+  if (field === 'value') val = parseFloat(val) || 0;
+  db[getPeriodKey()][cat][i][field] = val;
+  calculate();
+  renderList(cat, db[getPeriodKey()][cat], ['liabilities','income','fixed','variable'].includes(cat));
+  save();
+}
+
+function addItem(cat) {
+  const hasDate = ['liabilities','income','fixed','variable'].includes(cat);
+  const item = { name:"New Item", value:0, ccy:"HKD" };
+  if (hasDate) item.date = "";
+  db[getPeriodKey()][cat].push(item);
+  renderDashboard(); save();
+}
+
+function deleteItem(cat, i) {
+  db[getPeriodKey()][cat].splice(i, 1);
+  renderDashboard(); save();
+}
+
+function addNote() {
+  if (!db[getPeriodKey()].notes) db[getPeriodKey()].notes = [];
+  db[getPeriodKey()].notes.push({ text:"", status:"pending" });
+  renderNotes(); save();
+}
+function updateNote(i, val) { db[getPeriodKey()].notes[i].text = val; save(); }
+function toggleNote(i) {
+  const n = db[getPeriodKey()].notes[i];
+  n.status = n.status === 'done' ? 'pending' : 'done';
+  renderNotes(); save();
+}
+function deleteNote(i) {
+  db[getPeriodKey()].notes.splice(i, 1);
+  renderNotes(); save();
+}
+
+// ─────────────────────────────────────────
+//  DATE INPUT
+// ─────────────────────────────────────────
+function handleDate(e, cat, i) {
+  let raw = e.target.value.replace(/\D/g,'');
+  let d = raw.slice(0,2), m = raw.slice(2,4);
+  if (d.length===1 && parseInt(d)>3) d = '0'+d;
+  if (d.length===2 && m.length===1 && parseInt(m)>1) m = '0'+m;
+  const formatted = d + (m ? '/'+m : '');
+  e.target.value = formatted;
+  if (formatted.length === 5) updateItem(cat, i, 'date', formatted);
+}
+
+// ─────────────────────────────────────────
+//  CALCULATE
+// ─────────────────────────────────────────
+function calculate() {
+  const data = db[getPeriodKey()];
+  if (!data) return;
+  const sumHKD = arr => arr.reduce((a,b) => {
+    const ccy = b.ccy || 'HKD';
+    return a + (parseFloat(b.value)||0) * (rates[ccy]||1);
+  }, 0);
+  const assets   = sumHKD(data.liquid) + sumHKD(data.investment);
+  const liab     = sumHKD(data.liabilities);
+  const income   = sumHKD(data.income);
+  const expenses = sumHKD(data.fixed) + sumHKD(data.variable);
+  setSummary('sum-assets',      assets,         false);
+  setSummary('sum-liabilities', liab,           false);
+  setSummary('sum-net-worth',   assets - liab,  true);
+  setSummary('sum-cashflow',    income-expenses, false, true);
+}
+
+function setSummary(id, val, isH, isCF) {
+  const el  = document.getElementById(id);
+  const str = '$ ' + fmtNum(val);
+  el.innerText = str;
+  const len = str.replace(/[$,\s]/g,'').length;
+  el.className = 'summary-value' + (isH?' highlight':'');
+  el.classList.add(len > 10 ? 'sz-sm' : len > 7 ? 'sz-md' : 'sz-lg');
+  if (isCF)      el.style.color = val >= 0 ? 'var(--success)' : 'var(--danger)';
+  else if (isH)  el.style.color = val < 0  ? 'var(--danger)'  : 'var(--accent)';
+  else           el.style.color = '';
+}
+
+// ─────────────────────────────────────────
+//  UI CONTROLS
+// ─────────────────────────────────────────
+function switchView(view) {
+  document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`view-${view}`).classList.add('active');
+  document.getElementById(`btn-view-${view}`).classList.add('active');
+  if (view === 'insights') initCharts();
+}
+
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', currentTheme);
+  document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? 'LIGHT' : 'DARK';
+  if (document.getElementById('view-insights').classList.contains('active')) initCharts();
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  document.getElementById('lang-btn').innerText = currentLang === 'zh' ? 'EN' : '中文';
+  updateMonthSelect(); applyI18n(); renderDashboard();
+}
+
+function toggleLock() {
+  isLocked = !isLocked;
+  document.getElementById('master-lock').innerText = isLocked ? '🔒' : '🔓';
+  applyI18n(); renderDashboard();
+  showToast(isLocked ? '🔒 已鎖定' : '🔓 已解鎖，可以編輯');
+}
+
+function updateMonthSelect() {
+  const sel = document.getElementById('month-select');
+  sel.innerHTML = '';
+  i18n[currentLang]["month-names"].forEach((m, i) => {
+    let o = document.createElement('option');
+    o.value = i+1; o.innerText = m;
+    if (i+1 === currentMonth) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
+  });
+  document.getElementById('lock-bs').innerText = i18n[currentLang][isLocked?'locked':'unlocked'];
+  document.getElementById('lock-cf').innerText = i18n[currentLang][isLocked?'locked':'unlocked'];
+}
+
+// ─────────────────────────────────────────
+//  CHARTS
+// ─────────────────────────────────────────
+function initCharts() {
+  const keys   = Object.keys(db).sort();
+  const labels = keys.map(k => k.split('-')[1] + '月');
+  const sumHKD = arr => arr.reduce((a,b) => a + (parseFloat(b.value)||0) * (rates[b.ccy||'HKD']||1), 0);
+  const accent = getComputedStyle(document.body).getPropertyValue('--accent').trim();
+  const txt    = getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
+  const opts   = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ color:txt, font:{size:10} } } },
+    scales:{ x:{ grid:{display:false}, ticks:{color:txt} }, y:{ grid:{color:'rgba(128,128,128,0.1)'}, ticks:{color:txt} } }
+  };
+  const mk = (id, cfg) => {
+    const key = id.replace('chart-','');
+    if (charts[key]) charts[key].destroy();
+    charts[key] = new Chart(document.getElementById(id), cfg);
+  };
+  mk('chart-wealth', { type:'line', data:{ labels, datasets:[{
+    label:'Net Worth HKD',
+    data: keys.map(k => sumHKD(db[k].liquid) + sumHKD(db[k].investment) - sumHKD(db[k].liabilities)),
+    borderColor:accent, tension:0.35, fill:true, backgroundColor:'rgba(197,168,128,0.08)'
+  }]}, options:opts });
+  mk('chart-cashflow', { type:'bar', data:{ labels, datasets:[
+    { label:'Income',   data:keys.map(k=>sumHKD(db[k].income)), backgroundColor:'rgba(16,185,129,0.6)' },
+    { label:'Expenses', data:keys.map(k=>sumHKD(db[k].fixed)+sumHKD(db[k].variable)), backgroundColor:'rgba(239,68,68,0.6)' }
+  ]}, options:opts });
+  mk('chart-liabilities', { type:'line', data:{ labels, datasets:[{
+    label:'Liabilities', data:keys.map(k=>sumHKD(db[k].liabilities)),
+    borderColor:'#ef4444', borderDash:[5,5], tension:0.2
+  }]}, options:opts });
+  mk('chart-savings', { type:'bar', data:{ labels, datasets:[{
+    label:'Savings Rate %',
+    data: keys.map(k => {
+      const inc = sumHKD(db[k].income);
+      const exp = sumHKD(db[k].fixed) + sumHKD(db[k].variable);
+      return inc > 0 ? +((inc-exp)/inc*100).toFixed(1) : 0;
+    }),
+    backgroundColor: accent
+  }]}, options:opts });
+}
+
+// ─────────────────────────────────────────
+//  EXPORT
+// ─────────────────────────────────────────
+function exportToExcel() {
+  const key  = getPeriodKey();
+  const data = db[key];
+  if (!data) return;
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.liquid,...data.investment,...data.liabilities]), "Balance Sheet");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([...data.income,...data.fixed,...data.variable]), "Cash Flow");
+  XLSX.writeFile(wb, `PrivateWealth_v8_${key}.xlsx`);
+  showToast('✓ Excel exported');
+}
+
+// ─────────────────────────────────────────
+//  SAVE (local + cloud)
+// ─────────────────────────────────────────
+let saveTimer = null;
+function save() {
+  // Always save locally first (instant)
+  try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch(e) {}
+  // Debounce cloud push by 1.5s so rapid edits don't spam Supabase
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => pushPeriod(getPeriodKey()), 1500);
+}
+
+// ─────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────
+function fmtNum(n) { return n.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:0 }); }
+function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
 </script>
 </body>
 </html>
