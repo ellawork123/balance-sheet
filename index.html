@@ -269,18 +269,28 @@ const sbH = () => ({
   'Authorization': 'Bearer ' + SB_KEY
 });
 
+// v8.5 — explicit cors mode + full console logging for debugging
 async function sbSavePeriod(key) {
   if (!userHash || !db[key]) return;
   setDot('spin', 'Saving…');
+  console.log('[PW] Saving period:', key, 'user:', userHash);
   try {
-    // Step 1: DELETE existing row (ignore 404)
-    await fetch(
-      `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&period_key=eq.${key}`,
-      { method: 'DELETE', headers: sbH() }
-    );
+    // Step 1: DELETE existing row
+    const delUrl = `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&period_key=eq.${key}`;
+    console.log('[PW] DELETE:', delUrl);
+    const delRes = await fetch(delUrl, {
+      method: 'DELETE',
+      mode: 'cors',
+      headers: sbH()
+    });
+    console.log('[PW] DELETE status:', delRes.status);
+
     // Step 2: INSERT fresh row
-    const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}`, {
+    const postUrl = `${SB_URL}/rest/v1/${SB_TABLE}`;
+    console.log('[PW] POST:', postUrl);
+    const res = await fetch(postUrl, {
       method: 'POST',
+      mode: 'cors',
       headers: { ...sbH(), 'Prefer': 'return=minimal' },
       body: JSON.stringify({
         user_hash:  userHash,
@@ -289,12 +299,14 @@ async function sbSavePeriod(key) {
         updated_at: new Date().toISOString()
       })
     });
+    console.log('[PW] POST status:', res.status);
     if (!res.ok) {
       const t = await res.text();
       throw new Error(res.status + ': ' + t);
     }
-    setDot('ok', 'Saved to cloud ✓ ' + new Date().toLocaleTimeString());
+    setDot('ok', 'Saved ✓ ' + new Date().toLocaleTimeString());
   } catch(e) {
+    console.error('[PW] Save error:', e);
     setDot('err', 'Cloud save failed');
     document.getElementById('sync-err').innerText = e.message;
   }
@@ -303,24 +315,32 @@ async function sbSavePeriod(key) {
 async function sbLoadAll() {
   if (!userHash) return false;
   setDot('spin', 'Loading from cloud…');
+  console.log('[PW] Loading all data for user:', userHash);
   try {
-    const res = await fetch(
-      `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&select=period_key,data`,
-      { headers: sbH() }
-    );
+    const url = `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&select=period_key,data`;
+    console.log('[PW] GET:', url);
+    const res = await fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: sbH()
+    });
+    console.log('[PW] GET status:', res.status);
     if (!res.ok) throw new Error((await res.text()));
     const rows = await res.json();
+    console.log('[PW] Got rows:', rows.length);
     if (rows.length > 0) {
       rows.forEach(r => { db[r.period_key] = r.data; });
       localStorage.setItem(LS_DB, JSON.stringify(db));
-      setDot('ok', 'Loaded ' + rows.length + ' month(s) from cloud ✓');
+      setDot('ok', 'Loaded ' + rows.length + ' month(s) ✓');
       return true;
     }
     setDot('ok', 'No cloud data yet — starting fresh');
     return false;
   } catch(e) {
+    console.error('[PW] Load error:', e);
     setDot('err', 'Load failed — using local data');
-    document.getElementById('sync-err') && (document.getElementById('sync-err').innerText = e.message);
+    const errEl = document.getElementById('sync-err');
+    if (errEl) errEl.innerText = e.message;
     return false;
   }
 }
