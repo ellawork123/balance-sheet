@@ -3,155 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Private Wealth Management | v8</title>
+<title>Private Wealth | v8</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root{--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-card:#1e293b;--accent:#c5a880;--text-primary:#f8fafc;--text-secondary:#94a3b8;--border:rgba(197,168,128,0.2);--input-bg:rgba(255,255,255,0.03);--danger:#ef4444;--success:#10b981;--shadow:0 10px 30px rgba(0,0,0,0.5)}
-[data-theme="light"]{--bg-primary:#fcfbf7;--bg-secondary:#f3f1e9;--bg-card:#ffffff;--accent:#8e734b;--text-primary:#1a1a1a;--text-secondary:#64748b;--border:rgba(142,115,75,0.2);--input-bg:rgba(0,0,0,0.02);--danger:#dc2626;--success:#059669;--shadow:0 10px 30px rgba(0,0,0,0.06)}
+[data-theme="light"]{--bg-primary:#fcfbf7;--bg-secondary:#f3f1e9;--bg-card:#fff;--accent:#8e734b;--text-primary:#1a1a1a;--text-secondary:#64748b;--border:rgba(142,115,75,0.2);--input-bg:rgba(0,0,0,0.02);--danger:#dc2626;--success:#059669;--shadow:0 10px 30px rgba(0,0,0,0.06)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif;transition:background 0.4s,color 0.4s;padding-bottom:80px}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif;transition:background .4s,color .4s;padding-bottom:80px}
 .container{max-width:1400px;margin:0 auto;padding:0 20px}
-#lock-screen{position:fixed;inset:0;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
-.lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:40px 36px;text-align:center;width:320px;box-shadow:var(--shadow)}
-.lock-logo{font-family:'Cinzel',serif;font-size:16px;letter-spacing:4px;color:var(--accent);margin-bottom:6px}
-.lock-sub{font-size:9px;letter-spacing:2px;color:var(--text-secondary);margin-bottom:28px}
-.lock-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:12px 14px;border-radius:3px;font-size:16px;text-align:center;letter-spacing:4px;font-family:'Inter',sans-serif;outline:none;margin-bottom:12px}
+
+/* LOCK SCREEN */
+#lock-screen{position:fixed;inset:0;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center}
+.lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:44px 38px;text-align:center;width:340px;box-shadow:var(--shadow)}
+.lock-logo{font-family:'Cinzel',serif;font-size:17px;letter-spacing:4px;color:var(--accent);margin-bottom:4px}
+.lock-sub{font-size:9px;letter-spacing:2px;color:var(--text-secondary);margin-bottom:32px}
+.lock-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:13px;border-radius:4px;font-size:18px;text-align:center;letter-spacing:6px;font-family:'Inter',sans-serif;outline:none;margin-bottom:12px}
 .lock-input:focus{border-color:var(--accent)}
-.lock-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:12px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif}
-.lock-err{color:var(--danger);font-size:11px;height:16px;letter-spacing:0.5px;margin-top:8px}
-.lock-syncing{font-size:10px;color:var(--text-secondary);margin-top:10px;height:14px;letter-spacing:1px}
-#ctrl-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:8000;align-items:center;justify-content:center}
+.lock-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:13px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s}
+.lock-btn:disabled{opacity:.5;cursor:not-allowed}
+.lock-err{color:var(--danger);font-size:11px;margin-top:10px;min-height:16px}
+.lock-status{color:var(--text-secondary);font-size:10px;margin-top:8px;min-height:14px;letter-spacing:.5px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--accent);color:var(--text-primary);padding:10px 22px;border-radius:4px;font-size:12px;letter-spacing:.5px;opacity:0;transition:all .3s;z-index:7000;pointer-events:none;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* CTRL PANEL */
+#ctrl-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:8000;align-items:center;justify-content:center}
 #ctrl-overlay.open{display:flex}
-.ctrl-box{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:32px;width:380px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
-.ctrl-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--accent);margin-bottom:22px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.ctrl-box{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:32px;width:380px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
+.ctrl-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--accent);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .ctrl-section{margin-bottom:20px}
-.ctrl-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin-bottom:7px;display:block}
-.ctrl-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:9px 12px;border-radius:3px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:8px}
+.ctrl-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin-bottom:8px;display:block}
+.ctrl-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:10px 12px;border-radius:4px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:8px}
 .ctrl-input:focus{border-color:var(--accent)}
-.ctrl-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:10px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:4px}
-.ctrl-btn.danger{background:var(--danger);margin-top:8px}
-.ctrl-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text-secondary);margin-top:8px}
-.ctrl-btn.info{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);margin-top:6px}
-.ctrl-msg{font-size:11px;min-height:16px;margin-top:6px;letter-spacing:0.5px;word-break:break-all}
-.ctrl-msg.ok{color:var(--success)}
-.ctrl-msg.err{color:var(--danger)}
-.sync-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:10px 12px;background:var(--bg-secondary);border-radius:3px}
-.sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--text-secondary)}
-.sync-dot.ok{background:var(--success)}
-.sync-dot.err{background:var(--danger)}
-.sync-dot.spin{background:var(--accent);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.ctrl-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:11px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:6px;transition:opacity .2s}
+.ctrl-btn:disabled{opacity:.5;cursor:not-allowed}
+.ctrl-btn.danger{background:var(--danger)}
+.ctrl-btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
+.ctrl-msg{font-size:11px;min-height:16px;margin-top:6px}
+.ctrl-msg.ok{color:var(--success)}.ctrl-msg.err{color:var(--danger)}
+.sync-row{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-secondary);border-radius:4px;font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--text-secondary);transition:background .3s}
+.dot.ok{background:var(--success)}.dot.err{background:var(--danger)}.dot.spin{background:var(--accent);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* NAV */
 nav{display:flex;flex-direction:column;gap:14px;padding:22px 0;border-bottom:1px solid var(--border);margin-bottom:30px}
 .brand h1{font-family:'Cinzel',serif;font-size:20px;letter-spacing:3px;color:var(--accent);text-transform:uppercase}
 .brand span{font-size:10px;letter-spacing:2px;color:var(--text-secondary);margin-top:4px;display:block}
 .nav-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .view-toggle{display:flex;background:var(--bg-secondary);padding:3px;border-radius:3px;border:1px solid var(--border)}
-.view-btn{padding:6px 14px;border-radius:2px;font-size:10px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--text-secondary);transition:all 0.25s;letter-spacing:0.5px}
+.view-btn{padding:6px 14px;border-radius:2px;font-size:10px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--text-secondary);transition:all .2s;letter-spacing:.5px}
 .view-btn.active{background:var(--accent);color:var(--bg-primary)}
 .nav-btn{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-primary);padding:7px 13px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif}
 .nav-btn.accent{background:var(--accent);color:var(--bg-primary);font-weight:700;border:none}
 .icon-btn{background:transparent;border:none;font-size:16px;padding:4px 7px;color:var(--accent);cursor:pointer}
 select.nav-btn{min-width:60px}
+
+/* SUMMARY */
 .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:36px}
 .summary-item{background:var(--bg-card);padding:22px 14px;text-align:center}
 .summary-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);margin-bottom:8px}
-.summary-value{font-weight:700;color:var(--text-primary);word-break:break-word;line-height:1.2}
-.summary-value.highlight{color:var(--accent)}
+.summary-value{font-weight:700;word-break:break-word;line-height:1.2}
+.summary-value.hi{color:var(--accent)}
 .sz-lg{font-size:22px}.sz-md{font-size:17px}.sz-sm{font-size:13px}
+
+/* CONTENT */
 .view-content{display:none}.view-content.active{display:block}
 .statement-layout{display:grid;grid-template-columns:1fr;gap:28px}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:2px solid var(--accent);padding-bottom:7px}
 .section-header h2{font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;color:var(--accent)}
-.lock-indicator{font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px}
+.lock-ind{font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px}
 .table-wrapper{background:var(--bg-card);border-radius:4px;margin-bottom:22px;box-shadow:var(--shadow);overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{padding:11px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);background:rgba(0,0,0,0.05);border-bottom:1px solid var(--border)}
+th{padding:11px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);background:rgba(0,0,0,.05);border-bottom:1px solid var(--border)}
 td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px}
 tr:last-child td{border-bottom:none}
 input,textarea{background:transparent;border:1px solid transparent;color:var(--text-primary);width:100%;padding:5px;font-size:13px;border-radius:2px;font-family:'Inter',sans-serif}
 input:focus,textarea:focus{background:var(--input-bg);border-color:var(--accent);outline:none}
-input.readonly{pointer-events:none}
-.num-input{text-align:right;font-weight:600;font-size:14px;letter-spacing:-0.3px}
-.date-input{font-size:11px;color:var(--text-secondary);text-align:center}
-.ccy-select{font-size:11px;padding:3px 5px;border:1px solid var(--border);border-radius:2px;background:var(--bg-secondary);color:var(--text-primary);font-family:'Inter',sans-serif;width:auto;min-width:62px;cursor:pointer}
-.hkd-equiv{font-size:10px;color:var(--text-secondary);margin-top:2px;text-align:right}
-.btn-action{font-size:10px;padding:8px 14px;text-transform:uppercase;letter-spacing:1px;margin:10px;border:1px dashed var(--accent);color:var(--accent);background:transparent;cursor:pointer;width:calc(100% - 20px);font-family:'Inter',sans-serif;border-radius:2px;transition:background 0.2s}
-.btn-action:hover{background:rgba(197,168,128,0.08)}
-.btn-delete{color:var(--text-secondary);background:transparent;border:none;cursor:pointer;font-size:15px;opacity:0.25;padding:3px 5px;transition:opacity 0.2s}
-.btn-delete:hover{opacity:1;color:var(--danger)}
-.notes-column{background:rgba(197,168,128,0.03);padding:16px;border-radius:4px;border:1px solid var(--border)}
+input.ro{pointer-events:none}
+.num-in{text-align:right;font-weight:600;font-size:14px}
+.date-in{font-size:11px;color:var(--text-secondary);text-align:center}
+.ccy-sel{font-size:11px;padding:3px 5px;border:1px solid var(--border);border-radius:2px;background:var(--bg-secondary);color:var(--text-primary);font-family:'Inter',sans-serif;min-width:62px;cursor:pointer}
+.hkd-eq{font-size:10px;color:var(--text-secondary);margin-top:2px;text-align:right}
+.btn-add{font-size:10px;padding:8px 14px;text-transform:uppercase;letter-spacing:1px;margin:10px;border:1px dashed var(--accent);color:var(--accent);background:transparent;cursor:pointer;width:calc(100% - 20px);font-family:'Inter',sans-serif;border-radius:2px;transition:background .2s}
+.btn-add:hover{background:rgba(197,168,128,.08)}
+.btn-del{color:var(--text-secondary);background:transparent;border:none;cursor:pointer;font-size:15px;opacity:.2;padding:3px 5px;transition:opacity .2s}
+.btn-del:hover{opacity:1;color:var(--danger)}
+.notes-col{background:rgba(197,168,128,.03);padding:16px;border-radius:4px;border:1px solid var(--border)}
 .note-item{background:var(--bg-card);padding:12px;border-radius:4px;margin-bottom:12px;border-left:3px solid var(--accent);box-shadow:var(--shadow)}
-.note-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.note-status{font-size:8px;text-transform:uppercase;letter-spacing:0.5px;padding:3px 8px;border-radius:10px;background:var(--bg-secondary);color:var(--accent);cursor:pointer}
-.note-status.done{background:var(--success);color:#fff}
+.note-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.note-st{font-size:8px;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:10px;background:var(--bg-secondary);color:var(--accent);cursor:pointer}
+.note-st.done{background:var(--success);color:#fff}
 textarea{resize:vertical;min-height:50px;font-size:12px;line-height:1.4}
 .insights-grid{display:grid;grid-template-columns:1fr;gap:22px}
 .chart-card{background:var(--bg-card);padding:20px;border-radius:4px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.chart-card h3{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.5px;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
-.chart-container{position:relative;height:240px;width:100%}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--accent);color:var(--text-primary);padding:10px 22px;border-radius:3px;font-size:12px;letter-spacing:0.5px;opacity:0;transition:all 0.3s;z-index:7000;pointer-events:none;box-shadow:var(--shadow)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.chart-card h3{font-family:'Cinzel',serif;font-size:12px;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.chart-box{position:relative;height:240px;width:100%}
 footer{margin-top:60px;text-align:center;padding:28px;border-top:1px solid var(--border);font-size:9px;letter-spacing:2.5px;color:var(--text-secondary);text-transform:uppercase}
+
 @media(min-width:768px){
 .container{padding:0 40px}
 nav{flex-direction:row;justify-content:space-between;align-items:center;padding:38px 0;margin-bottom:50px}
 .nav-controls{flex-wrap:nowrap}
-.brand h1{font-size:24px;letter-spacing:4px}
-.brand span{font-size:11px}
+.brand h1{font-size:24px;letter-spacing:4px}.brand span{font-size:11px}
 .summary-grid{grid-template-columns:repeat(4,1fr);margin-bottom:55px}
 .summary-item{padding:38px 18px}
-.summary-label{font-size:10px;letter-spacing:2px;margin-bottom:12px}
+.summary-label{font-size:10px;margin-bottom:12px}
 .sz-lg{font-size:28px}.sz-md{font-size:22px}.sz-sm{font-size:17px}
 .statement-layout{grid-template-columns:1fr 1fr 320px;gap:44px}
-.section-header h2{font-size:16px;letter-spacing:2px}
+.section-header h2{font-size:16px}
 th{padding:14px;font-size:10px}td{padding:9px 14px;font-size:14px}
-.num-input{font-size:15px}
 .insights-grid{grid-template-columns:repeat(2,1fr);gap:36px}
-.chart-container{height:320px}
+.chart-box{height:320px}
 footer{margin-top:90px;padding:38px;font-size:10px}}
 </style>
 </head>
 <body data-theme="dark">
 
+<!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-box">
     <div class="lock-logo">PRIVATE WEALTH</div>
     <div class="lock-sub">PREMIUM FINANCIAL STATEMENT · V8</div>
     <input class="lock-input" type="password" id="pw-input" placeholder="· · · · · · · ·" maxlength="32">
-    <button class="lock-btn" onclick="unlock()">ENTER</button>
+    <button class="lock-btn" id="lock-btn" onclick="unlock()">ENTER</button>
     <div class="lock-err" id="pw-err"></div>
-    <div class="lock-syncing" id="lock-syncing"></div>
+    <div class="lock-status" id="lock-status"></div>
   </div>
 </div>
 
+<!-- CONTROL PANEL -->
 <div id="ctrl-overlay">
   <div class="ctrl-box">
     <div class="ctrl-title">⚙ Control Panel</div>
+
     <div class="ctrl-section">
-      <span class="ctrl-label">Cloud Sync Status</span>
+      <span class="ctrl-label">Cloud Sync</span>
       <div class="sync-row">
-        <span class="sync-dot" id="ctrl-dot"></span>
-        <span id="ctrl-sync-label" style="color:var(--text-secondary);font-size:12px">—</span>
+        <span class="dot" id="sync-dot"></span>
+        <span id="sync-label" style="color:var(--text-secondary)">—</span>
       </div>
-      <div class="ctrl-msg err" id="sync-err-detail" style="margin-top:8px;font-size:10px"></div>
-      <button class="ctrl-btn info" style="margin-top:10px" onclick="forcePush()">↑ PUSH LOCAL → CLOUD</button>
-      <button class="ctrl-btn info" onclick="forcePull()">↓ PULL CLOUD → LOCAL</button>
+      <div class="ctrl-msg err" id="sync-err" style="font-size:10px;word-break:break-all"></div>
+      <button class="ctrl-btn ghost" onclick="manualPush()">↑ SAVE ALL TO CLOUD NOW</button>
+      <button class="ctrl-btn ghost" onclick="manualPull()">↓ LOAD FROM CLOUD</button>
       <div class="ctrl-msg" id="sync-action-msg"></div>
     </div>
+
     <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
       <span class="ctrl-label">Change Password</span>
       <input class="ctrl-input" type="password" id="new-pw1" placeholder="New password">
-      <input class="ctrl-input" type="password" id="new-pw2" placeholder="Confirm new password">
+      <input class="ctrl-input" type="password" id="new-pw2" placeholder="Confirm password">
       <button class="ctrl-btn" onclick="changePw()">UPDATE PASSWORD</button>
-      <div class="ctrl-msg" id="pw-change-msg"></div>
+      <div class="ctrl-msg" id="pw-msg"></div>
     </div>
+
     <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
       <span class="ctrl-label">Danger Zone</span>
-      <button class="ctrl-btn danger" onclick="if(confirm('Reset ALL local data?'))clearAllData()">RESET ALL LOCAL DATA</button>
+      <button class="ctrl-btn danger" onclick="if(confirm('Wipe ALL local data?'))nukeLocal()">RESET ALL LOCAL DATA</button>
     </div>
-    <button class="ctrl-btn secondary" onclick="closeCtrl()">CLOSE</button>
+
+    <button class="ctrl-btn ghost" onclick="closeCtrl()" style="margin-top:4px">CLOSE</button>
   </div>
 </div>
 
@@ -161,261 +176,304 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
   <nav>
     <div class="brand">
       <h1>Private Wealth</h1>
-      <span>PREMIUM FINANCIAL STATEMENT · V8</span>
+      <span id="nav-sub">PREMIUM FINANCIAL STATEMENT · V8</span>
     </div>
     <div class="nav-controls">
       <div class="view-toggle">
-        <div class="view-btn active" onclick="switchView('statement')" id="btn-view-statement">STATEMENT</div>
-        <div class="view-btn" onclick="switchView('insights')" id="btn-view-insights">INSIGHTS</div>
+        <div class="view-btn active" onclick="switchView('statement')" id="btn-statement">STATEMENT</div>
+        <div class="view-btn" onclick="switchView('insights')" id="btn-insights">INSIGHTS</div>
       </div>
-      <select class="nav-btn" id="year-select" onchange="changePeriod()"></select>
-      <select class="nav-btn" id="month-select" onchange="changePeriod()"></select>
+      <select class="nav-btn" id="year-sel" onchange="changePeriod()"></select>
+      <select class="nav-btn" id="month-sel" onchange="changePeriod()"></select>
       <button class="nav-btn" onclick="toggleTheme()" id="theme-btn">LIGHT</button>
-      <button class="nav-btn" onclick="toggleLanguage()" id="lang-btn">EN</button>
-      <button class="nav-btn accent" onclick="exportToExcel()">EXPORT</button>
-      <button class="icon-btn" onclick="openCtrl()" title="Control Panel">⚙</button>
-      <button class="icon-btn" onclick="toggleLock()" id="master-lock">🔒</button>
+      <button class="nav-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+      <button class="nav-btn accent" onclick="exportXL()">EXPORT</button>
+      <button class="icon-btn" onclick="openCtrl()">⚙</button>
+      <button class="icon-btn" onclick="toggleEdit()" id="edit-btn">🔒</button>
     </div>
   </nav>
 
   <div class="summary-grid">
-    <div class="summary-item"><div class="summary-label" data-i18n="net-worth">資產淨值</div><div class="summary-value highlight sz-lg" id="sum-net-worth">$ 0</div></div>
-    <div class="summary-item"><div class="summary-label" data-i18n="net-cashflow">每月淨現金流</div><div class="summary-value sz-lg" id="sum-cashflow">$ 0</div></div>
-    <div class="summary-item"><div class="summary-label" data-i18n="total-assets">總資產</div><div class="summary-value sz-lg" id="sum-assets">$ 0</div></div>
-    <div class="summary-item"><div class="summary-label" data-i18n="total-liabilities">總負債</div><div class="summary-value sz-lg" id="sum-liabilities">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-t="net-worth">資產淨值</div><div class="summary-value hi sz-lg" id="s-nw">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-t="net-cf">每月淨現金流</div><div class="summary-value sz-lg" id="s-cf">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-t="total-assets">總資產</div><div class="summary-value sz-lg" id="s-as">$ 0</div></div>
+    <div class="summary-item"><div class="summary-label" data-t="total-liab">總負債</div><div class="summary-value sz-lg" id="s-lb">$ 0</div></div>
   </div>
 
   <div id="view-statement" class="view-content active">
     <div class="statement-layout">
-      <div class="column">
-        <div class="section-header"><h2 data-i18n="balance-sheet">資產負債表</h2><span class="lock-indicator" id="lock-bs">已鎖定</span></div>
-        <div class="table-wrapper"><table><thead><tr><th data-i18n="liquid-assets">流動資產</th><th style="width:70px">CCY</th><th style="text-align:right;width:110px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-liquid"></tbody></table><button class="btn-action edit-only" onclick="addItem('liquid')">+ ADD ITEM</button></div>
-        <div class="table-wrapper"><table><thead><tr><th data-i18n="investment-assets">投資資產</th><th style="width:70px">CCY</th><th style="text-align:right;width:110px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-investment"></tbody></table><button class="btn-action edit-only" onclick="addItem('investment')">+ ADD ITEM</button></div>
-        <div class="table-wrapper"><table><thead><tr><th data-i18n="liabilities">負債</th><th style="width:70px">CCY</th><th style="width:82px">Due</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-liabilities"></tbody></table><button class="btn-action edit-only" onclick="addItem('liabilities')">+ ADD ITEM</button></div>
+      <div>
+        <div class="section-header"><h2 data-t="bs">資產負債表</h2><span class="lock-ind" id="ind-bs">已鎖定</span></div>
+        <div class="table-wrapper"><table><thead><tr><th data-t="liquid">流動資產</th><th style="width:70px">CCY</th><th style="text-align:right;width:110px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="lst-liquid"></tbody></table><button class="btn-add" onclick="addRow('liquid')">+ ADD</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-t="invest">投資資產</th><th style="width:70px">CCY</th><th style="text-align:right;width:110px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="lst-invest"></tbody></table><button class="btn-add" onclick="addRow('invest')">+ ADD</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-t="liab">負債</th><th style="width:70px">CCY</th><th style="width:80px">Due</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="lst-liab"></tbody></table><button class="btn-add" onclick="addRow('liab')">+ ADD</button></div>
       </div>
-      <div class="column">
-        <div class="section-header"><h2 data-i18n="cash-flow">現金流量表</h2><span class="lock-indicator" id="lock-cf">已鎖定</span></div>
-        <div class="table-wrapper"><table><thead><tr><th data-i18n="income">收入</th><th style="width:70px">CCY</th><th style="width:82px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-income"></tbody></table><button class="btn-action edit-only" onclick="addItem('income')">+ ADD ITEM</button></div>
-        <div class="table-wrapper"><table><thead><tr><th data-i18n="fixed-expenses">固定支出</th><th style="width:70px">CCY</th><th style="width:82px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-fixed"></tbody></table><button class="btn-action edit-only" onclick="addItem('fixed')">+ ADD ITEM</button></div>
-        <div class="table-wrapper"><table><thead><tr><th data-i18n="variable-expenses">彈性支出</th><th style="width:70px">CCY</th><th style="width:82px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="list-variable"></tbody></table><button class="btn-action edit-only" onclick="addItem('variable')">+ ADD ITEM</button></div>
+      <div>
+        <div class="section-header"><h2 data-t="cf">現金流量表</h2><span class="lock-ind" id="ind-cf">已鎖定</span></div>
+        <div class="table-wrapper"><table><thead><tr><th data-t="income">收入</th><th style="width:70px">CCY</th><th style="width:80px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="lst-income"></tbody></table><button class="btn-add" onclick="addRow('income')">+ ADD</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-t="fixed">固定支出</th><th style="width:70px">CCY</th><th style="width:80px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="lst-fixed"></tbody></table><button class="btn-add" onclick="addRow('fixed')">+ ADD</button></div>
+        <div class="table-wrapper"><table><thead><tr><th data-t="variable">彈性支出</th><th style="width:70px">CCY</th><th style="width:80px">Date</th><th style="text-align:right;width:100px">Amount</th><th style="width:28px"></th></tr></thead><tbody id="lst-variable"></tbody></table><button class="btn-add" onclick="addRow('variable')">+ ADD</button></div>
       </div>
-      <div class="notes-column">
-        <div class="section-header"><h2 data-i18n="strategic-notes">Strategic Notes</h2></div>
+      <div class="notes-col">
+        <div class="section-header"><h2>Strategic Notes</h2></div>
         <div id="notes-list"></div>
-        <button class="btn-action" onclick="addNote()" style="width:calc(100% - 20px);margin:10px">+ ADD ACTION</button>
+        <button class="btn-add" onclick="addNote()" style="width:calc(100% - 20px);margin:10px">+ ADD NOTE</button>
       </div>
     </div>
   </div>
 
   <div id="view-insights" class="view-content">
     <div class="insights-grid">
-      <div class="chart-card"><h3>Wealth Growth</h3><div class="chart-container"><canvas id="chart-wealth"></canvas></div></div>
-      <div class="chart-card"><h3>Income vs. Expenses</h3><div class="chart-container"><canvas id="chart-cashflow"></canvas></div></div>
-      <div class="chart-card"><h3>Liability Trend</h3><div class="chart-container"><canvas id="chart-liabilities"></canvas></div></div>
-      <div class="chart-card"><h3>Savings Rate %</h3><div class="chart-container"><canvas id="chart-savings"></canvas></div></div>
+      <div class="chart-card"><h3>Wealth Growth</h3><div class="chart-box"><canvas id="ch-wealth"></canvas></div></div>
+      <div class="chart-card"><h3>Income vs Expenses</h3><div class="chart-box"><canvas id="ch-cf"></canvas></div></div>
+      <div class="chart-card"><h3>Liability Trend</h3><div class="chart-box"><canvas id="ch-liab"></canvas></div></div>
+      <div class="chart-card"><h3>Savings Rate %</h3><div class="chart-box"><canvas id="ch-sav"></canvas></div></div>
     </div>
   </div>
 
-  <footer>&copy; 2026 PRIVATE WEALTH MANAGEMENT · HIGHLY CONFIDENTIAL · SWISS STANDARD</footer>
+  <footer>&copy; 2026 PRIVATE WEALTH MANAGEMENT · HIGHLY CONFIDENTIAL</footer>
 </div>
 
 <script>
-// ── CONFIG ──
-const SUPABASE_URL  = 'https://zvevigywfonuyzrqavmj.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2ZXZpZ3l3Zm9udXl6cnFhdm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTM4NDksImV4cCI6MjA5NjA4OTg0OX0.9xSEv9ti14y7rrB4_8OlUd5U0me6UVx1sqg6dn4mg-c';
-const TABLE         = 'wealth_data';
-const DEFAULT_PW    = 'wealth2026';
-const PW_KEY        = 'wealth_pw_v8';
-const DB_KEY        = 'wealth_db_v8';
+// ═══════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════
+const SB_URL   = 'https://zvevigywfonuyzrqavmj.supabase.co';
+const SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2ZXZpZ3l3Zm9udXl6cnFhdm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTM4NDksImV4cCI6MjA5NjA4OTg0OX0.9xSEv9ti14y7rrB4_8OlUd5U0me6UVx1sqg6dn4mg-c';
+const SB_TABLE = 'wealth_data';
+const LS_DB    = 'pw_db_v8';
+const LS_PW    = 'pw_secret_v8';
+const DEF_PW   = 'wealth2026';
 
-// ── STATE ──
-let userHash = null, currentTheme='dark', currentLang='zh';
-let currentYear=new Date().getFullYear(), currentMonth=new Date().getMonth()+1;
-let isLocked=true, charts={}, saveTimer=null;
-let syncStatus = 'idle'; // idle | ok | err | loading
-let lastErrDetail = '';
-let rates={HKD:1,USD:7.8,CNY:1.08,JPY:0.052,EUR:8.6};
-let db={};
-try{db=JSON.parse(localStorage.getItem(DB_KEY))||{};}catch(e){db={};}
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let userHash = null;
+let db = {};
+let isLocked = true;
+let lang = 'zh';
+let theme = 'dark';
+let CY = new Date().getFullYear();
+let CM = new Date().getMonth() + 1;
+let charts = {};
+let rates = {HKD:1, USD:7.8, CNY:1.08, JPY:0.052, EUR:8.6};
 
-function getStoredPw(){return localStorage.getItem(PW_KEY)||DEFAULT_PW;}
+try { db = JSON.parse(localStorage.getItem(LS_DB)) || {}; } catch(e) { db = {}; }
 
-// ── HASH ──
-async function hashPw(pw){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
-}
+// ═══════════════════════════════════════
+//  SUPABASE  — simple try-delete-then-insert (avoids all upsert issues)
+// ═══════════════════════════════════════
+const sbH = () => ({
+  'Content-Type':  'application/json',
+  'apikey':        SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY
+});
 
-// ── SUPABASE CORE ──
-// Uses POST with Prefer: resolution=merge-duplicates for upsert
-async function sbUpsert(row){
-  // ?on_conflict= tells Supabase which columns to match on for upsert
-  const url = `${SUPABASE_URL}/rest/v1/${TABLE}?on_conflict=user_hash,period_key`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'apikey':        SUPABASE_ANON,
-      'Authorization': 'Bearer ' + SUPABASE_ANON,
-      'Prefer':        'resolution=merge-duplicates,return=minimal'
-    },
-    body: JSON.stringify(row)
-  });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`${res.status}: ${txt}`);
-  }
-  return true;
-}
-
-async function sbSelect(userH){
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${TABLE}?user_hash=eq.${userH}&select=period_key,data`,
-    { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON } }
-  );
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`${res.status}: ${txt}`);
-  }
-  return res.json();
-}
-
-// ── SYNC ──
-function setSyncUI(state, detail=''){
-  syncStatus = state;
-  lastErrDetail = state==='err' ? detail : '';
-  const dot   = document.getElementById('ctrl-dot');
-  const label = document.getElementById('ctrl-sync-label');
-  const errEl = document.getElementById('sync-err-detail');
-  if(dot){
-    dot.className = 'sync-dot' + (state==='ok'?' ok':state==='err'?' err':state==='loading'?' spin':'');
-  }
-  if(label){
-    const map={ok:'Cloud saved ✓ '+new Date().toLocaleTimeString(), err:'Save failed', loading:'Syncing…', idle:'—'};
-    label.innerText = map[state]||state;
-  }
-  if(errEl) errEl.innerText = detail;
-}
-
-async function pushPeriod(key){
-  if(!userHash||!db[key]) return;
-  setSyncUI('loading');
-  try{
-    await sbUpsert({
-      user_hash:  userHash,
-      period_key: key,
-      data:       db[key],
-      updated_at: new Date().toISOString()
+async function sbSavePeriod(key) {
+  if (!userHash || !db[key]) return;
+  setDot('spin', 'Saving…');
+  try {
+    // Step 1: DELETE existing row (ignore 404)
+    await fetch(
+      `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&period_key=eq.${key}`,
+      { method: 'DELETE', headers: sbH() }
+    );
+    // Step 2: INSERT fresh row
+    const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}`, {
+      method: 'POST',
+      headers: { ...sbH(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify({
+        user_hash:  userHash,
+        period_key: key,
+        data:       db[key],
+        updated_at: new Date().toISOString()
+      })
     });
-    setSyncUI('ok');
-  }catch(e){
-    console.error('Supabase push error:', e.message);
-    setSyncUI('err', e.message);
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error(res.status + ': ' + t);
+    }
+    setDot('ok', 'Saved to cloud ✓ ' + new Date().toLocaleTimeString());
+  } catch(e) {
+    setDot('err', 'Cloud save failed');
+    document.getElementById('sync-err').innerText = e.message;
   }
 }
 
-async function pullFromCloud(){
-  if(!userHash) return false;
-  setSyncUI('loading');
-  try{
-    const rows = await sbSelect(userHash);
-    if(rows.length){
-      rows.forEach(r=>{ db[r.period_key]=r.data; });
-      localStorage.setItem(DB_KEY, JSON.stringify(db));
+async function sbLoadAll() {
+  if (!userHash) return false;
+  setDot('spin', 'Loading from cloud…');
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&select=period_key,data`,
+      { headers: sbH() }
+    );
+    if (!res.ok) throw new Error((await res.text()));
+    const rows = await res.json();
+    if (rows.length > 0) {
+      rows.forEach(r => { db[r.period_key] = r.data; });
+      localStorage.setItem(LS_DB, JSON.stringify(db));
+      setDot('ok', 'Loaded ' + rows.length + ' month(s) from cloud ✓');
+      return true;
     }
-    setSyncUI('ok');
-    return true;
-  }catch(e){
-    console.error('Supabase pull error:', e.message);
-    setSyncUI('err', e.message);
+    setDot('ok', 'No cloud data yet — starting fresh');
+    return false;
+  } catch(e) {
+    setDot('err', 'Load failed — using local data');
+    document.getElementById('sync-err') && (document.getElementById('sync-err').innerText = e.message);
     return false;
   }
 }
 
-async function forcePush(){
-  const msg=document.getElementById('sync-action-msg');
-  msg.className='ctrl-msg'; msg.innerText='Pushing…';
-  try{
-    for(const k of Object.keys(db)) await pushPeriod(k);
-    msg.className='ctrl-msg ok'; msg.innerText='All data pushed ✓';
-  }catch(e){ msg.className='ctrl-msg err'; msg.innerText='Push failed: '+e.message; }
-  setTimeout(()=>msg.innerText='',4000);
+async function manualPush() {
+  const msg = document.getElementById('sync-action-msg');
+  msg.className = 'ctrl-msg'; msg.innerText = 'Pushing all months…';
+  document.getElementById('sync-err').innerText = '';
+  let ok = true;
+  for (const k of Object.keys(db)) {
+    await sbSavePeriod(k);
+    if (document.getElementById('sync-dot').className.includes('err')) { ok = false; break; }
+  }
+  msg.className = ok ? 'ctrl-msg ok' : 'ctrl-msg err';
+  msg.innerText = ok ? 'All data saved to cloud ✓' : 'Some saves failed — see error above';
+  setTimeout(() => msg.innerText = '', 4000);
 }
 
-async function forcePull(){
-  const msg=document.getElementById('sync-action-msg');
-  msg.className='ctrl-msg'; msg.innerText='Pulling…';
-  const ok=await pullFromCloud();
-  if(ok){ renderDashboard(); msg.className='ctrl-msg ok'; msg.innerText='Data pulled ✓'; }
-  else   { msg.className='ctrl-msg err'; msg.innerText='Pull failed — check error above'; }
-  setTimeout(()=>msg.innerText='',4000);
+async function manualPull() {
+  const msg = document.getElementById('sync-action-msg');
+  msg.className = 'ctrl-msg'; msg.innerText = 'Loading from cloud…';
+  document.getElementById('sync-err').innerText = '';
+  const ok = await sbLoadAll();
+  if (ok) { renderDash(); msg.className = 'ctrl-msg ok'; msg.innerText = 'Cloud data loaded ✓'; }
+  else     { msg.className = 'ctrl-msg err'; msg.innerText = 'Nothing loaded'; }
+  setTimeout(() => msg.innerText = '', 4000);
 }
 
-// ── SAVE (local instant + cloud debounced) ──
-function save(){
-  try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); }catch(e){}
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>pushPeriod(getPeriodKey()),1500);
+function setDot(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (dot) dot.className = 'dot ' + state;
+  if (lbl) lbl.innerText = label;
+  // Clear err detail on success
+  if (state === 'ok') {
+    const e = document.getElementById('sync-err');
+    if (e) e.innerText = '';
+  }
 }
 
-// ── LOCK / UNLOCK ──
-async function unlock(){
-  const val=document.getElementById('pw-input').value;
-  if(val!==getStoredPw()){
-    const err=document.getElementById('pw-err');
-    err.innerText='Incorrect password';
-    setTimeout(()=>err.innerText='',2000);
-    document.getElementById('pw-input').value='';
+// ═══════════════════════════════════════
+//  PASSWORD + UNLOCK
+// ═══════════════════════════════════════
+async function sha16(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,16);
+}
+
+function getPw() { return localStorage.getItem(LS_PW) || DEF_PW; }
+
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+
+async function unlock() {
+  const val = document.getElementById('pw-input').value;
+  const err = document.getElementById('pw-err');
+  const sts = document.getElementById('lock-status');
+  const btn = document.getElementById('lock-btn');
+
+  if (val !== getPw()) {
+    err.innerText = 'Incorrect password';
+    setTimeout(() => err.innerText = '', 2000);
+    document.getElementById('pw-input').value = '';
     return;
   }
-  userHash=await hashPw(val);
-  const syncing=document.getElementById('lock-syncing');
-  syncing.innerText='Loading from cloud…';
-  await pullFromCloud();
-  syncing.innerText='';
-  document.getElementById('lock-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  init();
+
+  btn.disabled = true;
+  btn.innerText = 'LOADING…';
+  sts.innerText = 'Computing identity…';
+
+  userHash = await sha16(val);
+
+  sts.innerText = 'Fetching cloud data…';
+  await sbLoadAll();
+
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
 }
 
-async function changePw(){
-  const p1=document.getElementById('new-pw1').value.trim();
-  const p2=document.getElementById('new-pw2').value.trim();
-  const msg=document.getElementById('pw-change-msg');
-  if(!p1){msg.className='ctrl-msg err';msg.innerText='Cannot be empty';return;}
-  if(p1!==p2){msg.className='ctrl-msg err';msg.innerText='Passwords do not match';return;}
-  localStorage.setItem(PW_KEY,p1);
-  userHash=await hashPw(p1);
-  msg.className='ctrl-msg ok';msg.innerText='Updated ✓';
+async function changePw() {
+  const p1  = document.getElementById('new-pw1').value.trim();
+  const p2  = document.getElementById('new-pw2').value.trim();
+  const msg = document.getElementById('pw-msg');
+  if (!p1)    { msg.className='ctrl-msg err'; msg.innerText='Cannot be empty'; return; }
+  if (p1!==p2){ msg.className='ctrl-msg err'; msg.innerText='Passwords do not match'; return; }
+  localStorage.setItem(LS_PW, p1);
+  userHash = await sha16(p1);
+  msg.className='ctrl-msg ok'; msg.innerText='Password updated ✓';
   document.getElementById('new-pw1').value='';
   document.getElementById('new-pw2').value='';
   setTimeout(()=>msg.innerText='',3000);
 }
 
-function clearAllData(){
-  localStorage.removeItem(DB_KEY); db={};
-  closeCtrl(); renderDashboard(); showToast('Local data cleared');
+function nukeLocal() {
+  localStorage.removeItem(LS_DB); db={};
+  closeCtrl(); renderDash(); toast('Local data cleared');
 }
 
-function openCtrl(){ document.getElementById('ctrl-overlay').classList.add('open'); setSyncUI(syncStatus,lastErrDetail); }
+function openCtrl(){ document.getElementById('ctrl-overlay').classList.add('open'); }
 function closeCtrl(){ document.getElementById('ctrl-overlay').classList.remove('open'); }
-document.getElementById('ctrl-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('ctrl-overlay'))closeCtrl();});
-document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
+document.getElementById('ctrl-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('ctrl-overlay')) closeCtrl();
+});
 
-// ── I18N ──
-const i18n={
-  zh:{"net-worth":"資產淨值","net-cashflow":"每月淨現金流","total-assets":"總資產","total-liabilities":"總負債","balance-sheet":"資產負債表","cash-flow":"現金流量表","strategic-notes":"Strategic Notes & Actions","liquid-assets":"流動資產","investment-assets":"投資資產","liabilities":"負債","income":"收入","fixed-expenses":"固定支出","variable-expenses":"彈性支出","locked":"已鎖定","unlocked":"已解鎖","month-names":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]},
-  en:{"net-worth":"Net Worth","net-cashflow":"Net Cash Flow","total-assets":"Total Assets","total-liabilities":"Total Liabilities","balance-sheet":"Balance Sheet","cash-flow":"Cash Flow","strategic-notes":"Strategic Notes & Actions","liquid-assets":"Liquid Assets","investment-assets":"Investment Assets","liabilities":"Liabilities","income":"Income","fixed-expenses":"Fixed Expenses","variable-expenses":"Variable Expenses","locked":"Locked","unlocked":"Unlocked","month-names":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}
+// ═══════════════════════════════════════
+//  I18N
+// ═══════════════════════════════════════
+const T = {
+  zh:{ 'net-worth':'資產淨值','net-cf':'每月淨現金流','total-assets':'總資產','total-liab':'總負債',
+       'bs':'資產負債表','cf':'現金流量表','liquid':'流動資產','invest':'投資資產','liab':'負債',
+       'income':'收入','fixed':'固定支出','variable':'彈性支出','locked':'已鎖定','unlocked':'已解鎖',
+       'months':['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
+  en:{ 'net-worth':'Net Worth','net-cf':'Net Cash Flow','total-assets':'Total Assets','total-liab':'Total Liabilities',
+       'bs':'Balance Sheet','cf':'Cash Flow','liquid':'Liquid Assets','invest':'Investments','liab':'Liabilities',
+       'income':'Income','fixed':'Fixed Expenses','variable':'Variable Expenses','locked':'Locked','unlocked':'Unlocked',
+       'months':['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
 };
-const defaultStructure=()=>({liquid:[{name:"主要戶口",value:0,ccy:"HKD"}],investment:[{name:"股票/ETF",value:0,ccy:"HKD"}],liabilities:[{name:"信用卡",value:0,ccy:"HKD",date:""}],income:[{name:"薪金",value:0,ccy:"HKD",date:""}],fixed:[{name:"家用",value:0,ccy:"HKD",date:""}],variable:[{name:"餐飲",value:0,ccy:"HKD",date:""}],notes:[]});
+function t(k){ return T[lang][k] || k; }
+function applyLang(){
+  document.querySelectorAll('[data-t]').forEach(el => { const k=el.getAttribute('data-t'); if(T[lang][k]) el.innerText=T[lang][k]; });
+  document.getElementById('ind-bs').innerText = t(isLocked?'locked':'unlocked');
+  document.getElementById('ind-cf').innerText = t(isLocked?'locked':'unlocked');
+}
 
-// ── INIT ──
-async function init(){
-  const ys=document.getElementById('year-select');
-  for(let y=2024;y<=2030;y++){const o=document.createElement('option');o.value=y;o.innerText=y;if(y===currentYear)o.selected=true;ys.appendChild(o);}
-  updateMonthSelect(); applyI18n();
-  await fetchRates();
-  renderDashboard();
+// ═══════════════════════════════════════
+//  DEFAULT DATA
+// ═══════════════════════════════════════
+const blankPeriod = () => ({
+  liquid:   [{name:'主要戶口',val:0,ccy:'HKD'}],
+  invest:   [{name:'股票/ETF',val:0,ccy:'HKD'}],
+  liab:     [{name:'信用卡', val:0,ccy:'HKD',date:''}],
+  income:   [{name:'薪金',   val:0,ccy:'HKD',date:''}],
+  fixed:    [{name:'家用',   val:0,ccy:'HKD',date:''}],
+  variable: [{name:'餐飲',   val:0,ccy:'HKD',date:''}],
+  notes:    []
+});
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+async function initApp() {
+  // Year selector
+  const ys = document.getElementById('year-sel');
+  ys.innerHTML = '';
+  for (let y=2024; y<=2030; y++) {
+    const o = document.createElement('option');
+    o.value=y; o.innerText=y; if(y===CY)o.selected=true;
+    ys.appendChild(o);
+  }
+  buildMonthSel();
+  applyLang();
+  fetchRates();
+  renderDash();
 }
 
 async function fetchRates(){
@@ -426,159 +484,218 @@ async function fetchRates(){
   }catch(e){}
 }
 
-// ── PERIOD ──
-function getPeriodKey(){return`${currentYear}-${String(currentMonth).padStart(2,'0')}`;}
-function getPrevKey(){let m=currentMonth-1,y=currentYear;if(m===0){m=12;y--;}return`${y}-${String(m).padStart(2,'0')}`;}
+// ═══════════════════════════════════════
+//  PERIOD
+// ═══════════════════════════════════════
+function pk(){ return `${CY}-${String(CM).padStart(2,'0')}`; }
+function prevPk(){
+  let m=CM-1, y=CY; if(m===0){m=12;y--;}
+  return `${y}-${String(m).padStart(2,'0')}`;
+}
 function ensurePeriod(){
-  const key=getPeriodKey();if(db[key])return;
-  const prev=getPrevKey();
+  const key=pk();
+  if(db[key]) return;
+  const prev=prevPk();
   if(db[prev]){
     db[key]=JSON.parse(JSON.stringify(db[prev]));
-    ['income','fixed','variable','liabilities'].forEach(c=>db[key][c].forEach(i=>{i.value=0;i.date="";}));
+    ['liab','income','fixed','variable'].forEach(c=>db[key][c].forEach(r=>{r.val=0;r.date='';}));
     db[key].notes=db[key].notes.filter(n=>n.status!=='done');
-  }else{db[key]=defaultStructure();}
-  save();
+  } else { db[key]=blankPeriod(); }
+  saveLocal();
 }
-function changePeriod(){currentYear=parseInt(document.getElementById('year-select').value);currentMonth=parseInt(document.getElementById('month-select').value);renderDashboard();}
+function changePeriod(){
+  CY=parseInt(document.getElementById('year-sel').value);
+  CM=parseInt(document.getElementById('month-sel').value);
+  renderDash();
+}
 
-// ── RENDER ──
-function renderDashboard(){
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function renderDash(){
   ensurePeriod();
-  const d=db[getPeriodKey()];
-  renderList('liquid',d.liquid,false);renderList('investment',d.investment,false);
-  renderList('liabilities',d.liabilities,true);renderList('income',d.income,true);
-  renderList('fixed',d.fixed,true);renderList('variable',d.variable,true);
-  renderNotes();calculate();
+  const d=db[pk()];
+  renderList('liquid', d.liquid, false);
+  renderList('invest', d.invest, false);
+  renderList('liab',   d.liab,   true);
+  renderList('income', d.income, true);
+  renderList('fixed',  d.fixed,  true);
+  renderList('variable',d.variable,true);
+  renderNotes();
+  calc();
 }
 
-function renderList(cat,items,hasDate){
-  const tbody=document.getElementById(`list-${cat}`);tbody.innerHTML='';
+function renderList(cat, items, hasDate){
+  const tb=document.getElementById('lst-'+cat);
+  tb.innerHTML='';
   items.forEach((item,i)=>{
-    const ccy=item.ccy||'HKD';const hkdAmt=(parseFloat(item.value)||0)*(rates[ccy]||1);const showEqv=ccy!=='HKD';
-    const ccyOpts=['HKD','USD','CNY','JPY','EUR'].map(c=>`<option value="${c}"${ccy===c?' selected':''}>${c}</option>`).join('');
-    const dateCell=hasDate?`<td><input type="text" class="date-input${isLocked?' readonly':''}" value="${item.date||''}" oninput="handleDate(event,'${cat}',${i})" placeholder="DD/MM"></td>`:'';
-    const delCell=!isLocked?`<td style="text-align:center"><button class="btn-delete" onclick="deleteItem('${cat}',${i})">×</button></td>`:'<td></td>';
+    const ccy=item.ccy||'HKD';
+    const hkd=(parseFloat(item.val)||0)*(rates[ccy]||1);
+    const showEq=ccy!=='HKD';
+    const opts=['HKD','USD','CNY','JPY','EUR'].map(c=>`<option${ccy===c?' selected':''}>${c}</option>`).join('');
+    const dCell=hasDate?`<td><input type="text" class="date-in${isLocked?' ro':''}" value="${esc(item.date||'')}" oninput="handleDate(event,'${cat}',${i})" placeholder="DD/MM"></td>`:'';
+    const xCell=!isLocked?`<td><button class="btn-del" onclick="delRow('${cat}',${i})">×</button></td>`:'<td></td>';
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td><input type="text" class="${isLocked?'readonly':''}" value="${escHtml(item.name)}" onchange="updateItem('${cat}',${i},'name',this.value)"></td><td><select class="ccy-select" onchange="updateItem('${cat}',${i},'ccy',this.value)"${isLocked?' disabled':''}>${ccyOpts}</select></td>${dateCell}<td><input type="number" class="num-input" value="${item.value}" onchange="updateItem('${cat}',${i},'value',this.value)" step="0.01">${showEqv?`<div class="hkd-equiv">≈ HKD ${fmtNum(hkdAmt)}</div>`:''}</td>${delCell}`;
-    tbody.appendChild(tr);
+    tr.innerHTML=`
+      <td><input type="text" class="${isLocked?'ro':''}" value="${esc(item.name)}" onchange="setField('${cat}',${i},'name',this.value)"></td>
+      <td><select class="ccy-sel" onchange="setField('${cat}',${i},'ccy',this.value)"${isLocked?' disabled':''}>${opts}</select></td>
+      ${dCell}
+      <td>
+        <input type="number" class="num-in" value="${item.val||0}" onchange="setField('${cat}',${i},'val',+this.value)" step="0.01">
+        ${showEq?`<div class="hkd-eq">≈ HKD ${fmt(hkd)}</div>`:''}
+      </td>
+      ${xCell}`;
+    tb.appendChild(tr);
   });
-  const addBtn=tbody.parentElement.nextElementSibling;
-  if(addBtn)addBtn.style.display=isLocked?'none':'block';
+  const btn=tb.parentElement.nextElementSibling;
+  if(btn) btn.style.display=isLocked?'none':'block';
 }
 
 function renderNotes(){
-  const list=document.getElementById('notes-list');list.innerHTML='';
-  (db[getPeriodKey()].notes||[]).forEach((note,i)=>{
-    const div=document.createElement('div');div.className='note-item';
-    div.innerHTML=`<div class="note-header"><span class="note-status${note.status==='done'?' done':''}" onclick="toggleNote(${i})">${note.status.toUpperCase()}</span><button class="btn-delete" onclick="deleteNote(${i})">×</button></div><textarea onchange="updateNote(${i},this.value)">${escHtml(note.text)}</textarea>`;
-    list.appendChild(div);
+  const el=document.getElementById('notes-list'); el.innerHTML='';
+  (db[pk()].notes||[]).forEach((n,i)=>{
+    const d=document.createElement('div'); d.className='note-item';
+    d.innerHTML=`<div class="note-hdr"><span class="note-st${n.status==='done'?' done':''}" onclick="toggleNote(${i})">${n.status.toUpperCase()}</span><button class="btn-del" onclick="delNote(${i})">×</button></div><textarea onchange="updateNote(${i},this.value)">${esc(n.text)}</textarea>`;
+    el.appendChild(d);
   });
 }
 
-// ── MUTATIONS ──
-function updateItem(cat,i,field,val){
-  if(field==='value')val=parseFloat(val)||0;
-  db[getPeriodKey()][cat][i][field]=val;
-  calculate();renderList(cat,db[getPeriodKey()][cat],['liabilities','income','fixed','variable'].includes(cat));save();
+// ═══════════════════════════════════════
+//  MUTATIONS
+// ═══════════════════════════════════════
+let saveTimer=null;
+function saveLocal(){
+  try{ localStorage.setItem(LS_DB,JSON.stringify(db)); }catch(e){}
 }
-function addItem(cat){
-  const item={name:"New Item",value:0,ccy:"HKD"};
-  if(['liabilities','income','fixed','variable'].includes(cat))item.date="";
-  db[getPeriodKey()][cat].push(item);renderDashboard();save();
+// Save locally immediately; push to cloud after 2s idle
+function save(){
+  saveLocal();
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>sbSavePeriod(pk()),2000);
 }
-function deleteItem(cat,i){db[getPeriodKey()][cat].splice(i,1);renderDashboard();save();}
-function addNote(){if(!db[getPeriodKey()].notes)db[getPeriodKey()].notes=[];db[getPeriodKey()].notes.push({text:"",status:"pending"});renderNotes();save();}
-function updateNote(i,val){db[getPeriodKey()].notes[i].text=val;save();}
-function toggleNote(i){const n=db[getPeriodKey()].notes[i];n.status=n.status==='done'?'pending':'done';renderNotes();save();}
-function deleteNote(i){db[getPeriodKey()].notes.splice(i,1);renderNotes();save();}
+
+function setField(cat,i,f,v){
+  db[pk()][cat][i][f]=v;
+  renderList(cat,db[pk()][cat],['liab','income','fixed','variable'].includes(cat));
+  calc(); save();
+}
+function addRow(cat){
+  const row={name:'New Item',val:0,ccy:'HKD'};
+  if(['liab','income','fixed','variable'].includes(cat)) row.date='';
+  db[pk()][cat].push(row); renderDash(); save();
+}
+function delRow(cat,i){ db[pk()][cat].splice(i,1); renderDash(); save(); }
+function addNote(){ (db[pk()].notes=db[pk()].notes||[]).push({text:'',status:'pending'}); renderNotes(); save(); }
+function updateNote(i,v){ db[pk()].notes[i].text=v; save(); }
+function toggleNote(i){ const n=db[pk()].notes[i]; n.status=n.status==='done'?'pending':'done'; renderNotes(); save(); }
+function delNote(i){ db[pk()].notes.splice(i,1); renderNotes(); save(); }
 
 function handleDate(e,cat,i){
-  let raw=e.target.value.replace(/\D/g,'');let d=raw.slice(0,2),m=raw.slice(2,4);
-  if(d.length===1&&parseInt(d)>3)d='0'+d;if(d.length===2&&m.length===1&&parseInt(m)>1)m='0'+m;
-  const f=d+(m?'/'+m:'');e.target.value=f;if(f.length===5)updateItem(cat,i,'date',f);
+  let r=e.target.value.replace(/\D/g,'');
+  let d=r.slice(0,2),m=r.slice(2,4);
+  if(d.length===1&&+d>3)d='0'+d;
+  if(d.length===2&&m.length===1&&+m>1)m='0'+m;
+  const f=d+(m?'/'+m:''); e.target.value=f;
+  if(f.length===5)setField(cat,i,'date',f);
 }
 
-// ── CALCULATE ──
-function calculate(){
-  const data=db[getPeriodKey()];if(!data)return;
-  const sumHKD=arr=>arr.reduce((a,b)=>a+(parseFloat(b.value)||0)*(rates[b.ccy||'HKD']||1),0);
-  const assets=sumHKD(data.liquid)+sumHKD(data.investment),liab=sumHKD(data.liabilities);
-  const income=sumHKD(data.income),expenses=sumHKD(data.fixed)+sumHKD(data.variable);
-  setSummary('sum-assets',assets,false);setSummary('sum-liabilities',liab,false);
-  setSummary('sum-net-worth',assets-liab,true);setSummary('sum-cashflow',income-expenses,false,true);
+// ═══════════════════════════════════════
+//  CALC
+// ═══════════════════════════════════════
+function calc(){
+  const d=db[pk()]; if(!d)return;
+  const hkd=a=>a.reduce((s,r)=>s+(parseFloat(r.val)||0)*(rates[r.ccy||'HKD']||1),0);
+  const assets=hkd(d.liquid)+hkd(d.invest), liab=hkd(d.liab);
+  const inc=hkd(d.income), exp=hkd(d.fixed)+hkd(d.variable);
+  setSumm('s-as',assets,false); setSumm('s-lb',liab,false);
+  setSumm('s-nw',assets-liab,true); setSumm('s-cf',inc-exp,false,true);
 }
-function setSummary(id,val,isH,isCF){
-  const el=document.getElementById(id);const str='$ '+fmtNum(val);el.innerText=str;
-  const len=str.replace(/[$,\s]/g,'').length;
-  el.className='summary-value'+(isH?' highlight':'');
+function setSumm(id,v,hi,cf){
+  const el=document.getElementById(id);
+  const s='$ '+fmt(v); el.innerText=s;
+  const len=s.replace(/[$,\s]/g,'').length;
+  el.className='summary-value'+(hi?' hi':'');
   el.classList.add(len>10?'sz-sm':len>7?'sz-md':'sz-lg');
-  if(isCF)el.style.color=val>=0?'var(--success)':'var(--danger)';
-  else if(isH)el.style.color=val<0?'var(--danger)':'var(--accent)';
+  if(cf) el.style.color=v>=0?'var(--success)':'var(--danger)';
+  else if(hi) el.style.color=v<0?'var(--danger)':'var(--accent)';
   else el.style.color='';
 }
 
-// ── UI ──
-function switchView(view){
-  document.querySelectorAll('.view-content').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(`view-${view}`).classList.add('active');
-  document.getElementById(`btn-view-${view}`).classList.add('active');
-  if(view==='insights')initCharts();
+// ═══════════════════════════════════════
+//  UI CONTROLS
+// ═══════════════════════════════════════
+function switchView(v){
+  document.querySelectorAll('.view-content').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('btn-'+v).classList.add('active');
+  if(v==='insights') buildCharts();
 }
 function toggleTheme(){
-  currentTheme=currentTheme==='dark'?'light':'dark';
-  document.body.setAttribute('data-theme',currentTheme);
-  document.getElementById('theme-btn').innerText=currentTheme==='dark'?'LIGHT':'DARK';
-  if(document.getElementById('view-insights').classList.contains('active'))initCharts();
+  theme=theme==='dark'?'light':'dark';
+  document.body.setAttribute('data-theme',theme);
+  document.getElementById('theme-btn').innerText=theme==='dark'?'LIGHT':'DARK';
+  if(document.getElementById('view-insights').classList.contains('active')) buildCharts();
 }
-function toggleLanguage(){
-  currentLang=currentLang==='zh'?'en':'zh';
-  document.getElementById('lang-btn').innerText=currentLang==='zh'?'EN':'中文';
-  updateMonthSelect();applyI18n();renderDashboard();
+function toggleLang(){
+  lang=lang==='zh'?'en':'zh';
+  document.getElementById('lang-btn').innerText=lang==='zh'?'EN':'中文';
+  buildMonthSel(); applyLang(); renderDash();
 }
-function toggleLock(){
+function toggleEdit(){
   isLocked=!isLocked;
-  document.getElementById('master-lock').innerText=isLocked?'🔒':'🔓';
-  applyI18n();renderDashboard();
-  showToast(isLocked?'🔒 已鎖定':'🔓 已解鎖，可以編輯');
+  document.getElementById('edit-btn').innerText=isLocked?'🔒':'🔓';
+  applyLang(); renderDash();
+  toast(isLocked?'🔒 已鎖定':'🔓 已解鎖，可以編輯');
 }
-function updateMonthSelect(){
-  const sel=document.getElementById('month-select');sel.innerHTML='';
-  i18n[currentLang]["month-names"].forEach((m,i)=>{const o=document.createElement('option');o.value=i+1;o.innerText=m;if(i+1===currentMonth)o.selected=true;sel.appendChild(o);});
-}
-function applyI18n(){
-  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(i18n[currentLang][k])el.innerText=i18n[currentLang][k];});
-  document.getElementById('lock-bs').innerText=i18n[currentLang][isLocked?'locked':'unlocked'];
-  document.getElementById('lock-cf').innerText=i18n[currentLang][isLocked?'locked':'unlocked'];
+function buildMonthSel(){
+  const sel=document.getElementById('month-sel'); sel.innerHTML='';
+  T[lang].months.forEach((m,i)=>{
+    const o=document.createElement('option'); o.value=i+1; o.innerText=m;
+    if(i+1===CM)o.selected=true; sel.appendChild(o);
+  });
 }
 
-// ── CHARTS ──
-function initCharts(){
-  const keys=Object.keys(db).sort();const labels=keys.map(k=>k.split('-')[1]+'月');
-  const sumHKD=arr=>arr.reduce((a,b)=>a+(parseFloat(b.value)||0)*(rates[b.ccy||'HKD']||1),0);
-  const accent=getComputedStyle(document.body).getPropertyValue('--accent').trim();
-  const txt=getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
-  const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:txt,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{color:txt}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:txt}}}};
-  const mk=(id,cfg)=>{const k=id.replace('chart-','');if(charts[k])charts[k].destroy();charts[k]=new Chart(document.getElementById(id),cfg);};
-  mk('chart-wealth',{type:'line',data:{labels,datasets:[{label:'Net Worth HKD',data:keys.map(k=>sumHKD(db[k].liquid)+sumHKD(db[k].investment)-sumHKD(db[k].liabilities)),borderColor:accent,tension:0.35,fill:true,backgroundColor:'rgba(197,168,128,0.08)'}]},options:opts});
-  mk('chart-cashflow',{type:'bar',data:{labels,datasets:[{label:'Income',data:keys.map(k=>sumHKD(db[k].income)),backgroundColor:'rgba(16,185,129,0.6)'},{label:'Expenses',data:keys.map(k=>sumHKD(db[k].fixed)+sumHKD(db[k].variable)),backgroundColor:'rgba(239,68,68,0.6)'}]},options:opts});
-  mk('chart-liabilities',{type:'line',data:{labels,datasets:[{label:'Liabilities',data:keys.map(k=>sumHKD(db[k].liabilities)),borderColor:'#ef4444',borderDash:[5,5],tension:0.2}]},options:opts});
-  mk('chart-savings',{type:'bar',data:{labels,datasets:[{label:'Savings Rate %',data:keys.map(k=>{const inc=sumHKD(db[k].income);const exp=sumHKD(db[k].fixed)+sumHKD(db[k].variable);return inc>0?+((inc-exp)/inc*100).toFixed(1):0;}),backgroundColor:accent}]},options:opts});
+// ═══════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════
+function buildCharts(){
+  const keys=Object.keys(db).sort();
+  const labels=keys.map(k=>k.split('-')[1]+'月');
+  const hkd=a=>a.reduce((s,r)=>s+(parseFloat(r.val)||0)*(rates[r.ccy||'HKD']||1),0);
+  const ac=getComputedStyle(document.body).getPropertyValue('--accent').trim();
+  const tx=getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
+  const baseOpts={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:tx,font:{size:10}}}},
+    scales:{x:{grid:{display:false},ticks:{color:tx}},y:{grid:{color:'rgba(128,128,128,.1)'},ticks:{color:tx}}}};
+  const mk=(id,cfg)=>{if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg);};
+  mk('ch-wealth',{type:'line',data:{labels,datasets:[{label:'Net Worth',data:keys.map(k=>hkd(db[k].liquid)+hkd(db[k].invest)-hkd(db[k].liab)),borderColor:ac,tension:.35,fill:true,backgroundColor:'rgba(197,168,128,.08)'}]},options:baseOpts});
+  mk('ch-cf',{type:'bar',data:{labels,datasets:[{label:'Income',data:keys.map(k=>hkd(db[k].income)),backgroundColor:'rgba(16,185,129,.6)'},{label:'Expenses',data:keys.map(k=>hkd(db[k].fixed)+hkd(db[k].variable)),backgroundColor:'rgba(239,68,68,.6)'}]},options:baseOpts});
+  mk('ch-liab',{type:'line',data:{labels,datasets:[{label:'Liabilities',data:keys.map(k=>hkd(db[k].liab)),borderColor:'#ef4444',borderDash:[5,5],tension:.2}]},options:baseOpts});
+  mk('ch-sav',{type:'bar',data:{labels,datasets:[{label:'Savings %',data:keys.map(k=>{const i=hkd(db[k].income),e=hkd(db[k].fixed)+hkd(db[k].variable);return i>0?+((i-e)/i*100).toFixed(1):0;}),backgroundColor:ac}]},options:baseOpts});
 }
 
-// ── EXPORT ──
-function exportToExcel(){
-  const key=getPeriodKey();const data=db[key];if(!data)return;
-  let wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...data.liquid,...data.investment,...data.liabilities]),"Balance Sheet");
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...data.income,...data.fixed,...data.variable]),"Cash Flow");
-  XLSX.writeFile(wb,`PrivateWealth_v8_${key}.xlsx`);showToast('✓ Excel exported');
+// ═══════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════
+function exportXL(){
+  const d=db[pk()]; if(!d)return;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...d.liquid,...d.invest,...d.liab]),'Balance Sheet');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...d.income,...d.fixed,...d.variable]),'Cash Flow');
+  XLSX.writeFile(wb,`PrivateWealth_${pk()}.xlsx`);
+  toast('✓ Exported');
 }
 
-// ── HELPERS ──
-function fmtNum(n){return n.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});}
-function escHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function showToast(msg){const t=document.getElementById('toast');t.innerText=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+function fmt(n){ return (n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(msg){
+  const t=document.getElementById('toast'); t.innerText=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
+}
 </script>
 </body>
 </html>
