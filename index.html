@@ -498,10 +498,11 @@ async function initApp() {
 
 async function fetchRates(){
   try{
-    const r=await fetch('https://api.frankfurter.app/latest?from=HKD&to=USD,CNY,JPY,EUR');
+    // open.er-api.com: free, no key, CORS-friendly
+    const r=await fetch('https://open.er-api.com/v6/latest/HKD');
     const d=await r.json();
     if(d.rates){rates.USD=1/d.rates.USD;rates.CNY=1/d.rates.CNY;rates.JPY=1/d.rates.JPY;rates.EUR=1/d.rates.EUR;}
-  }catch(e){}
+  }catch(e){ console.log('[PW] Using default rates'); }
 }
 
 // ═══════════════════════════════════════
