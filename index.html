@@ -13,8 +13,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif;transition:background .4s,color .4s;padding-bottom:80px}
 .container{max-width:1400px;margin:0 auto;padding:0 20px}
-
-/* LOCK SCREEN */
 #lock-screen{position:fixed;inset:0;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center}
 .lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:44px 38px;text-align:center;width:340px;box-shadow:var(--shadow)}
 .lock-logo{font-family:'Cinzel',serif;font-size:17px;letter-spacing:4px;color:var(--accent);margin-bottom:4px}
@@ -25,12 +23,8 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',
 .lock-btn:disabled{opacity:.5;cursor:not-allowed}
 .lock-err{color:var(--danger);font-size:11px;margin-top:10px;min-height:16px}
 .lock-status{color:var(--text-secondary);font-size:10px;margin-top:8px;min-height:14px;letter-spacing:.5px}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--accent);color:var(--text-primary);padding:10px 22px;border-radius:4px;font-size:12px;letter-spacing:.5px;opacity:0;transition:all .3s;z-index:7000;pointer-events:none;box-shadow:var(--shadow)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* CTRL PANEL */
 #ctrl-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:8000;align-items:center;justify-content:center}
 #ctrl-overlay.open{display:flex}
 .ctrl-box{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:32px;width:380px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
@@ -40,7 +34,6 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',
 .ctrl-input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text-primary);padding:10px 12px;border-radius:4px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:8px}
 .ctrl-input:focus{border-color:var(--accent)}
 .ctrl-btn{width:100%;background:var(--accent);color:var(--bg-primary);border:none;padding:11px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:6px;transition:opacity .2s}
-.ctrl-btn:disabled{opacity:.5;cursor:not-allowed}
 .ctrl-btn.danger{background:var(--danger)}
 .ctrl-btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
 .ctrl-msg{font-size:11px;min-height:16px;margin-top:6px}
@@ -49,8 +42,6 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',
 .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--text-secondary);transition:background .3s}
 .dot.ok{background:var(--success)}.dot.err{background:var(--danger)}.dot.spin{background:var(--accent);animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* NAV */
 nav{display:flex;flex-direction:column;gap:14px;padding:22px 0;border-bottom:1px solid var(--border);margin-bottom:30px}
 .brand h1{font-family:'Cinzel',serif;font-size:20px;letter-spacing:3px;color:var(--accent);text-transform:uppercase}
 .brand span{font-size:10px;letter-spacing:2px;color:var(--text-secondary);margin-top:4px;display:block}
@@ -62,16 +53,12 @@ nav{display:flex;flex-direction:column;gap:14px;padding:22px 0;border-bottom:1px
 .nav-btn.accent{background:var(--accent);color:var(--bg-primary);font-weight:700;border:none}
 .icon-btn{background:transparent;border:none;font-size:16px;padding:4px 7px;color:var(--accent);cursor:pointer}
 select.nav-btn{min-width:60px}
-
-/* SUMMARY */
 .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:36px}
 .summary-item{background:var(--bg-card);padding:22px 14px;text-align:center}
 .summary-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);margin-bottom:8px}
 .summary-value{font-weight:700;word-break:break-word;line-height:1.2}
 .summary-value.hi{color:var(--accent)}
 .sz-lg{font-size:22px}.sz-md{font-size:17px}.sz-sm{font-size:13px}
-
-/* CONTENT */
 .view-content{display:none}.view-content.active{display:block}
 .statement-layout{display:grid;grid-template-columns:1fr;gap:28px}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:2px solid var(--accent);padding-bottom:7px}
@@ -104,7 +91,6 @@ textarea{resize:vertical;min-height:50px;font-size:12px;line-height:1.4}
 .chart-card h3{font-family:'Cinzel',serif;font-size:12px;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
 .chart-box{position:relative;height:240px;width:100%}
 footer{margin-top:60px;text-align:center;padding:28px;border-top:1px solid var(--border);font-size:9px;letter-spacing:2.5px;color:var(--text-secondary);text-transform:uppercase}
-
 @media(min-width:768px){
 .container{padding:0 40px}
 nav{flex-direction:row;justify-content:space-between;align-items:center;padding:38px 0;margin-bottom:50px}
@@ -124,7 +110,6 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
 </head>
 <body data-theme="dark">
 
-<!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-box">
     <div class="lock-logo">PRIVATE WEALTH</div>
@@ -136,23 +121,20 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
   </div>
 </div>
 
-<!-- CONTROL PANEL -->
 <div id="ctrl-overlay">
   <div class="ctrl-box">
     <div class="ctrl-title">⚙ Control Panel</div>
-
     <div class="ctrl-section">
       <span class="ctrl-label">Cloud Sync</span>
       <div class="sync-row">
         <span class="dot" id="sync-dot"></span>
         <span id="sync-label" style="color:var(--text-secondary)">—</span>
       </div>
-      <div class="ctrl-msg err" id="sync-err" style="font-size:10px;word-break:break-all"></div>
-      <button class="ctrl-btn ghost" onclick="manualPush()">↑ SAVE ALL TO CLOUD NOW</button>
+      <div class="ctrl-msg err" id="sync-err" style="font-size:10px;word-break:break-all;margin-top:6px"></div>
+      <button class="ctrl-btn ghost" style="margin-top:10px" onclick="manualPush()">↑ SAVE ALL TO CLOUD NOW</button>
       <button class="ctrl-btn ghost" onclick="manualPull()">↓ LOAD FROM CLOUD</button>
       <div class="ctrl-msg" id="sync-action-msg"></div>
     </div>
-
     <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
       <span class="ctrl-label">Change Password</span>
       <input class="ctrl-input" type="password" id="new-pw1" placeholder="New password">
@@ -160,12 +142,10 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
       <button class="ctrl-btn" onclick="changePw()">UPDATE PASSWORD</button>
       <div class="ctrl-msg" id="pw-msg"></div>
     </div>
-
     <div class="ctrl-section" style="border-top:1px solid var(--border);padding-top:18px">
       <span class="ctrl-label">Danger Zone</span>
       <button class="ctrl-btn danger" onclick="if(confirm('Wipe ALL local data?'))nukeLocal()">RESET ALL LOCAL DATA</button>
     </div>
-
     <button class="ctrl-btn ghost" onclick="closeCtrl()" style="margin-top:4px">CLOSE</button>
   </div>
 </div>
@@ -176,7 +156,7 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
   <nav>
     <div class="brand">
       <h1>Private Wealth</h1>
-      <span id="nav-sub">PREMIUM FINANCIAL STATEMENT · V8</span>
+      <span>PREMIUM FINANCIAL STATEMENT · V8</span>
     </div>
     <div class="nav-controls">
       <div class="view-toggle">
@@ -235,19 +215,19 @@ footer{margin-top:90px;padding:38px;font-size:10px}}
 </div>
 
 <script>
-// ═══════════════════════════════════════
-//  CONFIG
-// ═══════════════════════════════════════
-const SB_URL   = 'https://zvevigywfonuyzrqavmj.supabase.co';
-const SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2ZXZpZ3l3Zm9udXl6cnFhdm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTM4NDksImV4cCI6MjA5NjA4OTg0OX0.9xSEv9ti14y7rrB4_8OlUd5U0me6UVx1sqg6dn4mg-c';
+// ═══════════════════════════════
+//  SUPABASE CONFIG — v8 fresh
+// ═══════════════════════════════
+const SB_URL   = 'https://bjstzdrzvuhimpsksupa.supabase.co';
+const SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqc3R6ZHJ6dnVoaW1wc2tzdXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MDg0ODMsImV4cCI6MjA5NjI4NDQ4M30.-yLVNMFHK_qPvtWH96Gp41z33pOOMN-MRyRIm8iGur4';
 const SB_TABLE = 'wealth_data';
-const LS_DB    = 'pw_db_v8';
-const LS_PW    = 'pw_secret_v8';
+const LS_DB    = 'pw_db_v8b';
+const LS_PW    = 'pw_secret_v8b';
 const DEF_PW   = 'wealth2026';
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  STATE
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 let userHash = null;
 let db = {};
 let isLocked = true;
@@ -256,42 +236,48 @@ let theme = 'dark';
 let CY = new Date().getFullYear();
 let CM = new Date().getMonth() + 1;
 let charts = {};
-let rates = {HKD:1, USD:7.8, CNY:1.08, JPY:0.052, EUR:8.6};
+let saveTimer = null;
+let rates = {HKD:1,USD:7.8,CNY:1.08,JPY:0.052,EUR:8.6};
 
 try { db = JSON.parse(localStorage.getItem(LS_DB)) || {}; } catch(e) { db = {}; }
 
-// ═══════════════════════════════════════
-//  SUPABASE  — simple try-delete-then-insert (avoids all upsert issues)
-// ═══════════════════════════════════════
-const sbH = () => ({
-  'Content-Type':  'application/json',
-  'apikey':        SB_KEY,
-  'Authorization': 'Bearer ' + SB_KEY
-});
+// ═══════════════════════════════
+//  SUPABASE HELPERS
+// ═══════════════════════════════
+function sbHeaders() {
+  return {
+    'Content-Type':  'application/json',
+    'apikey':        SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY
+  };
+}
 
-// v8.5 — explicit cors mode + full console logging for debugging
-async function sbSavePeriod(key) {
-  if (!userHash || !db[key]) return;
-  setDot('spin', 'Saving…');
-  console.log('[PW] Saving period:', key, 'user:', userHash);
+// Test connection first
+async function sbTest() {
   try {
-    // Step 1: DELETE existing row
-    const delUrl = `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&period_key=eq.${key}`;
-    console.log('[PW] DELETE:', delUrl);
-    const delRes = await fetch(delUrl, {
-      method: 'DELETE',
-      mode: 'cors',
-      headers: sbH()
+    const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}?limit=1`, {
+      method: 'GET',
+      headers: sbHeaders()
     });
-    console.log('[PW] DELETE status:', delRes.status);
+    return res.ok;
+  } catch(e) {
+    return false;
+  }
+}
 
-    // Step 2: INSERT fresh row
-    const postUrl = `${SB_URL}/rest/v1/${SB_TABLE}`;
-    console.log('[PW] POST:', postUrl);
-    const res = await fetch(postUrl, {
-      method: 'POST',
-      mode: 'cors',
-      headers: { ...sbH(), 'Prefer': 'return=minimal' },
+// DELETE then INSERT — most reliable upsert
+async function sbSavePeriod(key) {
+  if (!userHash || !db[key]) return false;
+  try {
+    // Delete old row
+    await fetch(
+      `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&period_key=eq.${key}`,
+      { method: 'DELETE', headers: sbHeaders() }
+    );
+    // Insert fresh
+    const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}`, {
+      method:  'POST',
+      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
       body: JSON.stringify({
         user_hash:  userHash,
         period_key: key,
@@ -299,91 +285,96 @@ async function sbSavePeriod(key) {
         updated_at: new Date().toISOString()
       })
     });
-    console.log('[PW] POST status:', res.status);
     if (!res.ok) {
-      const t = await res.text();
-      throw new Error(res.status + ': ' + t);
+      const txt = await res.text();
+      throw new Error(res.status + ': ' + txt);
     }
-    setDot('ok', 'Saved ✓ ' + new Date().toLocaleTimeString());
+    return true;
   } catch(e) {
-    console.error('[PW] Save error:', e);
-    setDot('err', 'Cloud save failed');
-    document.getElementById('sync-err').innerText = e.message;
+    throw e;
   }
 }
 
 async function sbLoadAll() {
-  if (!userHash) return false;
-  setDot('spin', 'Loading from cloud…');
-  console.log('[PW] Loading all data for user:', userHash);
   try {
-    const url = `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&select=period_key,data`;
-    console.log('[PW] GET:', url);
-    const res = await fetch(url, {
-      method: 'GET',
-      mode: 'cors',
-      headers: sbH()
-    });
-    console.log('[PW] GET status:', res.status);
-    if (!res.ok) throw new Error((await res.text()));
+    const res = await fetch(
+      `${SB_URL}/rest/v1/${SB_TABLE}?user_hash=eq.${userHash}&select=period_key,data`,
+      { method: 'GET', headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error(await res.text());
     const rows = await res.json();
-    console.log('[PW] Got rows:', rows.length);
-    if (rows.length > 0) {
-      rows.forEach(r => { db[r.period_key] = r.data; });
-      localStorage.setItem(LS_DB, JSON.stringify(db));
-      setDot('ok', 'Loaded ' + rows.length + ' month(s) ✓');
-      return true;
-    }
-    setDot('ok', 'No cloud data yet — starting fresh');
-    return false;
+    rows.forEach(r => { db[r.period_key] = r.data; });
+    if (rows.length) localStorage.setItem(LS_DB, JSON.stringify(db));
+    return rows.length;
   } catch(e) {
-    console.error('[PW] Load error:', e);
-    setDot('err', 'Load failed — using local data');
-    const errEl = document.getElementById('sync-err');
-    if (errEl) errEl.innerText = e.message;
-    return false;
+    throw e;
   }
+}
+
+// ═══════════════════════════════
+//  SYNC UI
+// ═══════════════════════════════
+function setDot(state, label, err) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  const errEl = document.getElementById('sync-err');
+  if (dot) dot.className = 'dot ' + (state === 'ok' ? 'ok' : state === 'err' ? 'err' : state === 'spin' ? 'spin' : '');
+  if (lbl) lbl.innerText = label || '';
+  if (errEl) errEl.innerText = (state === 'err' && err) ? err : '';
 }
 
 async function manualPush() {
   const msg = document.getElementById('sync-action-msg');
-  msg.className = 'ctrl-msg'; msg.innerText = 'Pushing all months…';
-  document.getElementById('sync-err').innerText = '';
-  let ok = true;
+  msg.className = 'ctrl-msg'; msg.innerText = 'Pushing…';
+  setDot('spin', 'Saving all months…');
+  let failed = 0;
   for (const k of Object.keys(db)) {
-    await sbSavePeriod(k);
-    if (document.getElementById('sync-dot').className.includes('err')) { ok = false; break; }
+    try { await sbSavePeriod(k); }
+    catch(e) { failed++; setDot('err', 'Failed on ' + k, e.message); }
   }
-  msg.className = ok ? 'ctrl-msg ok' : 'ctrl-msg err';
-  msg.innerText = ok ? 'All data saved to cloud ✓' : 'Some saves failed — see error above';
+  if (failed === 0) {
+    setDot('ok', 'All saved to cloud ✓ ' + new Date().toLocaleTimeString());
+    msg.className = 'ctrl-msg ok'; msg.innerText = 'All data saved ✓';
+  } else {
+    msg.className = 'ctrl-msg err'; msg.innerText = failed + ' month(s) failed';
+  }
   setTimeout(() => msg.innerText = '', 4000);
 }
 
 async function manualPull() {
   const msg = document.getElementById('sync-action-msg');
-  msg.className = 'ctrl-msg'; msg.innerText = 'Loading from cloud…';
-  document.getElementById('sync-err').innerText = '';
-  const ok = await sbLoadAll();
-  if (ok) { renderDash(); msg.className = 'ctrl-msg ok'; msg.innerText = 'Cloud data loaded ✓'; }
-  else     { msg.className = 'ctrl-msg err'; msg.innerText = 'Nothing loaded'; }
+  msg.className = 'ctrl-msg'; msg.innerText = 'Loading…';
+  setDot('spin', 'Loading from cloud…');
+  try {
+    const count = await sbLoadAll();
+    renderDash();
+    setDot('ok', 'Loaded ' + count + ' month(s) ✓');
+    msg.className = 'ctrl-msg ok'; msg.innerText = 'Done ✓';
+  } catch(e) {
+    setDot('err', 'Load failed', e.message);
+    msg.className = 'ctrl-msg err'; msg.innerText = 'Failed: ' + e.message;
+  }
   setTimeout(() => msg.innerText = '', 4000);
 }
 
-function setDot(state, label) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  if (dot) dot.className = 'dot ' + state;
-  if (lbl) lbl.innerText = label;
-  // Clear err detail on success
-  if (state === 'ok') {
-    const e = document.getElementById('sync-err');
-    if (e) e.innerText = '';
-  }
+// Auto-save: local immediately, cloud after 2s idle
+function save() {
+  try { localStorage.setItem(LS_DB, JSON.stringify(db)); } catch(e) {}
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const key = pk();
+    try {
+      await sbSavePeriod(key);
+      setDot('ok', 'Auto-saved ✓ ' + new Date().toLocaleTimeString());
+    } catch(e) {
+      setDot('err', 'Auto-save failed', e.message);
+    }
+  }, 2000);
 }
 
-// ═══════════════════════════════════════
-//  PASSWORD + UNLOCK
-// ═══════════════════════════════════════
+// ═══════════════════════════════
+//  PASSWORD / UNLOCK
+// ═══════════════════════════════
 async function sha16(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,16);
@@ -395,59 +386,77 @@ document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key
 
 async function unlock() {
   const val = document.getElementById('pw-input').value;
-  const err = document.getElementById('pw-err');
-  const sts = document.getElementById('lock-status');
-  const btn = document.getElementById('lock-btn');
+  const errEl = document.getElementById('pw-err');
+  const sts   = document.getElementById('lock-status');
+  const btn   = document.getElementById('lock-btn');
 
   if (val !== getPw()) {
-    err.innerText = 'Incorrect password';
-    setTimeout(() => err.innerText = '', 2000);
+    errEl.innerText = 'Incorrect password';
+    setTimeout(() => errEl.innerText = '', 2000);
     document.getElementById('pw-input').value = '';
     return;
   }
 
-  btn.disabled = true;
-  btn.innerText = 'LOADING…';
-  sts.innerText = 'Computing identity…';
+  btn.disabled = true; btn.innerText = 'LOADING…';
+  sts.innerText = 'Connecting to cloud…';
 
   userHash = await sha16(val);
 
-  sts.innerText = 'Fetching cloud data…';
-  await sbLoadAll();
+  // Test connection
+  const connected = await sbTest();
+  if (!connected) {
+    sts.innerText = '⚠ Cloud offline — using local data';
+    setTimeout(() => {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      initApp();
+    }, 1500);
+    return;
+  }
 
-  document.getElementById('lock-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  initApp();
+  sts.innerText = 'Loading your data…';
+  try {
+    const count = await sbLoadAll();
+    sts.innerText = count > 0 ? `Loaded ${count} month(s) ✓` : 'No cloud data yet';
+  } catch(e) {
+    sts.innerText = 'Cloud load failed — using local';
+  }
+
+  setTimeout(() => {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  }, 600);
 }
 
 async function changePw() {
   const p1  = document.getElementById('new-pw1').value.trim();
   const p2  = document.getElementById('new-pw2').value.trim();
   const msg = document.getElementById('pw-msg');
-  if (!p1)    { msg.className='ctrl-msg err'; msg.innerText='Cannot be empty'; return; }
-  if (p1!==p2){ msg.className='ctrl-msg err'; msg.innerText='Passwords do not match'; return; }
+  if (!p1)     { msg.className='ctrl-msg err'; msg.innerText='Cannot be empty'; return; }
+  if (p1 !== p2){ msg.className='ctrl-msg err'; msg.innerText='Passwords do not match'; return; }
   localStorage.setItem(LS_PW, p1);
   userHash = await sha16(p1);
-  msg.className='ctrl-msg ok'; msg.innerText='Password updated ✓';
-  document.getElementById('new-pw1').value='';
-  document.getElementById('new-pw2').value='';
-  setTimeout(()=>msg.innerText='',3000);
+  msg.className='ctrl-msg ok'; msg.innerText='Updated ✓';
+  document.getElementById('new-pw1').value = '';
+  document.getElementById('new-pw2').value = '';
+  setTimeout(() => msg.innerText = '', 3000);
 }
 
 function nukeLocal() {
-  localStorage.removeItem(LS_DB); db={};
+  localStorage.removeItem(LS_DB); db = {};
   closeCtrl(); renderDash(); toast('Local data cleared');
 }
 
-function openCtrl(){ document.getElementById('ctrl-overlay').classList.add('open'); }
-function closeCtrl(){ document.getElementById('ctrl-overlay').classList.remove('open'); }
+function openCtrl()  { document.getElementById('ctrl-overlay').classList.add('open'); }
+function closeCtrl() { document.getElementById('ctrl-overlay').classList.remove('open'); }
 document.getElementById('ctrl-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('ctrl-overlay')) closeCtrl();
 });
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  I18N
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 const T = {
   zh:{ 'net-worth':'資產淨值','net-cf':'每月淨現金流','total-assets':'總資產','total-liab':'總負債',
        'bs':'資產負債表','cf':'現金流量表','liquid':'流動資產','invest':'投資資產','liab':'負債',
@@ -458,17 +467,17 @@ const T = {
        'income':'Income','fixed':'Fixed Expenses','variable':'Variable Expenses','locked':'Locked','unlocked':'Unlocked',
        'months':['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
 };
-function t(k){ return T[lang][k] || k; }
+function t(k){ return T[lang][k]||k; }
 function applyLang(){
-  document.querySelectorAll('[data-t]').forEach(el => { const k=el.getAttribute('data-t'); if(T[lang][k]) el.innerText=T[lang][k]; });
-  document.getElementById('ind-bs').innerText = t(isLocked?'locked':'unlocked');
-  document.getElementById('ind-cf').innerText = t(isLocked?'locked':'unlocked');
+  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.getAttribute('data-t');if(T[lang][k])el.innerText=T[lang][k];});
+  document.getElementById('ind-bs').innerText=t(isLocked?'locked':'unlocked');
+  document.getElementById('ind-cf').innerText=t(isLocked?'locked':'unlocked');
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  DEFAULT DATA
-// ═══════════════════════════════════════
-const blankPeriod = () => ({
+// ═══════════════════════════════
+const blank=()=>({
   liquid:   [{name:'主要戶口',val:0,ccy:'HKD'}],
   invest:   [{name:'股票/ETF',val:0,ccy:'HKD'}],
   liab:     [{name:'信用卡', val:0,ccy:'HKD',date:''}],
@@ -478,51 +487,37 @@ const blankPeriod = () => ({
   notes:    []
 });
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  INIT
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 async function initApp() {
-  // Year selector
-  const ys = document.getElementById('year-sel');
-  ys.innerHTML = '';
-  for (let y=2024; y<=2030; y++) {
-    const o = document.createElement('option');
-    o.value=y; o.innerText=y; if(y===CY)o.selected=true;
-    ys.appendChild(o);
-  }
-  buildMonthSel();
-  applyLang();
-  fetchRates();
-  renderDash();
+  const ys = document.getElementById('year-sel'); ys.innerHTML='';
+  for(let y=2024;y<=2030;y++){const o=document.createElement('option');o.value=y;o.innerText=y;if(y===CY)o.selected=true;ys.appendChild(o);}
+  buildMonthSel(); applyLang(); fetchRates(); renderDash();
 }
 
 async function fetchRates(){
   try{
-    // open.er-api.com: free, no key, CORS-friendly
     const r=await fetch('https://open.er-api.com/v6/latest/HKD');
     const d=await r.json();
     if(d.rates){rates.USD=1/d.rates.USD;rates.CNY=1/d.rates.CNY;rates.JPY=1/d.rates.JPY;rates.EUR=1/d.rates.EUR;}
-  }catch(e){ console.log('[PW] Using default rates'); }
+  }catch(e){}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  PERIOD
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 function pk(){ return `${CY}-${String(CM).padStart(2,'0')}`; }
-function prevPk(){
-  let m=CM-1, y=CY; if(m===0){m=12;y--;}
-  return `${y}-${String(m).padStart(2,'0')}`;
-}
+function prevPk(){ let m=CM-1,y=CY;if(m===0){m=12;y--;}return `${y}-${String(m).padStart(2,'0')}`; }
 function ensurePeriod(){
-  const key=pk();
-  if(db[key]) return;
+  const key=pk(); if(db[key])return;
   const prev=prevPk();
   if(db[prev]){
     db[key]=JSON.parse(JSON.stringify(db[prev]));
     ['liab','income','fixed','variable'].forEach(c=>db[key][c].forEach(r=>{r.val=0;r.date='';}));
     db[key].notes=db[key].notes.filter(n=>n.status!=='done');
-  } else { db[key]=blankPeriod(); }
-  saveLocal();
+  } else { db[key]=blank(); }
+  save();
 }
 function changePeriod(){
   CY=parseInt(document.getElementById('year-sel').value);
@@ -530,25 +525,20 @@ function changePeriod(){
   renderDash();
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  RENDER
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 function renderDash(){
   ensurePeriod();
   const d=db[pk()];
-  renderList('liquid', d.liquid, false);
-  renderList('invest', d.invest, false);
-  renderList('liab',   d.liab,   true);
-  renderList('income', d.income, true);
-  renderList('fixed',  d.fixed,  true);
-  renderList('variable',d.variable,true);
-  renderNotes();
-  calc();
+  renderList('liquid',d.liquid,false); renderList('invest',d.invest,false);
+  renderList('liab',d.liab,true);     renderList('income',d.income,true);
+  renderList('fixed',d.fixed,true);   renderList('variable',d.variable,true);
+  renderNotes(); calc();
 }
 
-function renderList(cat, items, hasDate){
-  const tb=document.getElementById('lst-'+cat);
-  tb.innerHTML='';
+function renderList(cat,items,hasDate){
+  const tb=document.getElementById('lst-'+cat); tb.innerHTML='';
   items.forEach((item,i)=>{
     const ccy=item.ccy||'HKD';
     const hkd=(parseFloat(item.val)||0)*(rates[ccy]||1);
@@ -564,8 +554,7 @@ function renderList(cat, items, hasDate){
       <td>
         <input type="number" class="num-in" value="${item.val||0}" onchange="setField('${cat}',${i},'val',+this.value)" step="0.01">
         ${showEq?`<div class="hkd-eq">≈ HKD ${fmt(hkd)}</div>`:''}
-      </td>
-      ${xCell}`;
+      </td>${xCell}`;
     tb.appendChild(tr);
   });
   const btn=tb.parentElement.nextElementSibling;
@@ -581,20 +570,9 @@ function renderNotes(){
   });
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  MUTATIONS
-// ═══════════════════════════════════════
-let saveTimer=null;
-function saveLocal(){
-  try{ localStorage.setItem(LS_DB,JSON.stringify(db)); }catch(e){}
-}
-// Save locally immediately; push to cloud after 2s idle
-function save(){
-  saveLocal();
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>sbSavePeriod(pk()),2000);
-}
-
+// ═══════════════════════════════
 function setField(cat,i,f,v){
   db[pk()][cat][i][f]=v;
   renderList(cat,db[pk()][cat],['liab','income','fixed','variable'].includes(cat));
@@ -602,7 +580,7 @@ function setField(cat,i,f,v){
 }
 function addRow(cat){
   const row={name:'New Item',val:0,ccy:'HKD'};
-  if(['liab','income','fixed','variable'].includes(cat)) row.date='';
+  if(['liab','income','fixed','variable'].includes(cat))row.date='';
   db[pk()][cat].push(row); renderDash(); save();
 }
 function delRow(cat,i){ db[pk()][cat].splice(i,1); renderDash(); save(); }
@@ -620,9 +598,9 @@ function handleDate(e,cat,i){
   if(f.length===5)setField(cat,i,'date',f);
 }
 
-// ═══════════════════════════════════════
-//  CALC
-// ═══════════════════════════════════════
+// ═══════════════════════════════
+//  CALCULATE
+// ═══════════════════════════════
 function calc(){
   const d=db[pk()]; if(!d)return;
   const hkd=a=>a.reduce((s,r)=>s+(parseFloat(r.val)||0)*(rates[r.ccy||'HKD']||1),0);
@@ -637,26 +615,26 @@ function setSumm(id,v,hi,cf){
   const len=s.replace(/[$,\s]/g,'').length;
   el.className='summary-value'+(hi?' hi':'');
   el.classList.add(len>10?'sz-sm':len>7?'sz-md':'sz-lg');
-  if(cf) el.style.color=v>=0?'var(--success)':'var(--danger)';
-  else if(hi) el.style.color=v<0?'var(--danger)':'var(--accent)';
+  if(cf)el.style.color=v>=0?'var(--success)':'var(--danger)';
+  else if(hi)el.style.color=v<0?'var(--danger)':'var(--accent)';
   else el.style.color='';
 }
 
-// ═══════════════════════════════════════
-//  UI CONTROLS
-// ═══════════════════════════════════════
+// ═══════════════════════════════
+//  UI
+// ═══════════════════════════════
 function switchView(v){
   document.querySelectorAll('.view-content').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.view-btn').forEach(x=>x.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('btn-'+v).classList.add('active');
-  if(v==='insights') buildCharts();
+  if(v==='insights')buildCharts();
 }
 function toggleTheme(){
   theme=theme==='dark'?'light':'dark';
   document.body.setAttribute('data-theme',theme);
   document.getElementById('theme-btn').innerText=theme==='dark'?'LIGHT':'DARK';
-  if(document.getElementById('view-insights').classList.contains('active')) buildCharts();
+  if(document.getElementById('view-insights').classList.contains('active'))buildCharts();
 }
 function toggleLang(){
   lang=lang==='zh'?'en':'zh';
@@ -671,52 +649,45 @@ function toggleEdit(){
 }
 function buildMonthSel(){
   const sel=document.getElementById('month-sel'); sel.innerHTML='';
-  T[lang].months.forEach((m,i)=>{
-    const o=document.createElement('option'); o.value=i+1; o.innerText=m;
-    if(i+1===CM)o.selected=true; sel.appendChild(o);
-  });
+  T[lang].months.forEach((m,i)=>{const o=document.createElement('option');o.value=i+1;o.innerText=m;if(i+1===CM)o.selected=true;sel.appendChild(o);});
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  CHARTS
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 function buildCharts(){
   const keys=Object.keys(db).sort();
   const labels=keys.map(k=>k.split('-')[1]+'月');
   const hkd=a=>a.reduce((s,r)=>s+(parseFloat(r.val)||0)*(rates[r.ccy||'HKD']||1),0);
   const ac=getComputedStyle(document.body).getPropertyValue('--accent').trim();
   const tx=getComputedStyle(document.body).getPropertyValue('--text-primary').trim();
-  const baseOpts={responsive:true,maintainAspectRatio:false,
+  const base={responsive:true,maintainAspectRatio:false,
     plugins:{legend:{labels:{color:tx,font:{size:10}}}},
     scales:{x:{grid:{display:false},ticks:{color:tx}},y:{grid:{color:'rgba(128,128,128,.1)'},ticks:{color:tx}}}};
   const mk=(id,cfg)=>{if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg);};
-  mk('ch-wealth',{type:'line',data:{labels,datasets:[{label:'Net Worth',data:keys.map(k=>hkd(db[k].liquid)+hkd(db[k].invest)-hkd(db[k].liab)),borderColor:ac,tension:.35,fill:true,backgroundColor:'rgba(197,168,128,.08)'}]},options:baseOpts});
-  mk('ch-cf',{type:'bar',data:{labels,datasets:[{label:'Income',data:keys.map(k=>hkd(db[k].income)),backgroundColor:'rgba(16,185,129,.6)'},{label:'Expenses',data:keys.map(k=>hkd(db[k].fixed)+hkd(db[k].variable)),backgroundColor:'rgba(239,68,68,.6)'}]},options:baseOpts});
-  mk('ch-liab',{type:'line',data:{labels,datasets:[{label:'Liabilities',data:keys.map(k=>hkd(db[k].liab)),borderColor:'#ef4444',borderDash:[5,5],tension:.2}]},options:baseOpts});
-  mk('ch-sav',{type:'bar',data:{labels,datasets:[{label:'Savings %',data:keys.map(k=>{const i=hkd(db[k].income),e=hkd(db[k].fixed)+hkd(db[k].variable);return i>0?+((i-e)/i*100).toFixed(1):0;}),backgroundColor:ac}]},options:baseOpts});
+  mk('ch-wealth',{type:'line',data:{labels,datasets:[{label:'Net Worth',data:keys.map(k=>hkd(db[k].liquid)+hkd(db[k].invest)-hkd(db[k].liab)),borderColor:ac,tension:.35,fill:true,backgroundColor:'rgba(197,168,128,.08)'}]},options:base});
+  mk('ch-cf',{type:'bar',data:{labels,datasets:[{label:'Income',data:keys.map(k=>hkd(db[k].income)),backgroundColor:'rgba(16,185,129,.6)'},{label:'Expenses',data:keys.map(k=>hkd(db[k].fixed)+hkd(db[k].variable)),backgroundColor:'rgba(239,68,68,.6)'}]},options:base});
+  mk('ch-liab',{type:'line',data:{labels,datasets:[{label:'Liabilities',data:keys.map(k=>hkd(db[k].liab)),borderColor:'#ef4444',borderDash:[5,5],tension:.2}]},options:base});
+  mk('ch-sav',{type:'bar',data:{labels,datasets:[{label:'Savings %',data:keys.map(k=>{const i=hkd(db[k].income),e=hkd(db[k].fixed)+hkd(db[k].variable);return i>0?+((i-e)/i*100).toFixed(1):0;}),backgroundColor:ac}]},options:base});
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  EXPORT
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 function exportXL(){
   const d=db[pk()]; if(!d)return;
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...d.liquid,...d.invest,...d.liab]),'Balance Sheet');
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...d.income,...d.fixed,...d.variable]),'Cash Flow');
-  XLSX.writeFile(wb,`PrivateWealth_${pk()}.xlsx`);
-  toast('✓ Exported');
+  XLSX.writeFile(wb,`PrivateWealth_${pk()}.xlsx`); toast('✓ Exported');
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════
-function fmt(n){ return (n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}); }
+// ═══════════════════════════════
+function fmt(n){ return(n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function toast(msg){
-  const t=document.getElementById('toast'); t.innerText=msg;
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
-}
+function toast(msg){ const t=document.getElementById('toast');t.innerText=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
 </script>
 </body>
 </html>
